@@ -1,3 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+
+/*
+ * Design tokens: "The Lit Workbench".
+ * Warm-tinted neutrals (never pure #fff/#000) carrying a single amber signal.
+ * Amber is reserved for the primary action and focus only (the One Signal Rule).
+ */
+@theme {
+  --color-counter: oklch(98% 0.006 75); /* warm off-white content surface */
+  --color-ink: oklch(24% 0.014 75); /* warm near-black, primary text */
+  --color-muted: oklch(50% 0.014 75); /* secondary text, captions */
+  --color-line: oklch(90% 0.008 75); /* hairline dividers */
+  --color-field: oklch(62% 0.013 75); /* input borders (>=3:1 non-text contrast) */
+  --color-signal: oklch(72% 0.15 75); /* amber signal */
+  --color-signal-hover: oklch(66% 0.155 75);
+  --color-danger: oklch(52% 0.17 27); /* error text/tint */
+}

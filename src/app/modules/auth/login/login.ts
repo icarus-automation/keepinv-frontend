@@ -1,0 +1,68 @@
+import {
+  afterNextRender,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+
+import { AuthService } from '../services/auth.service';
+
+@Component({
+  selector: 'app-login',
+  imports: [ReactiveFormsModule],
+  templateUrl: './login.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class Login {
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+
+  private readonly emailInput = viewChild<ElementRef<HTMLInputElement>>('emailInput');
+
+  protected readonly loading = signal(false);
+  protected readonly error = signal<string | null>(null);
+  protected readonly passwordVisible = signal(false);
+
+  protected readonly form = this.formBuilder.nonNullable.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required]],
+  });
+
+  constructor() {
+    // Keyboard-first: land focus on the first field so the operator can type or scan immediately.
+    afterNextRender(() => this.emailInput()?.nativeElement.focus());
+  }
+
+  protected isInvalid(control: 'email' | 'password'): boolean {
+    const field = this.form.controls[control];
+    return field.touched && field.invalid;
+  }
+
+  protected togglePasswordVisibility(): void {
+    this.passwordVisible.update((visible) => !visible);
+  }
+
+  protected submit(): void {
+    if (this.form.invalid || this.loading()) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.authService.login(this.form.getRawValue()).subscribe({
+      next: () => this.router.navigateByUrl('/'),
+      error: () => {
+        this.error.set('Invalid email or password.');
+        this.loading.set(false);
+      },
+    });
+  }
+}

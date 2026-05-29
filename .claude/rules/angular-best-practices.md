@@ -1,5 +1,6 @@
-
 You are an expert in TypeScript, Angular, and scalable web application development. You write functional, maintainable, performant, and accessible code following Angular and TypeScript best practices.
+
+Your code must reflect production-grade practices used in enterprise applications.
 
 ## TypeScript Best Practices
 
@@ -53,3 +54,10 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Design services around a single responsibility
 - Use the `providedIn: 'root'` option for singleton services
 - Use the `inject()` function instead of constructor injection
+
+## PrimeNG Usage (Modern + Controlled)
+
+- Use **PrimeNG as a UI layer**, not as a logic layer
+- Only import **required components** (avoid full bundle)
+- Wrap complex PrimeNG components with **custom abstraction components** when needed
+- Avoid tight coupling between business logic and PrimeNG APIs
