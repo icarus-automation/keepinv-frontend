@@ -1,1 +1,196 @@
-<p>categories works!</p>
+<div class="mx-auto max-w-3xl">
+  <p class="max-w-prose text-sm text-muted">
+    Define how assets are grouped, like Engine, Hand Tools, or Garage Equipment. Categories keep
+    inventory organized so the counter finds parts fast.
+  </p>
+
+  <!-- Quick add: name only, stays focused for rapid entry. Description is set later via edit. -->
+  <form [formGroup]="addForm" (ngSubmit)="addCategory()" novalidate class="mt-6">
+    <label for="add-category" class="block text-sm font-medium">Add a category</label>
+    <div class="mt-1.5 flex items-start gap-2">
+      <div class="min-w-0 flex-1">
+        <input
+          pInputText
+          id="add-category"
+          #addInput
+          type="text"
+          formControlName="name"
+          placeholder="e.g. Engine"
+          autocomplete="off"
+          [invalid]="!!addError()"
+          [attr.aria-describedby]="addError() ? 'add-error' : null"
+          class="w-full text-sm"
+        />
+        @if (addError()) {
+          <p id="add-error" role="alert" class="mt-1.5 text-xs text-danger">{{ addError() }}</p>
+        }
+      </div>
+      <p-button
+        type="submit"
+        [label]="creating() ? 'Adding...' : 'Add'"
+        [loading]="creating()"
+        [disabled]="creating()"
+        styleClass="shrink-0 font-medium"
+      />
+    </div>
+  </form>
+
+  <section class="mt-9" aria-labelledby="categories-heading">
+    <div class="flex items-baseline justify-between gap-3">
+      <h2 id="categories-heading" class="text-sm font-semibold tracking-tight">Your categories</h2>
+      @if (!loading() && !loadError() && count() > 0) {
+        <span class="text-xs tabular-nums text-muted">
+          {{ count() }} {{ count() === 1 ? 'category' : 'categories' }}
+        </span>
+      }
+    </div>
+
+    @if (loading()) {
+      <ul class="mt-3 divide-y divide-line overflow-hidden rounded-lg border border-line bg-counter">
+        @for (placeholder of [0, 1, 2]; track placeholder) {
+          <li class="flex items-center justify-between px-4 py-3.5">
+            <div class="h-3.5 w-40 animate-pulse rounded bg-line motion-reduce:animate-none"></div>
+            <div class="h-3.5 w-12 animate-pulse rounded bg-line motion-reduce:animate-none"></div>
+          </li>
+        }
+      </ul>
+    } @else if (loadError()) {
+      <div class="mt-3 rounded-lg border border-line bg-counter px-6 py-10 text-center">
+        <p class="text-sm font-medium text-ink">Couldn't load categories</p>
+        <p class="mx-auto mt-1 max-w-xs text-sm text-muted">
+          The server didn't respond. Check your connection and try again.
+        </p>
+        <p-button
+          type="button"
+          label="Retry"
+          [text]="true"
+          (onClick)="load()"
+          styleClass="mt-3 font-medium"
+        />
+      </div>
+    } @else if (isEmpty()) {
+      <div class="mt-3 rounded-lg border border-dashed border-line px-6 py-14 text-center">
+        <span class="mx-auto grid h-11 w-11 place-items-center rounded-full bg-panel text-muted">
+          <i class="pi pi-inbox text-xl" aria-hidden="true"></i>
+        </span>
+        <p class="mt-3 text-sm font-medium text-ink">No categories yet</p>
+        <p class="mx-auto mt-1 max-w-xs text-sm text-muted">
+          Add your first one above. Try Engine, Hand Tools, or Garage Equipment.
+        </p>
+      </div>
+    } @else {
+      <ul class="mt-3 divide-y divide-line overflow-hidden rounded-lg border border-line bg-counter">
+        @for (category of categories(); track category.id) {
+          <li>
+            @if (isEditing(category)) {
+              <form
+                [formGroup]="editForm"
+                (ngSubmit)="saveEdit()"
+                novalidate
+                class="flex flex-col gap-2.5 px-4 py-3"
+              >
+                <div class="flex flex-col gap-2 sm:flex-row">
+                  <input
+                    pInputText
+                    #editNameInput
+                    type="text"
+                    formControlName="name"
+                    aria-label="Category name"
+                    autocomplete="off"
+                    [invalid]="!!editError()"
+                    class="w-full text-sm sm:flex-1"
+                  />
+                  <input
+                    pInputText
+                    type="text"
+                    formControlName="description"
+                    aria-label="Description"
+                    placeholder="Description (optional)"
+                    autocomplete="off"
+                    class="w-full text-sm sm:flex-[1.4]"
+                  />
+                </div>
+                @if (editError()) {
+                  <p role="alert" class="text-xs text-danger">{{ editError() }}</p>
+                }
+                <div class="flex items-center gap-1.5">
+                  <p-button
+                    type="submit"
+                    [label]="savingEdit() ? 'Saving...' : 'Save'"
+                    [loading]="savingEdit()"
+                    [disabled]="savingEdit()"
+                    styleClass="font-medium"
+                  />
+                  <p-button
+                    type="button"
+                    label="Cancel"
+                    [text]="true"
+                    (onClick)="cancelEdit()"
+                    styleClass="text-muted"
+                  />
+                </div>
+              </form>
+            } @else if (isArchiving(category)) {
+              <div class="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+                <div class="min-w-0">
+                  <p class="text-sm font-medium text-ink">Archive "{{ category.name }}"?</p>
+                  <p class="mt-0.5 text-sm text-muted">
+                    It will no longer be available when organizing inventory.
+                  </p>
+                  @if (archiveError()) {
+                    <p role="alert" class="mt-1 text-xs text-danger">{{ archiveError() }}</p>
+                  }
+                </div>
+                <div class="flex shrink-0 items-center gap-1.5">
+                  <p-button
+                    type="button"
+                    severity="danger"
+                    [label]="busyId() === category.id ? 'Archiving...' : 'Archive'"
+                    [loading]="busyId() === category.id"
+                    [disabled]="busyId() === category.id"
+                    (onClick)="archive(category)"
+                    styleClass="font-medium"
+                  />
+                  <p-button
+                    type="button"
+                    label="Cancel"
+                    [text]="true"
+                    (onClick)="cancelArchive()"
+                    styleClass="text-muted"
+                  />
+                </div>
+              </div>
+            } @else {
+              <div class="group flex items-center gap-3 px-4 py-3">
+                <div class="min-w-0 flex-1">
+                  <p class="truncate text-sm font-medium text-ink">{{ category.name }}</p>
+                  @if (category.description) {
+                    <p class="mt-0.5 truncate text-sm text-muted">{{ category.description }}</p>
+                  }
+                </div>
+                <div class="flex shrink-0 items-center gap-0.5">
+                  <button
+                    type="button"
+                    (click)="startEdit(category)"
+                    [attr.aria-label]="'Edit ' + category.name"
+                    class="grid h-8 w-8 place-items-center rounded-md text-muted outline-none transition-colors hover:bg-line/60 hover:text-ink focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+                  >
+                    <i class="pi pi-pencil text-base" aria-hidden="true"></i>
+                  </button>
+                  <button
+                    type="button"
+                    (click)="confirmArchive(category)"
+                    [attr.aria-label]="'Archive ' + category.name"
+                    class="grid h-8 w-8 place-items-center rounded-md text-muted outline-none transition-colors hover:bg-danger/10 hover:text-danger focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+                  >
+                    <i class="pi pi-folder text-base" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
+            }
+          </li>
+        }
+      </ul>
+    }
+  </section>
+</div>

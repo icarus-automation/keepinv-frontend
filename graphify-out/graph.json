@@ -1,0 +1,2744 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {
+    "hyperedges": [
+      {
+        "id": "auth_flow",
+        "label": "Authentication Flow",
+        "nodes": [
+          "login_Login",
+          "authservice_AuthService",
+          "authmodel_AuthUser",
+          "authguard_authGuard",
+          "guestguard_guestGuard"
+        ],
+        "relation": "participate_in",
+        "confidence": "EXTRACTED",
+        "confidence_score": 0.95,
+        "source_file": "src/app/modules/auth"
+      },
+      {
+        "id": "app_shell_navigation",
+        "label": "App Shell and Navigation",
+        "nodes": [
+          "layout_Layout",
+          "icon_LayoutIcon",
+          "categories_Categories",
+          "authservice_AuthService"
+        ],
+        "relation": "form",
+        "confidence": "EXTRACTED",
+        "confidence_score": 0.85,
+        "source_file": "src/app/layout/layout.ts"
+      },
+      {
+        "id": "bootstrap_routing_chain",
+        "label": "Bootstrap and Routing Configuration Chain",
+        "nodes": [
+          "main_bootstrap",
+          "appconfig_appConfig",
+          "approutes_routes",
+          "preset_AssetWisePreset"
+        ],
+        "relation": "participate_in",
+        "confidence": "EXTRACTED",
+        "confidence_score": 0.95,
+        "source_file": "src/main.ts"
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "label": "main.ts",
+      "file_type": "code",
+      "source_file": "src/main.ts",
+      "source_location": "L1",
+      "id": "src_main_ts",
+      "community": 3,
+      "norm_label": "main.ts"
+    },
+    {
+      "label": "app.config.ts",
+      "file_type": "code",
+      "source_file": "src/app/app.config.ts",
+      "source_location": "L1",
+      "id": "src_app_app_config_ts",
+      "community": 3,
+      "norm_label": "app.config.ts"
+    },
+    {
+      "label": "appConfig",
+      "file_type": "code",
+      "source_file": "src/app/app.config.ts",
+      "source_location": "L10",
+      "id": "app_app_config_appconfig",
+      "community": 3,
+      "norm_label": "appconfig"
+    },
+    {
+      "label": "app.routes.ts",
+      "file_type": "code",
+      "source_file": "src/app/app.routes.ts",
+      "source_location": "L1",
+      "id": "src_app_app_routes_ts",
+      "community": 0,
+      "norm_label": "app.routes.ts"
+    },
+    {
+      "label": "routes",
+      "file_type": "code",
+      "source_file": "src/app/app.routes.ts",
+      "source_location": "L6",
+      "id": "app_app_routes_routes",
+      "community": 3,
+      "norm_label": "routes"
+    },
+    {
+      "label": "app.spec.ts",
+      "file_type": "code",
+      "source_file": "src/app/app.spec.ts",
+      "source_location": "L1",
+      "id": "src_app_app_spec_ts",
+      "community": 3,
+      "norm_label": "app.spec.ts"
+    },
+    {
+      "label": "app.ts",
+      "file_type": "code",
+      "source_file": "src/app/app.ts",
+      "source_location": "L1",
+      "id": "src_app_app_ts",
+      "community": 3,
+      "norm_label": "app.ts"
+    },
+    {
+      "label": "App",
+      "file_type": "code",
+      "source_file": "src/app/app.ts",
+      "source_location": "L10",
+      "id": "app_app_app",
+      "community": 3,
+      "norm_label": "app"
+    },
+    {
+      "label": "layout.ts",
+      "file_type": "code",
+      "source_file": "src/app/layout/layout.ts",
+      "source_location": "L1",
+      "id": "src_app_layout_layout_ts",
+      "community": 0,
+      "norm_label": "layout.ts"
+    },
+    {
+      "label": "NavItem",
+      "file_type": "code",
+      "source_file": "src/app/layout/layout.ts",
+      "source_location": "L18",
+      "id": "layout_layout_navitem",
+      "community": 0,
+      "norm_label": "navitem"
+    },
+    {
+      "label": "Layout",
+      "file_type": "code",
+      "source_file": "src/app/layout/layout.ts",
+      "source_location": "L33",
+      "id": "layout_layout_layout",
+      "community": 2,
+      "norm_label": "layout"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/app/layout/layout.ts",
+      "source_location": "L103",
+      "id": "layout_layout_layout_constructor",
+      "community": 2,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": ".toggleNav()",
+      "file_type": "code",
+      "source_file": "src/app/layout/layout.ts",
+      "source_location": "L118",
+      "id": "layout_layout_layout_togglenav",
+      "community": 2,
+      "norm_label": ".togglenav()"
+    },
+    {
+      "label": ".closeMobile()",
+      "file_type": "code",
+      "source_file": "src/app/layout/layout.ts",
+      "source_location": "L126",
+      "id": "layout_layout_layout_closemobile",
+      "community": 2,
+      "norm_label": ".closemobile()"
+    },
+    {
+      "label": ".isActive()",
+      "file_type": "code",
+      "source_file": "src/app/layout/layout.ts",
+      "source_location": "L130",
+      "id": "layout_layout_layout_isactive",
+      "community": 2,
+      "norm_label": ".isactive()"
+    },
+    {
+      "label": ".navLinkClasses()",
+      "file_type": "code",
+      "source_file": "src/app/layout/layout.ts",
+      "source_location": "L134",
+      "id": "layout_layout_layout_navlinkclasses",
+      "community": 2,
+      "norm_label": ".navlinkclasses()"
+    },
+    {
+      "label": ".disabledItemClasses()",
+      "file_type": "code",
+      "source_file": "src/app/layout/layout.ts",
+      "source_location": "L146",
+      "id": "layout_layout_layout_disableditemclasses",
+      "community": 2,
+      "norm_label": ".disableditemclasses()"
+    },
+    {
+      "label": ".labelClasses()",
+      "file_type": "code",
+      "source_file": "src/app/layout/layout.ts",
+      "source_location": "L153",
+      "id": "layout_layout_layout_labelclasses",
+      "community": 2,
+      "norm_label": ".labelclasses()"
+    },
+    {
+      "label": ".logout()",
+      "file_type": "code",
+      "source_file": "src/app/layout/layout.ts",
+      "source_location": "L157",
+      "id": "layout_layout_layout_logout",
+      "community": 2,
+      "norm_label": ".logout()"
+    },
+    {
+      "label": ".matches()",
+      "file_type": "code",
+      "source_file": "src/app/layout/layout.ts",
+      "source_location": "L162",
+      "id": "layout_layout_layout_matches",
+      "community": 2,
+      "norm_label": ".matches()"
+    },
+    {
+      "label": "auth.guard.ts",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/guards/auth.guard.ts",
+      "source_location": "L1",
+      "id": "src_app_modules_auth_guards_auth_guard_ts",
+      "community": 0,
+      "norm_label": "auth.guard.ts"
+    },
+    {
+      "label": "authGuard()",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/guards/auth.guard.ts",
+      "source_location": "L6",
+      "id": "guards_auth_guard_authguard",
+      "community": 0,
+      "norm_label": "authguard()"
+    },
+    {
+      "label": "guest.guard.ts",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/guards/guest.guard.ts",
+      "source_location": "L1",
+      "id": "src_app_modules_auth_guards_guest_guard_ts",
+      "community": 0,
+      "norm_label": "guest.guard.ts"
+    },
+    {
+      "label": "guestGuard()",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/guards/guest.guard.ts",
+      "source_location": "L6",
+      "id": "guards_guest_guard_guestguard",
+      "community": 0,
+      "norm_label": "guestguard()"
+    },
+    {
+      "label": "auth.interceptor.ts",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/interceptors/auth.interceptor.ts",
+      "source_location": "L1",
+      "id": "src_app_modules_auth_interceptors_auth_interceptor_ts",
+      "community": 3,
+      "norm_label": "auth.interceptor.ts"
+    },
+    {
+      "label": "authInterceptor()",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/interceptors/auth.interceptor.ts",
+      "source_location": "L11",
+      "id": "interceptors_auth_interceptor_authinterceptor",
+      "community": 3,
+      "norm_label": "authinterceptor()"
+    },
+    {
+      "label": "login.spec.ts",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/login/login.spec.ts",
+      "source_location": "L1",
+      "id": "src_app_modules_auth_login_login_spec_ts",
+      "community": 5,
+      "norm_label": "login.spec.ts"
+    },
+    {
+      "label": "login.ts",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/login/login.ts",
+      "source_location": "L1",
+      "id": "src_app_modules_auth_login_login_ts",
+      "community": 5,
+      "norm_label": "login.ts"
+    },
+    {
+      "label": "Login",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/login/login.ts",
+      "source_location": "L24",
+      "id": "login_login_login",
+      "community": 5,
+      "norm_label": "login"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/login/login.ts",
+      "source_location": "L39",
+      "id": "login_login_login_constructor",
+      "community": 5,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": ".isInvalid()",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/login/login.ts",
+      "source_location": "L44",
+      "id": "login_login_login_isinvalid",
+      "community": 5,
+      "norm_label": ".isinvalid()"
+    },
+    {
+      "label": ".submit()",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/login/login.ts",
+      "source_location": "L49",
+      "id": "login_login_login_submit",
+      "community": 5,
+      "norm_label": ".submit()"
+    },
+    {
+      "label": "auth.model.ts",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/models/auth.model.ts",
+      "source_location": "L1",
+      "id": "src_app_modules_auth_models_auth_model_ts",
+      "community": 0,
+      "norm_label": "auth.model.ts"
+    },
+    {
+      "label": "LoginRequest",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/models/auth.model.ts",
+      "source_location": "L1",
+      "id": "models_auth_model_loginrequest",
+      "community": 0,
+      "norm_label": "loginrequest"
+    },
+    {
+      "label": "AuthUser",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/models/auth.model.ts",
+      "source_location": "L6",
+      "id": "models_auth_model_authuser",
+      "community": 0,
+      "norm_label": "authuser"
+    },
+    {
+      "label": "LoginResponse",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/models/auth.model.ts",
+      "source_location": "L15",
+      "id": "models_auth_model_loginresponse",
+      "community": 0,
+      "norm_label": "loginresponse"
+    },
+    {
+      "label": "auth.service.ts",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": "L1",
+      "id": "src_app_modules_auth_services_auth_service_ts",
+      "community": 0,
+      "norm_label": "auth.service.ts"
+    },
+    {
+      "label": "AuthService",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": "L12",
+      "id": "services_auth_service_authservice",
+      "community": 0,
+      "norm_label": "authservice"
+    },
+    {
+      "label": ".login()",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": "L19",
+      "id": "services_auth_service_authservice_login",
+      "community": 0,
+      "norm_label": ".login()"
+    },
+    {
+      "label": ".logout()",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": "L26",
+      "id": "services_auth_service_authservice_logout",
+      "community": 0,
+      "norm_label": ".logout()"
+    },
+    {
+      "label": ".isAuthenticated()",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": "L32",
+      "id": "services_auth_service_authservice_isauthenticated",
+      "community": 0,
+      "norm_label": ".isauthenticated()"
+    },
+    {
+      "label": ".token()",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": "L36",
+      "id": "services_auth_service_authservice_token",
+      "community": 0,
+      "norm_label": ".token()"
+    },
+    {
+      "label": ".persistSession()",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": "L40",
+      "id": "services_auth_service_authservice_persistsession",
+      "community": 0,
+      "norm_label": ".persistsession()"
+    },
+    {
+      "label": ".restoreUser()",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": "L46",
+      "id": "services_auth_service_authservice_restoreuser",
+      "community": 0,
+      "norm_label": ".restoreuser()"
+    },
+    {
+      "label": "categories.spec.ts",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/categories.spec.ts",
+      "source_location": "L1",
+      "id": "src_app_modules_categories_categories_spec_ts",
+      "community": 4,
+      "norm_label": "categories.spec.ts"
+    },
+    {
+      "label": "categories.ts",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L1",
+      "id": "src_app_modules_categories_categories_ts",
+      "community": 4,
+      "norm_label": "categories.ts"
+    },
+    {
+      "label": "Categories",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L30",
+      "id": "categories_categories_categories",
+      "community": 7,
+      "norm_label": "categories"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L68",
+      "id": "categories_categories_categories_constructor",
+      "community": 7,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": ".load()",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L78",
+      "id": "categories_categories_categories_load",
+      "community": 7,
+      "norm_label": ".load()"
+    },
+    {
+      "label": ".addCategory()",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L93",
+      "id": "categories_categories_categories_addcategory",
+      "community": 7,
+      "norm_label": ".addcategory()"
+    },
+    {
+      "label": ".startEdit()",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L126",
+      "id": "categories_categories_categories_startedit",
+      "community": 7,
+      "norm_label": ".startedit()"
+    },
+    {
+      "label": ".saveEdit()",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L133",
+      "id": "categories_categories_categories_saveedit",
+      "community": 7,
+      "norm_label": ".saveedit()"
+    },
+    {
+      "label": ".cancelEdit()",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L170",
+      "id": "categories_categories_categories_canceledit",
+      "community": 7,
+      "norm_label": ".canceledit()"
+    },
+    {
+      "label": ".confirmArchive()",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L175",
+      "id": "categories_categories_categories_confirmarchive",
+      "community": 7,
+      "norm_label": ".confirmarchive()"
+    },
+    {
+      "label": ".cancelArchive()",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L181",
+      "id": "categories_categories_categories_cancelarchive",
+      "community": 7,
+      "norm_label": ".cancelarchive()"
+    },
+    {
+      "label": ".archive()",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L186",
+      "id": "categories_categories_categories_archive",
+      "community": 4,
+      "norm_label": ".archive()"
+    },
+    {
+      "label": ".isEditing()",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L207",
+      "id": "categories_categories_categories_isediting",
+      "community": 7,
+      "norm_label": ".isediting()"
+    },
+    {
+      "label": ".isArchiving()",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L211",
+      "id": "categories_categories_categories_isarchiving",
+      "community": 4,
+      "norm_label": ".isarchiving()"
+    },
+    {
+      "label": ".onEscape()",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L215",
+      "id": "categories_categories_categories_onescape",
+      "community": 7,
+      "norm_label": ".onescape()"
+    },
+    {
+      "label": ".nameTaken()",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L220",
+      "id": "categories_categories_categories_nametaken",
+      "community": 7,
+      "norm_label": ".nametaken()"
+    },
+    {
+      "label": ".messageFor()",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L227",
+      "id": "categories_categories_categories_messagefor",
+      "community": 7,
+      "norm_label": ".messagefor()"
+    },
+    {
+      "label": "categories.service.ts",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L1",
+      "id": "src_app_modules_categories_services_categories_service_ts",
+      "community": 4,
+      "norm_label": "categories.service.ts"
+    },
+    {
+      "label": "CategoriesService",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L15",
+      "id": "services_categories_service_categoriesservice",
+      "community": 4,
+      "norm_label": "categoriesservice"
+    },
+    {
+      "label": ".list()",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L19",
+      "id": "services_categories_service_categoriesservice_list",
+      "community": 4,
+      "norm_label": ".list()"
+    },
+    {
+      "label": ".create()",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L23",
+      "id": "services_categories_service_categoriesservice_create",
+      "community": 4,
+      "norm_label": ".create()"
+    },
+    {
+      "label": ".update()",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L27",
+      "id": "services_categories_service_categoriesservice_update",
+      "community": 4,
+      "norm_label": ".update()"
+    },
+    {
+      "label": ".archive()",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L34",
+      "id": "services_categories_service_categoriesservice_archive",
+      "community": 4,
+      "norm_label": ".archive()"
+    },
+    {
+      "label": "category.types.ts",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/types/category.types.ts",
+      "source_location": "L1",
+      "id": "src_app_modules_categories_types_category_types_ts",
+      "community": 4,
+      "norm_label": "category.types.ts"
+    },
+    {
+      "label": "Category",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/types/category.types.ts",
+      "source_location": "L2",
+      "id": "types_category_types_category",
+      "community": 4,
+      "norm_label": "category"
+    },
+    {
+      "label": "CategoryRequest",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/types/category.types.ts",
+      "source_location": "L12",
+      "id": "types_category_types_categoryrequest",
+      "community": 4,
+      "norm_label": "categoryrequest"
+    },
+    {
+      "label": "asset-wise-preset.ts",
+      "file_type": "code",
+      "source_file": "src/app/theme/asset-wise-preset.ts",
+      "source_location": "L1",
+      "id": "src_app_theme_asset_wise_preset_ts",
+      "community": 3,
+      "norm_label": "asset-wise-preset.ts"
+    },
+    {
+      "label": "AssetWisePreset",
+      "file_type": "code",
+      "source_file": "src/app/theme/asset-wise-preset.ts",
+      "source_location": "L10",
+      "id": "theme_asset_wise_preset_assetwisepreset",
+      "community": 3,
+      "norm_label": "assetwisepreset"
+    },
+    {
+      "label": "api.response.ts",
+      "file_type": "code",
+      "source_file": "src/common/responses/api.response.ts",
+      "source_location": "L1",
+      "id": "src_common_responses_api_response_ts",
+      "community": 4,
+      "norm_label": "api.response.ts"
+    },
+    {
+      "label": "ApiResponse",
+      "file_type": "code",
+      "source_file": "src/common/responses/api.response.ts",
+      "source_location": "L1",
+      "id": "responses_api_response_apiresponse",
+      "community": 4,
+      "norm_label": "apiresponse"
+    },
+    {
+      "label": "environment.dev.ts",
+      "file_type": "code",
+      "source_file": "src/environments/environment.dev.ts",
+      "source_location": "L1",
+      "id": "src_environments_environment_dev_ts",
+      "community": 8,
+      "norm_label": "environment.dev.ts"
+    },
+    {
+      "label": "environment",
+      "file_type": "code",
+      "source_file": "src/environments/environment.dev.ts",
+      "source_location": "L1",
+      "id": "environments_environment_dev_environment",
+      "community": 8,
+      "norm_label": "environment"
+    },
+    {
+      "label": "environment.ts",
+      "file_type": "code",
+      "source_file": "src/environments/environment.ts",
+      "source_location": "L1",
+      "id": "src_environments_environment_ts",
+      "community": 4,
+      "norm_label": "environment.ts"
+    },
+    {
+      "label": "environment",
+      "file_type": "code",
+      "source_file": "src/environments/environment.ts",
+      "source_location": "L1",
+      "id": "environments_environment_environment",
+      "community": 4,
+      "norm_label": "environment"
+    },
+    {
+      "label": ".sortByName()",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L211",
+      "community": 7,
+      "norm_label": ".sortbyname()",
+      "id": "categories_categories_categories_sortbyname"
+    },
+    {
+      "label": "Application Bootstrap",
+      "file_type": "code",
+      "source_file": "src/main.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "community": 1,
+      "norm_label": "application bootstrap",
+      "id": "main_bootstrap"
+    },
+    {
+      "label": "appConfig (ApplicationConfig)",
+      "file_type": "code",
+      "source_file": "src/app/app.config.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "community": 1,
+      "norm_label": "appconfig (applicationconfig)",
+      "id": "appconfig_appConfig"
+    },
+    {
+      "label": "Application Routes",
+      "file_type": "code",
+      "source_file": "src/app/app.routes.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "community": 1,
+      "norm_label": "application routes",
+      "id": "approutes_routes"
+    },
+    {
+      "label": "App (Root Component)",
+      "file_type": "code",
+      "source_file": "src/app/app.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "community": 1,
+      "norm_label": "app (root component)",
+      "id": "app_App"
+    },
+    {
+      "label": "Layout (App Shell Component)",
+      "file_type": "code",
+      "source_file": "src/app/layout/layout.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "community": 1,
+      "norm_label": "layout (app shell component)",
+      "id": "layout_Layout"
+    },
+    {
+      "label": "authGuard (CanActivateFn)",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/guards/auth.guard.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "community": 1,
+      "norm_label": "authguard (canactivatefn)",
+      "id": "authguard_authGuard"
+    },
+    {
+      "label": "guestGuard (CanActivateFn)",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/guards/guest.guard.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "community": 1,
+      "norm_label": "guestguard (canactivatefn)",
+      "id": "guestguard_guestGuard"
+    },
+    {
+      "label": "Login Component",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/login/login.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "community": 1,
+      "norm_label": "login component",
+      "id": "login_Login"
+    },
+    {
+      "label": "AuthUser / Login Models",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/models/auth.model.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "community": 1,
+      "norm_label": "authuser / login models",
+      "id": "authmodel_AuthUser"
+    },
+    {
+      "label": "AuthService",
+      "file_type": "code",
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "community": 1,
+      "norm_label": "authservice",
+      "id": "authservice_AuthService"
+    },
+    {
+      "label": "Categories Component",
+      "file_type": "code",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "community": 1,
+      "norm_label": "categories component",
+      "id": "categories_Categories"
+    },
+    {
+      "label": "AssetWisePreset (PrimeNG Theme)",
+      "file_type": "code",
+      "source_file": "src/app/theme/asset-wise-preset.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "community": 1,
+      "norm_label": "assetwisepreset (primeng theme)",
+      "id": "preset_AssetWisePreset"
+    },
+    {
+      "label": "Environment Config (apiBaseUrl)",
+      "file_type": "code",
+      "source_file": "src/environments/environment.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "community": 1,
+      "norm_label": "environment config (apibaseurl)",
+      "id": "environment_environment"
+    },
+    {
+      "label": "Route Guard Protection Pattern",
+      "file_type": "rationale",
+      "source_file": "src/app/app.routes.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "community": 1,
+      "norm_label": "route guard protection pattern",
+      "id": "concept_route_guard_protection"
+    },
+    {
+      "label": "Lazy-Loaded Feature Routes",
+      "file_type": "rationale",
+      "source_file": "src/app/app.routes.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "community": 1,
+      "norm_label": "lazy-loaded feature routes",
+      "id": "concept_lazy_loading"
+    },
+    {
+      "label": "Signal-Based State Management",
+      "file_type": "rationale",
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "community": 1,
+      "norm_label": "signal-based state management",
+      "id": "concept_signal_state"
+    },
+    {
+      "label": "Token Persistence (localStorage)",
+      "file_type": "rationale",
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "community": 1,
+      "norm_label": "token persistence (localstorage)",
+      "id": "concept_token_persistence"
+    },
+    {
+      "label": "Shared Design Token Language",
+      "file_type": "rationale",
+      "source_file": "src/app/theme/asset-wise-preset.ts",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "community": 1,
+      "norm_label": "shared design token language",
+      "id": "concept_design_tokens"
+    },
+    {
+      "label": "Keyboard-First Accessibility Pattern",
+      "file_type": "rationale",
+      "source_file": "src/app/modules/auth/login/login.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "community": 1,
+      "norm_label": "keyboard-first accessibility pattern",
+      "id": "concept_keyboard_first_a11y"
+    },
+    {
+      "label": "Responsive App Shell (Rail + Drawer)",
+      "file_type": "rationale",
+      "source_file": "src/app/layout/layout.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "community": 1,
+      "norm_label": "responsive app shell (rail + drawer)",
+      "id": "concept_responsive_shell"
+    }
+  ],
+  "links": [
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_main_ts",
+      "target": "app_app_app"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_main_ts",
+      "target": "app_app_config_appconfig"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_main_ts",
+      "target": "src_app_app_config_ts"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_main_ts",
+      "target": "src_app_app_ts"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.config.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_app_config_ts",
+      "target": "app_app_config_appconfig"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.config.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_app_config_ts",
+      "target": "app_app_routes_routes"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.config.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_app_config_ts",
+      "target": "interceptors_auth_interceptor_authinterceptor"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.config.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_app_config_ts",
+      "target": "src_app_app_routes_ts"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.config.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_app_config_ts",
+      "target": "src_app_modules_auth_interceptors_auth_interceptor_ts"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.config.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_app_config_ts",
+      "target": "src_app_theme_asset_wise_preset_ts"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.config.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_app_config_ts",
+      "target": "theme_asset_wise_preset_assetwisepreset"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.routes.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_app_routes_ts",
+      "target": "app_app_routes_routes"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.routes.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_app_routes_ts",
+      "target": "guards_auth_guard_authguard"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.routes.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_app_routes_ts",
+      "target": "guards_guest_guard_guestguard"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.routes.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_app_routes_ts",
+      "target": "src_app_modules_auth_guards_auth_guard_ts"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.routes.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_app_routes_ts",
+      "target": "src_app_modules_auth_guards_guest_guard_ts"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.spec.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_app_spec_ts",
+      "target": "app_app_app"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.spec.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_app_spec_ts",
+      "target": "src_app_app_ts"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_app_ts",
+      "target": "app_app_app"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/layout/layout.ts",
+      "source_location": "L33",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_layout_layout_ts",
+      "target": "layout_layout_layout"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/layout/layout.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_layout_layout_ts",
+      "target": "layout_layout_navitem"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/layout/layout.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_layout_layout_ts",
+      "target": "services_auth_service_authservice"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/layout/layout.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_layout_layout_ts",
+      "target": "src_app_modules_auth_services_auth_service_ts"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/layout/layout.ts",
+      "source_location": "L126",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "layout_layout_layout",
+      "target": "layout_layout_layout_closemobile"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/layout/layout.ts",
+      "source_location": "L103",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "layout_layout_layout",
+      "target": "layout_layout_layout_constructor"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/layout/layout.ts",
+      "source_location": "L146",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "layout_layout_layout",
+      "target": "layout_layout_layout_disableditemclasses"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/layout/layout.ts",
+      "source_location": "L130",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "layout_layout_layout",
+      "target": "layout_layout_layout_isactive"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/layout/layout.ts",
+      "source_location": "L153",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "layout_layout_layout",
+      "target": "layout_layout_layout_labelclasses"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/layout/layout.ts",
+      "source_location": "L157",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "layout_layout_layout",
+      "target": "layout_layout_layout_logout"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/layout/layout.ts",
+      "source_location": "L162",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "layout_layout_layout",
+      "target": "layout_layout_layout_matches"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/layout/layout.ts",
+      "source_location": "L134",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "layout_layout_layout",
+      "target": "layout_layout_layout_navlinkclasses"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/layout/layout.ts",
+      "source_location": "L118",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "layout_layout_layout",
+      "target": "layout_layout_layout_togglenav"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/layout/layout.ts",
+      "source_location": "L131",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "layout_layout_layout_isactive",
+      "target": "layout_layout_layout_matches"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/guards/auth.guard.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_guards_auth_guard_ts",
+      "target": "guards_auth_guard_authguard"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/guards/auth.guard.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_guards_auth_guard_ts",
+      "target": "services_auth_service_authservice"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/guards/auth.guard.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_guards_auth_guard_ts",
+      "target": "src_app_modules_auth_services_auth_service_ts"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/guards/guest.guard.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_guards_guest_guard_ts",
+      "target": "guards_guest_guard_guestguard"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/guards/guest.guard.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_guards_guest_guard_ts",
+      "target": "services_auth_service_authservice"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/guards/guest.guard.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_guards_guest_guard_ts",
+      "target": "src_app_modules_auth_services_auth_service_ts"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/interceptors/auth.interceptor.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_interceptors_auth_interceptor_ts",
+      "target": "interceptors_auth_interceptor_authinterceptor"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/interceptors/auth.interceptor.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_interceptors_auth_interceptor_ts",
+      "target": "services_auth_service_authservice"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/interceptors/auth.interceptor.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_interceptors_auth_interceptor_ts",
+      "target": "src_app_modules_auth_services_auth_service_ts"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/login/login.spec.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_login_login_spec_ts",
+      "target": "login_login_login"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/login/login.spec.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_login_login_spec_ts",
+      "target": "src_app_modules_auth_login_login_ts"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/login/login.ts",
+      "source_location": "L24",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_login_login_ts",
+      "target": "login_login_login"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/login/login.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_login_login_ts",
+      "target": "services_auth_service_authservice"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/login/login.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_login_login_ts",
+      "target": "src_app_modules_auth_services_auth_service_ts"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/modules/auth/login/login.ts",
+      "source_location": "L39",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "login_login_login",
+      "target": "login_login_login_constructor"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/modules/auth/login/login.ts",
+      "source_location": "L44",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "login_login_login",
+      "target": "login_login_login_isinvalid"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/modules/auth/login/login.ts",
+      "source_location": "L49",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "login_login_login",
+      "target": "login_login_login_submit"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/models/auth.model.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_models_auth_model_ts",
+      "target": "models_auth_model_authuser"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/models/auth.model.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_models_auth_model_ts",
+      "target": "models_auth_model_loginrequest"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/models/auth.model.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_models_auth_model_ts",
+      "target": "models_auth_model_loginresponse"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_services_auth_service_ts",
+      "target": "src_app_modules_auth_models_auth_model_ts"
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "app/modules/auth/services/auth.service.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "services_auth_service_authservice_login",
+      "target": "models_auth_model_loginrequest"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_services_auth_service_ts",
+      "target": "models_auth_model_loginrequest"
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "app/modules/auth/services/auth.service.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "services_auth_service_authservice_login",
+      "target": "models_auth_model_authuser"
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "app/modules/auth/services/auth.service.ts",
+      "source_location": "L38",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "services_auth_service_authservice_persistsession",
+      "target": "models_auth_model_authuser"
+    },
+    {
+      "relation": "references",
+      "context": "return_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "services_auth_service_authservice_restoreuser",
+      "target": "models_auth_model_authuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_services_auth_service_ts",
+      "target": "models_auth_model_authuser"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_services_auth_service_ts",
+      "target": "models_auth_model_loginresponse"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_services_auth_service_ts",
+      "target": "environments_environment_environment"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_services_auth_service_ts",
+      "target": "services_auth_service_authservice"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_auth_services_auth_service_ts",
+      "target": "src_environments_environment_ts"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/modules/auth/services/auth.service.ts",
+      "source_location": "L30",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "services_auth_service_authservice",
+      "target": "services_auth_service_authservice_isauthenticated"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/modules/auth/services/auth.service.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "services_auth_service_authservice",
+      "target": "services_auth_service_authservice_login"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/modules/auth/services/auth.service.ts",
+      "source_location": "L25",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "services_auth_service_authservice",
+      "target": "services_auth_service_authservice_logout"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/modules/auth/services/auth.service.ts",
+      "source_location": "L38",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "services_auth_service_authservice",
+      "target": "services_auth_service_authservice_persistsession"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "services_auth_service_authservice",
+      "target": "services_auth_service_authservice_restoreuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/modules/auth/services/auth.service.ts",
+      "source_location": "L34",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "services_auth_service_authservice",
+      "target": "services_auth_service_authservice_token"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.spec.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_categories_categories_spec_ts",
+      "target": "categories_categories_categories"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.spec.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_categories_categories_spec_ts",
+      "target": "environments_environment_environment"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.spec.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_categories_categories_spec_ts",
+      "target": "src_app_modules_categories_categories_ts"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.spec.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_categories_categories_spec_ts",
+      "target": "src_environments_environment_ts"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L27",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_modules_categories_categories_ts",
+      "target": "categories_categories_categories"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_app_modules_categories_categories_ts",
+      "target": "services_categories_service_categoriesservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_app_modules_categories_categories_ts",
+      "target": "src_app_modules_categories_services_categories_service_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_app_modules_categories_categories_ts",
+      "target": "src_app_modules_categories_types_category_types_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_app_modules_categories_categories_ts",
+      "target": "types_category_types_category",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L90",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories",
+      "target": "categories_categories_categories_addcategory"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L179",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories",
+      "target": "categories_categories_categories_archive"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L174",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories",
+      "target": "categories_categories_categories_cancelarchive"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L163",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories",
+      "target": "categories_categories_categories_canceledit"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L168",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories",
+      "target": "categories_categories_categories_confirmarchive"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L65",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories",
+      "target": "categories_categories_categories_constructor"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L202",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories",
+      "target": "categories_categories_categories_isarchiving"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L198",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories",
+      "target": "categories_categories_categories_isediting"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L75",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories",
+      "target": "categories_categories_categories_load"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L224",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories",
+      "target": "categories_categories_categories_messagefor"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L217",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories",
+      "target": "categories_categories_categories_nametaken"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L206",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories",
+      "target": "categories_categories_categories_onescape"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L128",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories",
+      "target": "categories_categories_categories_saveedit"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L211",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories",
+      "target": "categories_categories_categories_sortbyname"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L121",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories",
+      "target": "categories_categories_categories_startedit"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L72",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories_constructor",
+      "target": "categories_categories_categories_load"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L101",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories_addcategory",
+      "target": "categories_categories_categories_nametaken"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L122",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories_startedit",
+      "target": "categories_categories_categories_cancelarchive"
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L126",
+      "weight": 1.0,
+      "source": "categories_categories_categories_startedit",
+      "target": "types_category_types_category",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L142",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories_saveedit",
+      "target": "categories_categories_categories_nametaken"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L169",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories_confirmarchive",
+      "target": "categories_categories_categories_canceledit"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L207",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories_onescape",
+      "target": "categories_categories_categories_canceledit"
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L175",
+      "weight": 1.0,
+      "source": "categories_categories_categories_confirmarchive",
+      "target": "types_category_types_category",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L208",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "categories_categories_categories_onescape",
+      "target": "categories_categories_categories_cancelarchive"
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L186",
+      "weight": 1.0,
+      "source": "categories_categories_categories_archive",
+      "target": "types_category_types_category",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L207",
+      "weight": 1.0,
+      "source": "categories_categories_categories_isediting",
+      "target": "types_category_types_category",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/categories.ts",
+      "source_location": "L211",
+      "weight": 1.0,
+      "source": "categories_categories_categories_isarchiving",
+      "target": "types_category_types_category",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_modules_categories_services_categories_service_ts",
+      "target": "environments_environment_environment",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_app_modules_categories_services_categories_service_ts",
+      "target": "responses_api_response_apiresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_app_modules_categories_services_categories_service_ts",
+      "target": "services_categories_service_categoriesservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_app_modules_categories_services_categories_service_ts",
+      "target": "src_app_modules_categories_types_category_types_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_app_modules_categories_services_categories_service_ts",
+      "target": "src_common_responses_api_response_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_modules_categories_services_categories_service_ts",
+      "target": "src_environments_environment_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_app_modules_categories_services_categories_service_ts",
+      "target": "types_category_types_category",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_app_modules_categories_services_categories_service_ts",
+      "target": "types_category_types_categoryrequest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "services_categories_service_categoriesservice",
+      "target": "services_categories_service_categoriesservice_archive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "services_categories_service_categoriesservice",
+      "target": "services_categories_service_categoriesservice_create",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "services_categories_service_categoriesservice",
+      "target": "services_categories_service_categoriesservice_list",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "services_categories_service_categoriesservice",
+      "target": "services_categories_service_categoriesservice_update",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "services_categories_service_categoriesservice_list",
+      "target": "types_category_types_category",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "services_categories_service_categoriesservice_create",
+      "target": "types_category_types_category",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "services_categories_service_categoriesservice_create",
+      "target": "types_category_types_categoryrequest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "services_categories_service_categoriesservice_update",
+      "target": "types_category_types_category",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "services_categories_service_categoriesservice_update",
+      "target": "types_category_types_categoryrequest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/services/categories.service.ts",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "services_categories_service_categoriesservice_archive",
+      "target": "types_category_types_category",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/types/category.types.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_app_modules_categories_types_category_types_ts",
+      "target": "types_category_types_category",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/categories/types/category.types.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_app_modules_categories_types_category_types_ts",
+      "target": "types_category_types_categoryrequest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/theme/asset-wise-preset.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_app_theme_asset_wise_preset_ts",
+      "target": "theme_asset_wise_preset_assetwisepreset"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/responses/api.response.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_common_responses_api_response_ts",
+      "target": "responses_api_response_apiresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/environments/environment.dev.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_environments_environment_dev_ts",
+      "target": "environments_environment_dev_environment"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/environments/environment.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_environments_environment_ts",
+      "target": "environments_environment_environment"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/main.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "main_bootstrap",
+      "target": "app_App"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/main.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "main_bootstrap",
+      "target": "appconfig_appConfig"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/app.config.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "appconfig_appConfig",
+      "target": "approutes_routes"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/app.config.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "appconfig_appConfig",
+      "target": "preset_AssetWisePreset"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/app.routes.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "approutes_routes",
+      "target": "authguard_authGuard"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/app.routes.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "approutes_routes",
+      "target": "categories_Categories"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/app.routes.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "approutes_routes",
+      "target": "concept_lazy_loading"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/app.routes.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "approutes_routes",
+      "target": "guestguard_guestGuard"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/app.routes.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "approutes_routes",
+      "target": "layout_Layout"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/app.routes.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "approutes_routes",
+      "target": "login_Login"
+    },
+    {
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "src/app/app.routes.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "authguard_authGuard",
+      "target": "layout_Layout"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "src/app/layout/layout.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "layout_Layout",
+      "target": "authmodel_AuthUser"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/layout/layout.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "layout_Layout",
+      "target": "authservice_AuthService"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/layout/layout.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "layout_Layout",
+      "target": "concept_responsive_shell"
+    },
+    {
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "src/app/layout/layout.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "layout_Layout",
+      "target": "concept_signal_state"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/modules/auth/guards/auth.guard.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "authguard_authGuard",
+      "target": "authservice_AuthService"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/modules/auth/guards/auth.guard.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "authguard_authGuard",
+      "target": "concept_route_guard_protection"
+    },
+    {
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "src/app/modules/auth/guards/auth.guard.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "authguard_authGuard",
+      "target": "guestguard_guestGuard"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/modules/auth/guards/guest.guard.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "guestguard_guestGuard",
+      "target": "authservice_AuthService"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/modules/auth/guards/guest.guard.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "guestguard_guestGuard",
+      "target": "concept_route_guard_protection"
+    },
+    {
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "src/app/app.routes.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "guestguard_guestGuard",
+      "target": "login_Login"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "src/app/modules/auth/login/login.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "login_Login",
+      "target": "authmodel_AuthUser"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/modules/auth/login/login.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "login_Login",
+      "target": "authservice_AuthService"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/modules/auth/login/login.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "login_Login",
+      "target": "concept_keyboard_first_a11y"
+    },
+    {
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "authservice_AuthService",
+      "target": "authmodel_AuthUser"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "authservice_AuthService",
+      "target": "concept_signal_state"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "authservice_AuthService",
+      "target": "concept_token_persistence"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/modules/auth/services/auth.service.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "authservice_AuthService",
+      "target": "environment_environment"
+    },
+    {
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/theme/asset-wise-preset.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "preset_AssetWisePreset",
+      "target": "concept_design_tokens"
+    },
+    {
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "src/app/theme/asset-wise-preset.ts",
+      "source_location": null,
+      "weight": 1.0,
+      "source": "preset_AssetWisePreset",
+      "target": "concept_keyboard_first_a11y"
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "auth_flow",
+      "label": "Authentication Flow",
+      "nodes": [
+        "login_Login",
+        "authservice_AuthService",
+        "authmodel_AuthUser",
+        "authguard_authGuard",
+        "guestguard_guestGuard"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "src/app/modules/auth"
+    },
+    {
+      "id": "app_shell_navigation",
+      "label": "App Shell and Navigation",
+      "nodes": [
+        "layout_Layout",
+        "icon_LayoutIcon",
+        "categories_Categories",
+        "authservice_AuthService"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.85,
+      "source_file": "src/app/layout/layout.ts"
+    },
+    {
+      "id": "bootstrap_routing_chain",
+      "label": "Bootstrap and Routing Configuration Chain",
+      "nodes": [
+        "main_bootstrap",
+        "appconfig_appConfig",
+        "approutes_routes",
+        "preset_AssetWisePreset"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "src/main.ts"
+    }
+  ],
+  "built_at_commit": "0a2ef8c3d979803962f291d7e04c04aae8ebd912"
+}

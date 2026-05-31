@@ -5,20 +5,20 @@ import { guestGuard } from './modules/auth/guards/guest.guard';
 
 export const routes: Routes = [
   {
-    path: '',
-    redirectTo: 'categories',
-    pathMatch: 'full'
-  },
-  {
     path: 'auth/login',
     canActivate: [guestGuard],
-    loadComponent: () => import('./modules/auth/login/login').then(m => m.Login)
+    loadComponent: () => import('./modules/auth/login/login').then((m) => m.Login),
   },
   {
-    path: 'categories',
+    path: '',
     canActivate: [authGuard],
+    loadComponent: () => import('./layout/layout').then((m) => m.Layout),
     children: [
-      { path: '', loadComponent: () => import('./modules/categories/categories').then(m => m.Categories) }
-    ]
+      { path: '', redirectTo: 'categories', pathMatch: 'full' },
+      {
+        path: 'categories',
+        loadComponent: () => import('./modules/categories/categories').then((m) => m.Categories),
+      },
+    ],
   },
 ];
