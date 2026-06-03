@@ -15,7 +15,7 @@
           #addInput
           type="text"
           formControlName="name"
-          placeholder="e.g. Main Warehouse"
+          placeholder="e.g. Sales Floor"
           autocomplete="off"
           [invalid]="!!addError()"
           [attr.aria-describedby]="addError() ? 'add-error' : null"
@@ -31,7 +31,7 @@
           id="add-code"
           type="text"
           formControlName="code"
-          placeholder="e.g. WH-001"
+          placeholder="e.g. FLR-01"
           autocomplete="off"
           [invalid]="!!addError()"
           class="mt-1.5 w-full text-sm tabular-nums"
