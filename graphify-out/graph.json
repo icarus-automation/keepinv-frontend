@@ -170,7 +170,7 @@
       "label": ".constructor()",
       "file_type": "code",
       "source_file": "src/app/layout/layout.ts",
-      "source_location": "L130",
+      "source_location": "L150",
       "id": "layout_layout_layout_constructor",
       "community": 2,
       "norm_label": ".constructor()"
@@ -505,7 +505,7 @@
       "source_file": "src/app/modules/categories/categories.spec.ts",
       "source_location": "L1",
       "id": "src_app_modules_categories_categories_spec_ts",
-      "community": 13,
+      "community": 5,
       "norm_label": "categories.spec.ts"
     },
     {
@@ -784,7 +784,7 @@
       "source_file": "src/app/modules/inventory-audit/inventory-audit.ts",
       "source_location": "L66",
       "id": "inventory_audit_inventory_audit_inventoryaudit",
-      "community": 16,
+      "community": 6,
       "norm_label": "inventoryaudit"
     },
     {
@@ -793,7 +793,7 @@
       "source_file": "src/app/modules/inventory-audit/inventory-audit.ts",
       "source_location": "L103",
       "id": "inventory_audit_inventory_audit_inventoryaudit_constructor",
-      "community": 16,
+      "community": 6,
       "norm_label": ".constructor()"
     },
     {
@@ -802,7 +802,7 @@
       "source_file": "src/app/modules/inventory-audit/inventory-audit.ts",
       "source_location": "L128",
       "id": "inventory_audit_inventory_audit_inventoryaudit_onlazyload",
-      "community": 16,
+      "community": 6,
       "norm_label": ".onlazyload()"
     },
     {
@@ -811,7 +811,7 @@
       "source_file": "src/app/modules/inventory-audit/inventory-audit.ts",
       "source_location": "L137",
       "id": "inventory_audit_inventory_audit_inventoryaudit_applyfilter",
-      "community": 16,
+      "community": 6,
       "norm_label": ".applyfilter()"
     },
     {
@@ -820,7 +820,7 @@
       "source_file": "src/app/modules/inventory-audit/inventory-audit.ts",
       "source_location": "L144",
       "id": "inventory_audit_inventory_audit_inventoryaudit_load",
-      "community": 16,
+      "community": 6,
       "norm_label": ".load()"
     },
     {
@@ -829,7 +829,7 @@
       "source_file": "src/app/modules/inventory-audit/inventory-audit.ts",
       "source_location": "L167",
       "id": "inventory_audit_inventory_audit_inventoryaudit_startaudit",
-      "community": 16,
+      "community": 6,
       "norm_label": ".startaudit()"
     },
     {
@@ -838,7 +838,7 @@
       "source_file": "src/app/modules/inventory-audit/inventory-audit.ts",
       "source_location": "L172",
       "id": "inventory_audit_inventory_audit_inventoryaudit_resumeaudit",
-      "community": 13,
+      "community": 6,
       "norm_label": ".resumeaudit()"
     },
     {
@@ -847,7 +847,7 @@
       "source_file": "src/app/modules/inventory-audit/inventory-audit.ts",
       "source_location": "L177",
       "id": "inventory_audit_inventory_audit_inventoryaudit_onselectionchange",
-      "community": 16,
+      "community": 6,
       "norm_label": ".onselectionchange()"
     },
     {
@@ -856,7 +856,7 @@
       "source_file": "src/app/modules/inventory-audit/inventory-audit.ts",
       "source_location": "L184",
       "id": "inventory_audit_inventory_audit_inventoryaudit_selectaudit",
-      "community": 16,
+      "community": 6,
       "norm_label": ".selectaudit()"
     },
     {
@@ -865,7 +865,7 @@
       "source_file": "src/app/modules/inventory-audit/inventory-audit.ts",
       "source_location": "L211",
       "id": "inventory_audit_inventory_audit_inventoryaudit_retrydetail",
-      "community": 16,
+      "community": 6,
       "norm_label": ".retrydetail()"
     },
     {
@@ -874,7 +874,7 @@
       "source_file": "src/app/modules/inventory-audit/inventory-audit.ts",
       "source_location": "L219",
       "id": "inventory_audit_inventory_audit_inventoryaudit_onsessioncompleted",
-      "community": 16,
+      "community": 6,
       "norm_label": ".onsessioncompleted()"
     },
     {
@@ -883,7 +883,7 @@
       "source_file": "src/app/modules/inventory-audit/inventory-audit.ts",
       "source_location": "L230",
       "id": "inventory_audit_inventory_audit_inventoryaudit_onsessioncancelled",
-      "community": 16,
+      "community": 6,
       "norm_label": ".onsessioncancelled()"
     },
     {
@@ -892,7 +892,7 @@
       "source_file": "src/app/modules/inventory-audit/inventory-audit.ts",
       "source_location": "L240",
       "id": "inventory_audit_inventory_audit_inventoryaudit_onsessionexited",
-      "community": 16,
+      "community": 6,
       "norm_label": ".onsessionexited()"
     },
     {
@@ -901,7 +901,7 @@
       "source_file": "src/app/modules/inventory-audit/inventory-audit.ts",
       "source_location": "L253",
       "id": "inventory_audit_inventory_audit_inventoryaudit_backtolist",
-      "community": 16,
+      "community": 6,
       "norm_label": ".backtolist()"
     },
     {
@@ -910,7 +910,7 @@
       "source_file": "src/app/modules/inventory-audit/inventory-audit.ts",
       "source_location": "L257",
       "id": "inventory_audit_inventory_audit_inventoryaudit_clearfilters",
-      "community": 16,
+      "community": 6,
       "norm_label": ".clearfilters()"
     },
     {
@@ -928,7 +928,7 @@
       "source_file": "src/app/modules/inventory-audit/inventory-audit.ts",
       "source_location": "L265",
       "id": "inventory_audit_inventory_audit_inventoryaudit_loadlocations",
-      "community": 16,
+      "community": 6,
       "norm_label": ".loadlocations()"
     },
     {
@@ -1009,7 +1009,7 @@
       "source_file": "src/app/modules/inventory-audit/services/inventory-audit.service.ts",
       "source_location": "L1",
       "id": "src_app_modules_inventory_audit_services_inventory_audit_service_ts",
-      "community": 13,
+      "community": 6,
       "norm_label": "inventory-audit.service.ts"
     },
     {
@@ -1018,7 +1018,7 @@
       "source_file": "src/app/modules/inventory-audit/services/inventory-audit.service.ts",
       "source_location": "L21",
       "id": "services_inventory_audit_service_inventoryauditpage",
-      "community": 13,
+      "community": 6,
       "norm_label": "inventoryauditpage"
     },
     {
@@ -1027,7 +1027,7 @@
       "source_file": "src/app/modules/inventory-audit/services/inventory-audit.service.ts",
       "source_location": "L30",
       "id": "services_inventory_audit_service_addinventoryauditscansresult",
-      "community": 13,
+      "community": 6,
       "norm_label": "addinventoryauditscansresult"
     },
     {
@@ -1036,7 +1036,7 @@
       "source_file": "src/app/modules/inventory-audit/services/inventory-audit.service.ts",
       "source_location": "L44",
       "id": "services_inventory_audit_service_inventoryauditservice",
-      "community": 13,
+      "community": 6,
       "norm_label": "inventoryauditservice"
     },
     {
@@ -1045,7 +1045,7 @@
       "source_file": "src/app/modules/inventory-audit/services/inventory-audit.service.ts",
       "source_location": "L48",
       "id": "services_inventory_audit_service_inventoryauditservice_list",
-      "community": 13,
+      "community": 6,
       "norm_label": ".list()"
     },
     {
@@ -1054,7 +1054,7 @@
       "source_file": "src/app/modules/inventory-audit/services/inventory-audit.service.ts",
       "source_location": "L60",
       "id": "services_inventory_audit_service_inventoryauditservice_get",
-      "community": 13,
+      "community": 6,
       "norm_label": ".get()"
     },
     {
@@ -1063,7 +1063,7 @@
       "source_file": "src/app/modules/inventory-audit/services/inventory-audit.service.ts",
       "source_location": "L67",
       "id": "services_inventory_audit_service_inventoryauditservice_expectedassets",
-      "community": 13,
+      "community": 6,
       "norm_label": ".expectedassets()"
     },
     {
@@ -1072,7 +1072,7 @@
       "source_file": "src/app/modules/inventory-audit/services/inventory-audit.service.ts",
       "source_location": "L74",
       "id": "services_inventory_audit_service_inventoryauditservice_create",
-      "community": 13,
+      "community": 6,
       "norm_label": ".create()"
     },
     {
@@ -1081,7 +1081,7 @@
       "source_file": "src/app/modules/inventory-audit/services/inventory-audit.service.ts",
       "source_location": "L81",
       "id": "services_inventory_audit_service_inventoryauditservice_addscans",
-      "community": 13,
+      "community": 6,
       "norm_label": ".addscans()"
     },
     {
@@ -1090,7 +1090,7 @@
       "source_file": "src/app/modules/inventory-audit/services/inventory-audit.service.ts",
       "source_location": "L88",
       "id": "services_inventory_audit_service_inventoryauditservice_complete",
-      "community": 13,
+      "community": 6,
       "norm_label": ".complete()"
     },
     {
@@ -1099,7 +1099,7 @@
       "source_file": "src/app/modules/inventory-audit/services/inventory-audit.service.ts",
       "source_location": "L95",
       "id": "services_inventory_audit_service_inventoryauditservice_cancel",
-      "community": 13,
+      "community": 6,
       "norm_label": ".cancel()"
     },
     {
@@ -1432,7 +1432,7 @@
       "source_file": "src/app/modules/inventory-audit/types/inventory-audit.types.ts",
       "source_location": "L110",
       "id": "types_inventory_audit_types_inventoryauditreport",
-      "community": 13,
+      "community": 6,
       "norm_label": "inventoryauditreport"
     },
     {
@@ -1441,7 +1441,7 @@
       "source_file": "src/app/modules/inventory-audit/types/inventory-audit.types.ts",
       "source_location": "L132",
       "id": "types_inventory_audit_types_inventoryauditlistitem",
-      "community": 16,
+      "community": 6,
       "norm_label": "inventoryauditlistitem"
     },
     {
@@ -1450,7 +1450,7 @@
       "source_file": "src/app/modules/inventory-audit/types/inventory-audit.types.ts",
       "source_location": "L148",
       "id": "types_inventory_audit_types_createinventoryauditrequest",
-      "community": 13,
+      "community": 6,
       "norm_label": "createinventoryauditrequest"
     },
     {
@@ -1459,7 +1459,7 @@
       "source_file": "src/app/modules/inventory-audit/types/inventory-audit.types.ts",
       "source_location": "L156",
       "id": "types_inventory_audit_types_addinventoryauditscansrequest",
-      "community": 13,
+      "community": 6,
       "norm_label": "addinventoryauditscansrequest"
     },
     {
@@ -1468,7 +1468,7 @@
       "source_file": "src/app/modules/inventory-audit/types/inventory-audit.types.ts",
       "source_location": "L163",
       "id": "types_inventory_audit_types_inventoryauditlistquery",
-      "community": 13,
+      "community": 6,
       "norm_label": "inventoryauditlistquery"
     },
     {
@@ -1477,7 +1477,7 @@
       "source_file": "src/app/modules/inventory-audit/types/inventory-audit.types.ts",
       "source_location": "L171",
       "id": "types_inventory_audit_types_expectedassetsresult",
-      "community": 13,
+      "community": 6,
       "norm_label": "expectedassetsresult"
     },
     {
@@ -1549,7 +1549,7 @@
       "source_file": "src/app/modules/locations/locations.spec.ts",
       "source_location": "L1",
       "id": "src_app_modules_locations_locations_spec_ts",
-      "community": 13,
+      "community": 5,
       "norm_label": "locations.spec.ts"
     },
     {
@@ -1979,72 +1979,72 @@
       "label": "ProductDetail",
       "file_type": "code",
       "source_file": "src/app/modules/products/detail/product-detail.ts",
-      "source_location": "L35",
+      "source_location": "L36",
       "id": "detail_product_detail_productdetail",
-      "community": 3,
+      "community": 16,
       "norm_label": "productdetail"
     },
     {
       "label": ".constructor()",
       "file_type": "code",
       "source_file": "src/app/modules/products/detail/product-detail.ts",
-      "source_location": "L61",
+      "source_location": "L62",
       "id": "detail_product_detail_productdetail_constructor",
-      "community": 3,
+      "community": 16,
       "norm_label": ".constructor()"
     },
     {
       "label": ".startEdit()",
       "file_type": "code",
       "source_file": "src/app/modules/products/detail/product-detail.ts",
-      "source_location": "L78",
+      "source_location": "L79",
       "id": "detail_product_detail_productdetail_startedit",
-      "community": 3,
+      "community": 16,
       "norm_label": ".startedit()"
     },
     {
       "label": ".onSaved()",
       "file_type": "code",
       "source_file": "src/app/modules/products/detail/product-detail.ts",
-      "source_location": "L83",
+      "source_location": "L84",
       "id": "detail_product_detail_productdetail_onsaved",
-      "community": 3,
+      "community": 16,
       "norm_label": ".onsaved()"
     },
     {
       "label": ".confirmArchive()",
       "file_type": "code",
       "source_file": "src/app/modules/products/detail/product-detail.ts",
-      "source_location": "L88",
+      "source_location": "L89",
       "id": "detail_product_detail_productdetail_confirmarchive",
-      "community": 3,
+      "community": 16,
       "norm_label": ".confirmarchive()"
     },
     {
       "label": ".cancelArchive()",
       "file_type": "code",
       "source_file": "src/app/modules/products/detail/product-detail.ts",
-      "source_location": "L94",
+      "source_location": "L95",
       "id": "detail_product_detail_productdetail_cancelarchive",
-      "community": 3,
+      "community": 16,
       "norm_label": ".cancelarchive()"
     },
     {
       "label": ".archive()",
       "file_type": "code",
       "source_file": "src/app/modules/products/detail/product-detail.ts",
-      "source_location": "L99",
+      "source_location": "L100",
       "id": "detail_product_detail_productdetail_archive",
-      "community": 3,
+      "community": 16,
       "norm_label": ".archive()"
     },
     {
       "label": ".onEscape()",
       "file_type": "code",
       "source_file": "src/app/modules/products/detail/product-detail.ts",
-      "source_location": "L121",
+      "source_location": "L122",
       "id": "detail_product_detail_productdetail_onescape",
-      "community": 3,
+      "community": 16,
       "norm_label": ".onescape()"
     },
     {
@@ -2327,10 +2327,28 @@
       "norm_label": "money.pipe.ts"
     },
     {
+      "label": "pesoFormatter",
+      "file_type": "code",
+      "source_file": "src/app/modules/products/utils/money.pipe.ts",
+      "source_location": "L3",
+      "id": "utils_money_pipe_pesoformatter",
+      "community": 3,
+      "norm_label": "pesoformatter"
+    },
+    {
+      "label": "formatPeso()",
+      "file_type": "code",
+      "source_file": "src/app/modules/products/utils/money.pipe.ts",
+      "source_location": "L16",
+      "id": "utils_money_pipe_formatpeso",
+      "community": 3,
+      "norm_label": "formatpeso()"
+    },
+    {
       "label": "MoneyPipe",
       "file_type": "code",
       "source_file": "src/app/modules/products/utils/money.pipe.ts",
-      "source_location": "L9",
+      "source_location": "L32",
       "id": "utils_money_pipe_moneypipe",
       "community": 3,
       "norm_label": "moneypipe"
@@ -2339,7 +2357,7 @@
       "label": ".transform()",
       "file_type": "code",
       "source_file": "src/app/modules/products/utils/money.pipe.ts",
-      "source_location": "L17",
+      "source_location": "L33",
       "id": "utils_money_pipe_moneypipe_transform",
       "community": 3,
       "norm_label": ".transform()"
@@ -2665,7 +2683,7 @@
       "source_file": "src/app/modules/stock-movements/services/stock-movements.service.ts",
       "source_location": "L1",
       "id": "src_app_modules_stock_movements_services_stock_movements_service_ts",
-      "community": 13,
+      "community": 14,
       "norm_label": "stock-movements.service.ts"
     },
     {
@@ -2674,7 +2692,7 @@
       "source_file": "src/app/modules/stock-movements/services/stock-movements.service.ts",
       "source_location": "L18",
       "id": "services_stock_movements_service_stockmovementpage",
-      "community": 13,
+      "community": 14,
       "norm_label": "stockmovementpage"
     },
     {
@@ -3322,7 +3340,7 @@
       "source_file": "src/app/modules/suppliers/utils/error-message.ts",
       "source_location": "L4",
       "id": "utils_error_message_httperrormessage",
-      "community": 5,
+      "community": 3,
       "norm_label": "httperrormessage()"
     },
     {
@@ -3371,12 +3389,624 @@
       "norm_label": "httperrormessage()"
     },
     {
+      "label": "label-data.spec.ts",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-data.spec.ts",
+      "source_location": "L1",
+      "id": "src_common_printing_label_data_spec_ts",
+      "community": 3,
+      "norm_label": "label-data.spec.ts"
+    },
+    {
+      "label": "makeProduct()",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-data.spec.ts",
+      "source_location": "L4",
+      "id": "printing_label_data_spec_makeproduct",
+      "community": 3,
+      "norm_label": "makeproduct()"
+    },
+    {
+      "label": "label-data.ts",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-data.ts",
+      "source_location": "L1",
+      "id": "src_common_printing_label_data_ts",
+      "community": 3,
+      "norm_label": "label-data.ts"
+    },
+    {
+      "label": "LabelData",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-data.ts",
+      "source_location": "L5",
+      "id": "printing_label_data_labeldata",
+      "community": 3,
+      "norm_label": "labeldata"
+    },
+    {
+      "label": "productToLabelData()",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-data.ts",
+      "source_location": "L15",
+      "id": "printing_label_data_producttolabeldata",
+      "community": 3,
+      "norm_label": "producttolabeldata()"
+    },
+    {
+      "label": "label-printer.ts",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-printer.ts",
+      "source_location": "L1",
+      "id": "src_common_printing_label_printer_ts",
+      "community": 13,
+      "norm_label": "label-printer.ts"
+    },
+    {
+      "label": "LabelBitmap",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-printer.ts",
+      "source_location": "L9",
+      "id": "printing_label_printer_labelbitmap",
+      "community": 13,
+      "norm_label": "labelbitmap"
+    },
+    {
+      "label": "LabelPrinter",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-printer.ts",
+      "source_location": "L19",
+      "id": "printing_label_printer_labelprinter",
+      "community": 13,
+      "norm_label": "labelprinter"
+    },
+    {
+      "label": "PrinterError",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-printer.ts",
+      "source_location": "L36",
+      "id": "printing_label_printer_printererror",
+      "community": 13,
+      "norm_label": "printererror"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-printer.ts",
+      "source_location": "L37",
+      "id": "printing_label_printer_printererror_constructor",
+      "community": 13,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": "label-printing.service.ts",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L1",
+      "id": "src_common_printing_label_printing_service_ts",
+      "community": 3,
+      "norm_label": "label-printing.service.ts"
+    },
+    {
+      "label": "PrintingEngine",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L8",
+      "id": "printing_label_printing_service_printingengine",
+      "community": 3,
+      "norm_label": "printingengine"
+    },
+    {
+      "label": "PrintPhase",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L11",
+      "id": "printing_label_printing_service_printphase",
+      "community": 3,
+      "norm_label": "printphase"
+    },
+    {
+      "label": "LabelPrintingService",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L19",
+      "id": "printing_label_printing_service_labelprintingservice",
+      "community": 3,
+      "norm_label": "labelprintingservice"
+    },
+    {
+      "label": ".preload()",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L36",
+      "id": "printing_label_printing_service_labelprintingservice_preload",
+      "community": 3,
+      "norm_label": ".preload()"
+    },
+    {
+      "label": ".printProductLabel()",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L42",
+      "id": "printing_label_printing_service_labelprintingservice_printproductlabel",
+      "community": 3,
+      "norm_label": ".printproductlabel()"
+    },
+    {
+      "label": ".loadEngine()",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L78",
+      "id": "printing_label_printing_service_labelprintingservice_loadengine",
+      "community": 3,
+      "norm_label": ".loadengine()"
+    },
+    {
+      "label": ".markDisconnected()",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L83",
+      "id": "printing_label_printing_service_labelprintingservice_markdisconnected",
+      "community": 3,
+      "norm_label": ".markdisconnected()"
+    },
+    {
+      "label": ".syncConnection()",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L89",
+      "id": "printing_label_printing_service_labelprintingservice_syncconnection",
+      "community": 3,
+      "norm_label": ".syncconnection()"
+    },
+    {
+      "label": ".fail()",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L97",
+      "id": "printing_label_printing_service_labelprintingservice_fail",
+      "community": 3,
+      "norm_label": ".fail()"
+    },
+    {
+      "label": "label-renderer.ts",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L1",
+      "id": "src_common_printing_label_renderer_ts",
+      "community": 13,
+      "norm_label": "label-renderer.ts"
+    },
+    {
+      "label": "renderLabel()",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L22",
+      "id": "printing_label_renderer_renderlabel",
+      "community": 13,
+      "norm_label": "renderlabel()"
+    },
+    {
+      "label": "renderBarcode()",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L64",
+      "id": "printing_label_renderer_renderbarcode",
+      "community": 13,
+      "norm_label": "renderbarcode()"
+    },
+    {
+      "label": "toBitmap()",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L84",
+      "id": "printing_label_renderer_tobitmap",
+      "community": 13,
+      "norm_label": "tobitmap()"
+    },
+    {
+      "label": "wrapText()",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L105",
+      "id": "printing_label_renderer_wraptext",
+      "community": 13,
+      "norm_label": "wraptext()"
+    },
+    {
+      "label": "truncate()",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L139",
+      "id": "printing_label_renderer_truncate",
+      "community": 13,
+      "norm_label": "truncate()"
+    },
+    {
+      "label": "label-spec.ts",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-spec.ts",
+      "source_location": "L1",
+      "id": "src_common_printing_label_spec_ts",
+      "community": 13,
+      "norm_label": "label-spec.ts"
+    },
+    {
+      "label": "LabelSpec",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-spec.ts",
+      "source_location": "L2",
+      "id": "printing_label_spec_labelspec",
+      "community": 13,
+      "norm_label": "labelspec"
+    },
+    {
+      "label": "B21_LABEL_50X30",
+      "file_type": "code",
+      "source_file": "src/common/printing/label-spec.ts",
+      "source_location": "L17",
+      "id": "printing_label_spec_b21_label_50x30",
+      "community": 13,
+      "norm_label": "b21_label_50x30"
+    },
+    {
+      "label": "print-label-button.ts",
+      "file_type": "code",
+      "source_file": "src/common/printing/print-label-button.ts",
+      "source_location": "L1",
+      "id": "src_common_printing_print_label_button_ts",
+      "community": 3,
+      "norm_label": "print-label-button.ts"
+    },
+    {
+      "label": "PrintLabelButton",
+      "file_type": "code",
+      "source_file": "src/common/printing/print-label-button.ts",
+      "source_location": "L42",
+      "id": "printing_print_label_button_printlabelbutton",
+      "community": 3,
+      "norm_label": "printlabelbutton"
+    },
+    {
+      "label": ".preload()",
+      "file_type": "code",
+      "source_file": "src/common/printing/print-label-button.ts",
+      "source_location": "L67",
+      "id": "printing_print_label_button_printlabelbutton_preload",
+      "community": 3,
+      "norm_label": ".preload()"
+    },
+    {
+      "label": ".print()",
+      "file_type": "code",
+      "source_file": "src/common/printing/print-label-button.ts",
+      "source_location": "L71",
+      "id": "printing_print_label_button_printlabelbutton_print",
+      "community": 3,
+      "norm_label": ".print()"
+    },
+    {
+      "label": "printing-engine.ts",
+      "file_type": "code",
+      "source_file": "src/common/printing/printing-engine.ts",
+      "source_location": "L1",
+      "id": "src_common_printing_printing_engine_ts",
+      "community": 13,
+      "norm_label": "printing-engine.ts"
+    },
+    {
+      "label": "createPrinter()",
+      "file_type": "code",
+      "source_file": "src/common/printing/printing-engine.ts",
+      "source_location": "L13",
+      "id": "printing_printing_engine_createprinter",
+      "community": 13,
+      "norm_label": "createprinter()"
+    },
+    {
+      "label": "niimbot-packet.spec.ts",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-packet.spec.ts",
+      "source_location": "L1",
+      "id": "src_common_printing_niimbot_niimbot_packet_spec_ts",
+      "community": 13,
+      "norm_label": "niimbot-packet.spec.ts"
+    },
+    {
+      "label": "niimbot-packet.ts",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-packet.ts",
+      "source_location": "L1",
+      "id": "src_common_printing_niimbot_niimbot_packet_ts",
+      "community": 13,
+      "norm_label": "niimbot-packet.ts"
+    },
+    {
+      "label": "NiimbotPacket",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-packet.ts",
+      "source_location": "L8",
+      "id": "niimbot_niimbot_packet_niimbotpacket",
+      "community": 13,
+      "norm_label": "niimbotpacket"
+    },
+    {
+      "label": "checksum()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-packet.ts",
+      "source_location": "L17",
+      "id": "niimbot_niimbot_packet_checksum",
+      "community": 13,
+      "norm_label": "checksum()"
+    },
+    {
+      "label": "encodePacket()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-packet.ts",
+      "source_location": "L26",
+      "id": "niimbot_niimbot_packet_encodepacket",
+      "community": 13,
+      "norm_label": "encodepacket()"
+    },
+    {
+      "label": "decodePackets()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-packet.ts",
+      "source_location": "L44",
+      "id": "niimbot_niimbot_packet_decodepackets",
+      "community": 13,
+      "norm_label": "decodepackets()"
+    },
+    {
+      "label": "niimbot-protocol.spec.ts",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.spec.ts",
+      "source_location": "L1",
+      "id": "src_common_printing_niimbot_niimbot_protocol_spec_ts",
+      "community": 13,
+      "norm_label": "niimbot-protocol.spec.ts"
+    },
+    {
+      "label": "niimbot-protocol.ts",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L1",
+      "id": "src_common_printing_niimbot_niimbot_protocol_ts",
+      "community": 13,
+      "norm_label": "niimbot-protocol.ts"
+    },
+    {
+      "label": "Cmd",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L10",
+      "id": "niimbot_niimbot_protocol_cmd",
+      "community": 13,
+      "norm_label": "cmd"
+    },
+    {
+      "label": "Resp",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L26",
+      "id": "niimbot_niimbot_protocol_resp",
+      "community": 13,
+      "norm_label": "resp"
+    },
+    {
+      "label": "setDensity()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L41",
+      "id": "niimbot_niimbot_protocol_setdensity",
+      "community": 13,
+      "norm_label": "setdensity()"
+    },
+    {
+      "label": "setLabelType()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L45",
+      "id": "niimbot_niimbot_protocol_setlabeltype",
+      "community": 13,
+      "norm_label": "setlabeltype()"
+    },
+    {
+      "label": "startPrint()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L49",
+      "id": "niimbot_niimbot_protocol_startprint",
+      "community": 13,
+      "norm_label": "startprint()"
+    },
+    {
+      "label": "startPagePrint()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L53",
+      "id": "niimbot_niimbot_protocol_startpageprint",
+      "community": 13,
+      "norm_label": "startpageprint()"
+    },
+    {
+      "label": "endPagePrint()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L57",
+      "id": "niimbot_niimbot_protocol_endpageprint",
+      "community": 13,
+      "norm_label": "endpageprint()"
+    },
+    {
+      "label": "endPrint()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L61",
+      "id": "niimbot_niimbot_protocol_endprint",
+      "community": 13,
+      "norm_label": "endprint()"
+    },
+    {
+      "label": "getPrintStatus()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L65",
+      "id": "niimbot_niimbot_protocol_getprintstatus",
+      "community": 13,
+      "norm_label": "getprintstatus()"
+    },
+    {
+      "label": "setDimension()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L73",
+      "id": "niimbot_niimbot_protocol_setdimension",
+      "community": 13,
+      "norm_label": "setdimension()"
+    },
+    {
+      "label": "imageLine()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L85",
+      "id": "niimbot_niimbot_protocol_imageline",
+      "community": 13,
+      "norm_label": "imageline()"
+    },
+    {
+      "label": "niimbot-web-bluetooth-printer.ts",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L1",
+      "id": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "community": 13,
+      "norm_label": "niimbot-web-bluetooth-printer.ts"
+    },
+    {
+      "label": "Waiter",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L28",
+      "id": "niimbot_niimbot_web_bluetooth_printer_waiter",
+      "community": 13,
+      "norm_label": "waiter"
+    },
+    {
+      "label": "NiimbotWebBluetoothPrinter",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L38",
+      "id": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter",
+      "community": 13,
+      "norm_label": "niimbotwebbluetoothprinter"
+    },
+    {
+      "label": ".connected()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L45",
+      "id": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_connected",
+      "community": 13,
+      "norm_label": ".connected()"
+    },
+    {
+      "label": ".connect()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L49",
+      "id": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_connect",
+      "community": 13,
+      "norm_label": ".connect()"
+    },
+    {
+      "label": ".disconnect()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L86",
+      "id": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_disconnect",
+      "community": 13,
+      "norm_label": ".disconnect()"
+    },
+    {
+      "label": ".print()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L93",
+      "id": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_print",
+      "community": 13,
+      "norm_label": ".print()"
+    },
+    {
+      "label": ".finish()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L119",
+      "id": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_finish",
+      "community": 13,
+      "norm_label": ".finish()"
+    },
+    {
+      "label": ".transceive()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L133",
+      "id": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_transceive",
+      "community": 13,
+      "norm_label": ".transceive()"
+    },
+    {
+      "label": ".write()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L153",
+      "id": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_write",
+      "community": 13,
+      "norm_label": ".write()"
+    },
+    {
+      "label": "findChannel()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L191",
+      "id": "niimbot_niimbot_web_bluetooth_printer_findchannel",
+      "community": 13,
+      "norm_label": "findchannel()"
+    },
+    {
+      "label": "toCancellation()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L205",
+      "id": "niimbot_niimbot_web_bluetooth_printer_tocancellation",
+      "community": 13,
+      "norm_label": "tocancellation()"
+    },
+    {
+      "label": "concat()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L213",
+      "id": "niimbot_niimbot_web_bluetooth_printer_concat",
+      "community": 13,
+      "norm_label": "concat()"
+    },
+    {
+      "label": "sleep()",
+      "file_type": "code",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L220",
+      "id": "niimbot_niimbot_web_bluetooth_printer_sleep",
+      "community": 13,
+      "norm_label": "sleep()"
+    },
+    {
       "label": "api.response.ts",
       "file_type": "code",
       "source_file": "src/common/responses/api.response.ts",
       "source_location": "L1",
       "id": "src_common_responses_api_response_ts",
-      "community": 13,
+      "community": 6,
       "norm_label": "api.response.ts"
     },
     {
@@ -3385,7 +4015,7 @@
       "source_file": "src/common/responses/api.response.ts",
       "source_location": "L1",
       "id": "responses_api_response_apiresponse",
-      "community": 13,
+      "community": 6,
       "norm_label": "apiresponse"
     },
     {
@@ -3394,7 +4024,7 @@
       "source_file": "src/common/responses/api.response.ts",
       "source_location": "L8",
       "id": "responses_api_response_pagemeta",
-      "community": 13,
+      "community": 6,
       "norm_label": "pagemeta"
     },
     {
@@ -3403,7 +4033,7 @@
       "source_file": "src/common/responses/api.response.ts",
       "source_location": "L16",
       "id": "responses_api_response_paginatedapiresponse",
-      "community": 13,
+      "community": 6,
       "norm_label": "paginatedapiresponse"
     },
     {
@@ -3430,7 +4060,7 @@
       "source_file": "src/environments/environment.ts",
       "source_location": "L1",
       "id": "src_environments_environment_ts",
-      "community": 13,
+      "community": 5,
       "norm_label": "environment.ts"
     },
     {
@@ -3439,8 +4069,26 @@
       "source_file": "src/environments/environment.ts",
       "source_location": "L1",
       "id": "environments_environment_environment",
-      "community": 13,
+      "community": 5,
       "norm_label": "environment"
+    },
+    {
+      "label": "keyboard-shortcuts.md",
+      "file_type": "document",
+      "source_file": "src/app/layout/keyboard-shortcuts.md",
+      "source_location": "L1",
+      "id": "src_app_layout_keyboard_shortcuts_md",
+      "community": 19,
+      "norm_label": "keyboard-shortcuts.md"
+    },
+    {
+      "label": "App shell, custom keyboard behavior",
+      "file_type": "document",
+      "source_file": "src/app/layout/keyboard-shortcuts.md",
+      "source_location": "L1",
+      "id": "layout_keyboard_shortcuts_app_shell_custom_keyboard_behavior",
+      "community": 19,
+      "norm_label": "app shell, custom keyboard behavior"
     },
     {
       "label": "keyboard-shortcuts.md",
@@ -3486,6 +4134,24 @@
       "id": "categories_keyboard_shortcuts_quick_reference",
       "community": 9,
       "norm_label": "quick reference"
+    },
+    {
+      "label": "keyboard-shortcuts.md",
+      "file_type": "document",
+      "source_file": "src/app/modules/inventory-audit/keyboard-shortcuts.md",
+      "source_location": "L1",
+      "id": "src_app_modules_inventory_audit_keyboard_shortcuts_md",
+      "community": 18,
+      "norm_label": "keyboard-shortcuts.md"
+    },
+    {
+      "label": "Inventory Audit, custom keyboard behavior",
+      "file_type": "document",
+      "source_file": "src/app/modules/inventory-audit/keyboard-shortcuts.md",
+      "source_location": "L1",
+      "id": "inventory_audit_keyboard_shortcuts_inventory_audit_custom_keyboard_behavior",
+      "community": 18,
+      "norm_label": "inventory audit, custom keyboard behavior"
     },
     {
       "label": "keyboard-shortcuts.md",
@@ -4045,9 +4711,9 @@
       "source_file": "src/app/layout/layout.ts",
       "source_location": "L39",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app_layout_layout_ts",
-      "target": "layout_layout_new_shortcuts",
-      "confidence_score": 1.0
+      "target": "layout_layout_new_shortcuts"
     },
     {
       "relation": "imports",
@@ -4077,9 +4743,9 @@
       "source_file": "src/app/layout/layout.ts",
       "source_location": "L219",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "layout_layout_layout",
-      "target": "layout_layout_layout_clearleader",
-      "confidence_score": 1.0
+      "target": "layout_layout_layout_clearleader"
     },
     {
       "relation": "method",
@@ -4127,9 +4793,9 @@
       "source_file": "src/app/layout/layout.ts",
       "source_location": "L229",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "layout_layout_layout",
-      "target": "layout_layout_layout_iseditabletarget",
-      "confidence_score": 1.0
+      "target": "layout_layout_layout_iseditabletarget"
     },
     {
       "relation": "method",
@@ -4177,9 +4843,9 @@
       "source_file": "src/app/layout/layout.ts",
       "source_location": "L188",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "layout_layout_layout",
-      "target": "layout_layout_layout_onglobalkeydown",
-      "confidence_score": 1.0
+      "target": "layout_layout_layout_onglobalkeydown"
     },
     {
       "relation": "method",
@@ -4208,9 +4874,9 @@
       "source_file": "src/app/layout/layout.ts",
       "source_location": "L204",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "layout_layout_layout_onglobalkeydown",
-      "target": "layout_layout_layout_closemobile",
-      "confidence_score": 1.0
+      "target": "layout_layout_layout_closemobile"
     },
     {
       "relation": "calls",
@@ -4219,9 +4885,9 @@
       "source_file": "src/app/layout/layout.ts",
       "source_location": "L193",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "layout_layout_layout_onglobalkeydown",
-      "target": "layout_layout_layout_clearleader",
-      "confidence_score": 1.0
+      "target": "layout_layout_layout_clearleader"
     },
     {
       "relation": "calls",
@@ -4230,9 +4896,9 @@
       "source_file": "src/app/layout/layout.ts",
       "source_location": "L192",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "layout_layout_layout_onglobalkeydown",
-      "target": "layout_layout_layout_iseditabletarget",
-      "confidence_score": 1.0
+      "target": "layout_layout_layout_iseditabletarget"
     },
     {
       "relation": "calls",
@@ -5659,9 +6325,9 @@
       "source_file": "src/app/modules/inventory-audit/inventory-audit.ts",
       "source_location": "L172",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "inventory_audit_inventory_audit_inventoryaudit",
-      "target": "inventory_audit_inventory_audit_inventoryaudit_resumeaudit",
-      "confidence_score": 1.0
+      "target": "inventory_audit_inventory_audit_inventoryaudit_resumeaudit"
     },
     {
       "relation": "method",
@@ -5776,9 +6442,9 @@
       "source_file": "src/app/modules/inventory-audit/inventory-audit.ts",
       "source_location": "L250",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "inventory_audit_inventory_audit_inventoryaudit_onsessionexited",
-      "target": "inventory_audit_inventory_audit_inventoryaudit_load",
-      "confidence_score": 1.0
+      "target": "inventory_audit_inventory_audit_inventoryaudit_load"
     },
     {
       "relation": "references",
@@ -5787,9 +6453,9 @@
       "source_file": "src/app/modules/inventory-audit/inventory-audit.ts",
       "source_location": "L172",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "inventory_audit_inventory_audit_inventoryaudit_resumeaudit",
-      "target": "types_inventory_audit_types_inventoryauditreport",
-      "confidence_score": 1.0
+      "target": "types_inventory_audit_types_inventoryauditreport"
     },
     {
       "relation": "calls",
@@ -5853,9 +6519,9 @@
       "source_file": "src/app/modules/inventory-audit/inventory-audit.ts",
       "source_location": "L240",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "inventory_audit_inventory_audit_inventoryaudit_onsessionexited",
-      "target": "types_inventory_audit_types_inventoryauditreport",
-      "confidence_score": 1.0
+      "target": "types_inventory_audit_types_inventoryauditreport"
     },
     {
       "relation": "references",
@@ -6775,9 +7441,9 @@
       "source_file": "src/app/modules/inventory-audit/session/audit-session.ts",
       "source_location": "L346",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "session_audit_session_auditsession",
-      "target": "session_audit_session_auditsession_closesession",
-      "confidence_score": 1.0
+      "target": "session_audit_session_auditsession_closesession"
     },
     {
       "relation": "method",
@@ -6785,9 +7451,9 @@
       "source_file": "src/app/modules/inventory-audit/session/audit-session.ts",
       "source_location": "L471",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "session_audit_session_auditsession",
-      "target": "session_audit_session_auditsession_completenow",
-      "confidence_score": 1.0
+      "target": "session_audit_session_auditsession_completenow"
     },
     {
       "relation": "method",
@@ -6855,9 +7521,9 @@
       "source_file": "src/app/modules/inventory-audit/session/audit-session.ts",
       "source_location": "L307",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "session_audit_session_auditsession",
-      "target": "session_audit_session_auditsession_ngoninit",
-      "confidence_score": 1.0
+      "target": "session_audit_session_auditsession_ngoninit"
     },
     {
       "relation": "method",
@@ -6905,9 +7571,9 @@
       "source_file": "src/app/modules/inventory-audit/session/audit-session.ts",
       "source_location": "L457",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "session_audit_session_auditsession",
-      "target": "session_audit_session_auditsession_settleafterdrain",
-      "confidence_score": 1.0
+      "target": "session_audit_session_auditsession_settleafterdrain"
     },
     {
       "relation": "method",
@@ -6957,9 +7623,9 @@
       "source_file": "src/app/modules/inventory-audit/session/audit-session.ts",
       "source_location": "L353",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "session_audit_session_auditsession_closesession",
-      "target": "session_audit_session_auditsession_settleafterdrain",
-      "confidence_score": 1.0
+      "target": "session_audit_session_auditsession_settleafterdrain"
     },
     {
       "relation": "calls",
@@ -6990,9 +7656,9 @@
       "source_file": "src/app/modules/inventory-audit/session/audit-session.ts",
       "source_location": "L422",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "session_audit_session_auditsession_finish",
-      "target": "session_audit_session_auditsession_settleafterdrain",
-      "confidence_score": 1.0
+      "target": "session_audit_session_auditsession_settleafterdrain"
     },
     {
       "relation": "calls",
@@ -7012,9 +7678,9 @@
       "source_file": "src/app/modules/inventory-audit/session/audit-session.ts",
       "source_location": "L462",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "session_audit_session_auditsession_settleafterdrain",
-      "target": "session_audit_session_auditsession_completenow",
-      "confidence_score": 1.0
+      "target": "session_audit_session_auditsession_completenow"
     },
     {
       "relation": "contains",
@@ -8758,6 +9424,17 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/app/modules/products/detail/product-detail.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app_modules_products_detail_product_detail_ts",
+      "target": "printing_print_label_button_printlabelbutton",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/products/detail/product-detail.ts",
       "source_location": "L17",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -8818,6 +9495,17 @@
       "confidence_score": 1.0,
       "source": "src_app_modules_products_detail_product_detail_ts",
       "target": "src_common_http_http_error_message_ts"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/products/detail/product-detail.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app_modules_products_detail_product_detail_ts",
+      "target": "src_common_printing_print_label_button_ts",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -9809,6 +10497,61 @@
       "target": "src_app_modules_products_types_product_types_ts"
     },
     {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-data.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_common_printing_label_data_spec_ts",
+      "target": "src_app_modules_products_types_product_types_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-data.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_common_printing_label_data_ts",
+      "target": "src_app_modules_products_types_product_types_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_common_printing_label_printing_service_ts",
+      "target": "src_app_modules_products_types_product_types_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/print-label-button.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_common_printing_print_label_button_ts",
+      "target": "src_app_modules_products_types_product_types_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L42",
+      "weight": 1.0,
+      "source": "printing_label_printing_service_labelprintingservice_printproductlabel",
+      "target": "types_product_types_product",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
@@ -9842,6 +10585,50 @@
       "target": "types_product_types_product"
     },
     {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-data.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_common_printing_label_data_spec_ts",
+      "target": "types_product_types_product",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-data.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_common_printing_label_data_ts",
+      "target": "types_product_types_product",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_common_printing_label_printing_service_ts",
+      "target": "types_product_types_product",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/print-label-button.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_common_printing_print_label_button_ts",
+      "target": "types_product_types_product",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "references",
       "context": "field",
       "confidence": "EXTRACTED",
@@ -9867,11 +10654,75 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/app/modules/products/utils/money.pipe.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_app_modules_products_utils_money_pipe_ts",
+      "target": "utils_money_pipe_formatpeso",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/products/utils/money.pipe.ts",
       "source_location": "L9",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "src_app_modules_products_utils_money_pipe_ts",
       "target": "utils_money_pipe_moneypipe"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/products/utils/money.pipe.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_app_modules_products_utils_money_pipe_ts",
+      "target": "utils_money_pipe_pesoformatter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-data.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_common_printing_label_data_ts",
+      "target": "src_app_modules_products_utils_money_pipe_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/common/printing/label-data.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "printing_label_data_producttolabeldata",
+      "target": "utils_money_pipe_formatpeso"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-data.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_common_printing_label_data_ts",
+      "target": "utils_money_pipe_formatpeso",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/products/utils/money.pipe.ts",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "utils_money_pipe_moneypipe_transform",
+      "target": "utils_money_pipe_formatpeso",
+      "confidence_score": 1.0
     },
     {
       "relation": "method",
@@ -12489,6 +13340,1601 @@
       "target": "http_http_error_message_backendmessage"
     },
     {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-data.spec.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_common_printing_label_data_spec_ts",
+      "target": "printing_label_data_producttolabeldata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-data.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_common_printing_label_data_spec_ts",
+      "target": "printing_label_data_spec_makeproduct",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-data.spec.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_common_printing_label_data_spec_ts",
+      "target": "src_common_printing_label_data_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-data.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_common_printing_label_data_ts",
+      "target": "printing_label_data_labeldata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-data.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_common_printing_label_data_ts",
+      "target": "printing_label_data_producttolabeldata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_common_printing_label_printing_service_ts",
+      "target": "src_common_printing_label_data_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_common_printing_label_renderer_ts",
+      "target": "src_common_printing_label_data_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_common_printing_label_renderer_ts",
+      "target": "printing_label_data_labeldata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L64",
+      "weight": 1.0,
+      "source": "printing_label_printing_service_labelprintingservice_printproductlabel",
+      "target": "printing_label_data_producttolabeldata"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_common_printing_label_printing_service_ts",
+      "target": "printing_label_data_producttolabeldata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printer.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_common_printing_label_printer_ts",
+      "target": "printing_label_printer_labelbitmap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printer.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_common_printing_label_printer_ts",
+      "target": "printing_label_printer_labelprinter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printer.ts",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "src_common_printing_label_printer_ts",
+      "target": "printing_label_printer_printererror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_common_printing_label_printing_service_ts",
+      "target": "src_common_printing_label_printer_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_common_printing_label_renderer_ts",
+      "target": "src_common_printing_label_printer_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "src_common_printing_label_printer_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/printing-engine.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_common_printing_printing_engine_ts",
+      "target": "src_common_printing_label_printer_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L93",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_print",
+      "target": "printing_label_printer_labelbitmap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_common_printing_label_renderer_ts",
+      "target": "printing_label_printer_labelbitmap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "printing_label_printer_labelbitmap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "implements",
+      "context": "type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter",
+      "target": "printing_label_printer_labelprinter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "printing_label_printing_service_labelprintingservice",
+      "target": "printing_label_printer_labelprinter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_common_printing_label_printing_service_ts",
+      "target": "printing_label_printer_labelprinter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "printing_label_printer_labelprinter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/printing-engine.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_common_printing_printing_engine_ts",
+      "target": "printing_label_printer_labelprinter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printer.ts",
+      "source_location": "L37",
+      "weight": 1.0,
+      "source": "printing_label_printer_printererror",
+      "target": "printing_label_printer_printererror_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_common_printing_label_printing_service_ts",
+      "target": "printing_label_printer_printererror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "printing_label_printer_printererror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_common_printing_label_printing_service_ts",
+      "target": "printing_label_printing_service_labelprintingservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_common_printing_label_printing_service_ts",
+      "target": "printing_label_printing_service_printingengine",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_common_printing_label_printing_service_ts",
+      "target": "printing_label_printing_service_printphase",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_common_printing_label_printing_service_ts",
+      "target": "printing_label_spec_b21_label_50x30",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_common_printing_label_printing_service_ts",
+      "target": "src_common_printing_label_spec_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/print-label-button.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_common_printing_print_label_button_ts",
+      "target": "src_common_printing_label_printing_service_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L97",
+      "weight": 1.0,
+      "source": "printing_label_printing_service_labelprintingservice",
+      "target": "printing_label_printing_service_labelprintingservice_fail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L78",
+      "weight": 1.0,
+      "source": "printing_label_printing_service_labelprintingservice",
+      "target": "printing_label_printing_service_labelprintingservice_loadengine",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L83",
+      "weight": 1.0,
+      "source": "printing_label_printing_service_labelprintingservice",
+      "target": "printing_label_printing_service_labelprintingservice_markdisconnected",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "printing_label_printing_service_labelprintingservice",
+      "target": "printing_label_printing_service_labelprintingservice_preload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L42",
+      "weight": 1.0,
+      "source": "printing_label_printing_service_labelprintingservice",
+      "target": "printing_label_printing_service_labelprintingservice_printproductlabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L89",
+      "weight": 1.0,
+      "source": "printing_label_printing_service_labelprintingservice",
+      "target": "printing_label_printing_service_labelprintingservice_syncconnection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/print-label-button.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_common_printing_print_label_button_ts",
+      "target": "printing_label_printing_service_labelprintingservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "printing_label_printing_service_labelprintingservice_preload",
+      "target": "printing_label_printing_service_labelprintingservice_loadengine",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "printing_label_printing_service_labelprintingservice_printproductlabel",
+      "target": "printing_label_printing_service_labelprintingservice_fail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L53",
+      "weight": 1.0,
+      "source": "printing_label_printing_service_labelprintingservice_printproductlabel",
+      "target": "printing_label_printing_service_labelprintingservice_loadengine",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L73",
+      "weight": 1.0,
+      "source": "printing_label_printing_service_labelprintingservice_printproductlabel",
+      "target": "printing_label_printing_service_labelprintingservice_syncconnection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-printing.service.ts",
+      "source_location": "L79",
+      "weight": 1.0,
+      "source": "printing_label_printing_service_labelprintingservice_loadengine",
+      "target": "src_common_printing_printing_engine_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L64",
+      "weight": 1.0,
+      "source": "src_common_printing_label_renderer_ts",
+      "target": "printing_label_renderer_renderbarcode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_common_printing_label_renderer_ts",
+      "target": "printing_label_renderer_renderlabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L84",
+      "weight": 1.0,
+      "source": "src_common_printing_label_renderer_ts",
+      "target": "printing_label_renderer_tobitmap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L139",
+      "weight": 1.0,
+      "source": "src_common_printing_label_renderer_ts",
+      "target": "printing_label_renderer_truncate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L105",
+      "weight": 1.0,
+      "source": "src_common_printing_label_renderer_ts",
+      "target": "printing_label_renderer_wraptext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_common_printing_label_renderer_ts",
+      "target": "printing_label_spec_labelspec",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_common_printing_label_renderer_ts",
+      "target": "src_common_printing_label_spec_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/printing-engine.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_common_printing_printing_engine_ts",
+      "target": "src_common_printing_label_renderer_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "printing_label_renderer_renderlabel",
+      "target": "printing_label_renderer_renderbarcode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L60",
+      "weight": 1.0,
+      "source": "printing_label_renderer_renderlabel",
+      "target": "printing_label_renderer_tobitmap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L48",
+      "weight": 1.0,
+      "source": "printing_label_renderer_renderlabel",
+      "target": "printing_label_renderer_truncate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "printing_label_renderer_renderlabel",
+      "target": "printing_label_renderer_wraptext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "re-export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/printing-engine.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_common_printing_printing_engine_ts",
+      "target": "printing_label_renderer_renderlabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-renderer.ts",
+      "source_location": "L133",
+      "weight": 1.0,
+      "source": "printing_label_renderer_wraptext",
+      "target": "printing_label_renderer_truncate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-spec.ts",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "src_common_printing_label_spec_ts",
+      "target": "printing_label_spec_b21_label_50x30",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/label-spec.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_common_printing_label_spec_ts",
+      "target": "printing_label_spec_labelspec",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/print-label-button.ts",
+      "source_location": "L42",
+      "weight": 1.0,
+      "source": "src_common_printing_print_label_button_ts",
+      "target": "printing_print_label_button_printlabelbutton",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/print-label-button.ts",
+      "source_location": "L67",
+      "weight": 1.0,
+      "source": "printing_print_label_button_printlabelbutton",
+      "target": "printing_print_label_button_printlabelbutton_preload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/print-label-button.ts",
+      "source_location": "L71",
+      "weight": 1.0,
+      "source": "printing_print_label_button_printlabelbutton",
+      "target": "printing_print_label_button_printlabelbutton_print",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/printing-engine.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_common_printing_printing_engine_ts",
+      "target": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/printing-engine.ts",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "src_common_printing_printing_engine_ts",
+      "target": "printing_printing_engine_createprinter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/printing-engine.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_common_printing_printing_engine_ts",
+      "target": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-packet.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_packet_spec_ts",
+      "target": "niimbot_niimbot_packet_decodepackets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-packet.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_packet_spec_ts",
+      "target": "niimbot_niimbot_packet_encodepacket",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-packet.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_packet_spec_ts",
+      "target": "src_common_printing_niimbot_niimbot_packet_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-packet.ts",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_packet_ts",
+      "target": "niimbot_niimbot_packet_checksum",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-packet.ts",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_packet_ts",
+      "target": "niimbot_niimbot_packet_decodepackets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-packet.ts",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_packet_ts",
+      "target": "niimbot_niimbot_packet_encodepacket",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-packet.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_packet_ts",
+      "target": "niimbot_niimbot_packet_niimbotpacket",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_protocol_spec_ts",
+      "target": "src_common_printing_niimbot_niimbot_packet_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_protocol_ts",
+      "target": "src_common_printing_niimbot_niimbot_packet_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "src_common_printing_niimbot_niimbot_packet_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L133",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_transceive",
+      "target": "niimbot_niimbot_packet_niimbotpacket",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_waiter",
+      "target": "niimbot_niimbot_packet_niimbotpacket",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "niimbot_niimbot_packet_niimbotpacket",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-packet.ts",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_packet_encodepacket",
+      "target": "niimbot_niimbot_packet_checksum",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L58",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_protocol_endpageprint",
+      "target": "niimbot_niimbot_packet_encodepacket"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L62",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_protocol_endprint",
+      "target": "niimbot_niimbot_packet_encodepacket"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L66",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_protocol_getprintstatus",
+      "target": "niimbot_niimbot_packet_encodepacket"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L91",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_protocol_imageline",
+      "target": "niimbot_niimbot_packet_encodepacket"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L42",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_protocol_setdensity",
+      "target": "niimbot_niimbot_packet_encodepacket"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L74",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_protocol_setdimension",
+      "target": "niimbot_niimbot_packet_encodepacket"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_protocol_setlabeltype",
+      "target": "niimbot_niimbot_packet_encodepacket"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L54",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_protocol_startpageprint",
+      "target": "niimbot_niimbot_packet_encodepacket"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L50",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_protocol_startprint",
+      "target": "niimbot_niimbot_packet_encodepacket"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_protocol_ts",
+      "target": "niimbot_niimbot_packet_encodepacket",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_protocol_spec_ts",
+      "target": "niimbot_niimbot_packet_decodepackets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "niimbot_niimbot_packet_decodepackets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.spec.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_protocol_spec_ts",
+      "target": "niimbot_niimbot_protocol_cmd",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.spec.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_protocol_spec_ts",
+      "target": "niimbot_niimbot_protocol_imageline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.spec.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_protocol_spec_ts",
+      "target": "niimbot_niimbot_protocol_setdimension",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.spec.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_protocol_spec_ts",
+      "target": "src_common_printing_niimbot_niimbot_protocol_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_protocol_ts",
+      "target": "niimbot_niimbot_protocol_cmd",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L57",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_protocol_ts",
+      "target": "niimbot_niimbot_protocol_endpageprint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L61",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_protocol_ts",
+      "target": "niimbot_niimbot_protocol_endprint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L65",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_protocol_ts",
+      "target": "niimbot_niimbot_protocol_getprintstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L85",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_protocol_ts",
+      "target": "niimbot_niimbot_protocol_imageline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_protocol_ts",
+      "target": "niimbot_niimbot_protocol_resp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_protocol_ts",
+      "target": "niimbot_niimbot_protocol_setdensity",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L73",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_protocol_ts",
+      "target": "niimbot_niimbot_protocol_setdimension",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_protocol_ts",
+      "target": "niimbot_niimbot_protocol_setlabeltype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L53",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_protocol_ts",
+      "target": "niimbot_niimbot_protocol_startpageprint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-protocol.ts",
+      "source_location": "L49",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_protocol_ts",
+      "target": "niimbot_niimbot_protocol_startprint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "src_common_printing_niimbot_niimbot_protocol_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "niimbot_niimbot_protocol_resp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L98",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_print",
+      "target": "niimbot_niimbot_protocol_setdensity"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "niimbot_niimbot_protocol_setdensity",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L99",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_print",
+      "target": "niimbot_niimbot_protocol_setlabeltype"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "niimbot_niimbot_protocol_setlabeltype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L100",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_print",
+      "target": "niimbot_niimbot_protocol_startprint"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "niimbot_niimbot_protocol_startprint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L101",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_print",
+      "target": "niimbot_niimbot_protocol_startpageprint"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "niimbot_niimbot_protocol_startpageprint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L114",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_print",
+      "target": "niimbot_niimbot_protocol_endpageprint"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "niimbot_niimbot_protocol_endpageprint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L122",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_finish",
+      "target": "niimbot_niimbot_protocol_endprint"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "niimbot_niimbot_protocol_endprint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L103",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_print",
+      "target": "niimbot_niimbot_protocol_setdimension"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "niimbot_niimbot_protocol_setdimension",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L110",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_print",
+      "target": "niimbot_niimbot_protocol_imageline"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "niimbot_niimbot_protocol_imageline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L213",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "niimbot_niimbot_web_bluetooth_printer_concat",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L191",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "niimbot_niimbot_web_bluetooth_printer_findchannel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L220",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "niimbot_niimbot_web_bluetooth_printer_sleep",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L205",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "niimbot_niimbot_web_bluetooth_printer_tocancellation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "src_common_printing_niimbot_niimbot_web_bluetooth_printer_ts",
+      "target": "niimbot_niimbot_web_bluetooth_printer_waiter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L49",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter",
+      "target": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_connect",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter",
+      "target": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_connected",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L86",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter",
+      "target": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_disconnect",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L119",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter",
+      "target": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_finish",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L93",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter",
+      "target": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_print",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L133",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter",
+      "target": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_transceive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L153",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter",
+      "target": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_write",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L73",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_connect",
+      "target": "niimbot_niimbot_web_bluetooth_printer_findchannel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L75",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_connect",
+      "target": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_disconnect",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L62",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_connect",
+      "target": "niimbot_niimbot_web_bluetooth_printer_tocancellation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L115",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_print",
+      "target": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_finish",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L98",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_print",
+      "target": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_transceive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L110",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_print",
+      "target": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_write",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L111",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_print",
+      "target": "niimbot_niimbot_web_bluetooth_printer_sleep",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L122",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_finish",
+      "target": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_transceive",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L126",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_finish",
+      "target": "niimbot_niimbot_web_bluetooth_printer_sleep",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/common/printing/niimbot/niimbot-web-bluetooth-printer.ts",
+      "source_location": "L149",
+      "weight": 1.0,
+      "source": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_transceive",
+      "target": "niimbot_niimbot_web_bluetooth_printer_niimbotwebbluetoothprinter_write",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/common/responses/api.response.ts",
@@ -12541,6 +14987,16 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "src/app/layout/keyboard-shortcuts.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_app_layout_keyboard_shortcuts_md",
+      "target": "layout_keyboard_shortcuts_app_shell_custom_keyboard_behavior",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "src/app/modules/categories/keyboard-shortcuts.md",
       "source_location": "L1",
       "weight": 1.0,
@@ -12577,6 +15033,16 @@
       "confidence_score": 1.0,
       "source": "categories_keyboard_shortcuts_categories_keyboard_shortcuts",
       "target": "categories_keyboard_shortcuts_quick_reference"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/inventory-audit/keyboard-shortcuts.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_app_modules_inventory_audit_keyboard_shortcuts_md",
+      "target": "inventory_audit_keyboard_shortcuts_inventory_audit_custom_keyboard_behavior",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -12934,5 +15400,5 @@
       "source_file": "src/main.ts"
     }
   ],
-  "built_at_commit": "1a73f00229859939fc97b43c7b15900cfa5c7e91"
+  "built_at_commit": "e64f54dc2af5f116f5c1560df6567384bc2a3828"
 }
