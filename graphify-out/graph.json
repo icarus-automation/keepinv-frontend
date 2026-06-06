@@ -514,7 +514,7 @@
       "source_file": "src/app/modules/categories/categories.spec.ts",
       "source_location": "L1",
       "id": "src_app_modules_categories_categories_spec_ts",
-      "community": 20,
+      "community": 7,
       "norm_label": "categories.spec.ts"
     },
     {
@@ -667,7 +667,7 @@
       "source_file": "src/app/modules/categories/services/categories.service.ts",
       "source_location": "L1",
       "id": "src_app_modules_categories_services_categories_service_ts",
-      "community": 7,
+      "community": 20,
       "norm_label": "categories.service.ts"
     },
     {
@@ -1018,7 +1018,7 @@
       "source_file": "src/app/modules/inventory-audit/services/inventory-audit.service.ts",
       "source_location": "L1",
       "id": "src_app_modules_inventory_audit_services_inventory_audit_service_ts",
-      "community": 20,
+      "community": 6,
       "norm_label": "inventory-audit.service.ts"
     },
     {
@@ -1027,7 +1027,7 @@
       "source_file": "src/app/modules/inventory-audit/services/inventory-audit.service.ts",
       "source_location": "L21",
       "id": "services_inventory_audit_service_inventoryauditpage",
-      "community": 20,
+      "community": 6,
       "norm_label": "inventoryauditpage"
     },
     {
@@ -1585,7 +1585,7 @@
       "source_file": "src/app/modules/locations/locations.ts",
       "source_location": "L1",
       "id": "src_app_modules_locations_locations_ts",
-      "community": 4,
+      "community": 3,
       "norm_label": "locations.ts"
     },
     {
@@ -1729,7 +1729,7 @@
       "source_file": "src/app/modules/locations/services/locations.service.ts",
       "source_location": "L1",
       "id": "src_app_modules_locations_services_locations_service_ts",
-      "community": 4,
+      "community": 3,
       "norm_label": "locations.service.ts"
     },
     {
@@ -1738,7 +1738,7 @@
       "source_file": "src/app/modules/locations/services/locations.service.ts",
       "source_location": "L15",
       "id": "services_locations_service_locationsservice",
-      "community": 4,
+      "community": 3,
       "norm_label": "locationsservice"
     },
     {
@@ -1747,7 +1747,7 @@
       "source_file": "src/app/modules/locations/services/locations.service.ts",
       "source_location": "L19",
       "id": "services_locations_service_locationsservice_list",
-      "community": 4,
+      "community": 3,
       "norm_label": ".list()"
     },
     {
@@ -1756,7 +1756,7 @@
       "source_file": "src/app/modules/locations/services/locations.service.ts",
       "source_location": "L23",
       "id": "services_locations_service_locationsservice_create",
-      "community": 4,
+      "community": 3,
       "norm_label": ".create()"
     },
     {
@@ -1765,7 +1765,7 @@
       "source_file": "src/app/modules/locations/services/locations.service.ts",
       "source_location": "L27",
       "id": "services_locations_service_locationsservice_update",
-      "community": 4,
+      "community": 3,
       "norm_label": ".update()"
     },
     {
@@ -1774,7 +1774,7 @@
       "source_file": "src/app/modules/locations/services/locations.service.ts",
       "source_location": "L34",
       "id": "services_locations_service_locationsservice_archive",
-      "community": 4,
+      "community": 3,
       "norm_label": ".archive()"
     },
     {
@@ -1783,7 +1783,7 @@
       "source_file": "src/app/modules/locations/types/location.types.ts",
       "source_location": "L1",
       "id": "src_app_modules_locations_types_location_types_ts",
-      "community": 4,
+      "community": 3,
       "norm_label": "location.types.ts"
     },
     {
@@ -1792,7 +1792,7 @@
       "source_file": "src/app/modules/locations/types/location.types.ts",
       "source_location": "L6",
       "id": "types_location_types_location",
-      "community": 4,
+      "community": 3,
       "norm_label": "location"
     },
     {
@@ -1801,8 +1801,854 @@
       "source_file": "src/app/modules/locations/types/location.types.ts",
       "source_location": "L18",
       "id": "types_location_types_locationrequest",
-      "community": 4,
+      "community": 3,
       "norm_label": "locationrequest"
+    },
+    {
+      "label": "pos.ts",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L1",
+      "id": "src_app_modules_pos_pos_ts",
+      "community": 24,
+      "norm_label": "pos.ts"
+    },
+    {
+      "label": "CartLine",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L38",
+      "id": "pos_pos_cartline",
+      "community": 24,
+      "norm_label": "cartline"
+    },
+    {
+      "label": "TenderChip",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L52",
+      "id": "pos_pos_tenderchip",
+      "community": 24,
+      "norm_label": "tenderchip"
+    },
+    {
+      "label": "Pos",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L76",
+      "id": "pos_pos_pos",
+      "community": 15,
+      "norm_label": "pos"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L162",
+      "id": "pos_pos_pos_constructor",
+      "community": 15,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": ".runLiveSearch()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L187",
+      "id": "pos_pos_pos_runlivesearch",
+      "community": 15,
+      "norm_label": ".runlivesearch()"
+    },
+    {
+      "label": ".onScanEnter()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L210",
+      "id": "pos_pos_pos_onscanenter",
+      "community": 15,
+      "norm_label": ".onscanenter()"
+    },
+    {
+      "label": ".resolveAndAdd()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L232",
+      "id": "pos_pos_pos_resolveandadd",
+      "community": 15,
+      "norm_label": ".resolveandadd()"
+    },
+    {
+      "label": ".identifierMatches()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L266",
+      "id": "pos_pos_pos_identifiermatches",
+      "community": 24,
+      "norm_label": ".identifiermatches()"
+    },
+    {
+      "label": ".firstSellableIndex()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L275",
+      "id": "pos_pos_pos_firstsellableindex",
+      "community": 24,
+      "norm_label": ".firstsellableindex()"
+    },
+    {
+      "label": ".moveHighlight()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L280",
+      "id": "pos_pos_pos_movehighlight",
+      "community": 15,
+      "norm_label": ".movehighlight()"
+    },
+    {
+      "label": ".highlight()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L289",
+      "id": "pos_pos_pos_highlight",
+      "community": 15,
+      "norm_label": ".highlight()"
+    },
+    {
+      "label": ".closeResults()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L293",
+      "id": "pos_pos_pos_closeresults",
+      "community": 15,
+      "norm_label": ".closeresults()"
+    },
+    {
+      "label": ".onScanBlur()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L297",
+      "id": "pos_pos_pos_onscanblur",
+      "community": 15,
+      "norm_label": ".onscanblur()"
+    },
+    {
+      "label": ".optionId()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L309",
+      "id": "pos_pos_pos_optionid",
+      "community": 15,
+      "norm_label": ".optionid()"
+    },
+    {
+      "label": ".addItem()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L315",
+      "id": "pos_pos_pos_additem",
+      "community": 15,
+      "norm_label": ".additem()"
+    },
+    {
+      "label": ".productLine()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L345",
+      "id": "pos_pos_pos_productline",
+      "community": 24,
+      "norm_label": ".productline()"
+    },
+    {
+      "label": ".unitLine()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L358",
+      "id": "pos_pos_pos_unitline",
+      "community": 24,
+      "norm_label": ".unitline()"
+    },
+    {
+      "label": ".afterAdd()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L374",
+      "id": "pos_pos_pos_afteradd",
+      "community": 15,
+      "norm_label": ".afteradd()"
+    },
+    {
+      "label": ".increment()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L382",
+      "id": "pos_pos_pos_increment",
+      "community": 15,
+      "norm_label": ".increment()"
+    },
+    {
+      "label": ".decrement()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L391",
+      "id": "pos_pos_pos_decrement",
+      "community": 15,
+      "norm_label": ".decrement()"
+    },
+    {
+      "label": ".removeLine()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L402",
+      "id": "pos_pos_pos_removeline",
+      "community": 15,
+      "norm_label": ".removeline()"
+    },
+    {
+      "label": ".clearCart()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L407",
+      "id": "pos_pos_pos_clearcart",
+      "community": 15,
+      "norm_label": ".clearcart()"
+    },
+    {
+      "label": ".overStock()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L413",
+      "id": "pos_pos_pos_overstock",
+      "community": 15,
+      "norm_label": ".overstock()"
+    },
+    {
+      "label": ".lineTotal()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L417",
+      "id": "pos_pos_pos_linetotal",
+      "community": 3,
+      "norm_label": ".linetotal()"
+    },
+    {
+      "label": ".unitPrice()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L421",
+      "id": "pos_pos_pos_unitprice",
+      "community": 3,
+      "norm_label": ".unitprice()"
+    },
+    {
+      "label": ".setMethod()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L427",
+      "id": "pos_pos_pos_setmethod",
+      "community": 27,
+      "norm_label": ".setmethod()"
+    },
+    {
+      "label": ".applyTenderChip()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L436",
+      "id": "pos_pos_pos_applytenderchip",
+      "community": 15,
+      "norm_label": ".applytenderchip()"
+    },
+    {
+      "label": ".toggleNote()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L445",
+      "id": "pos_pos_pos_togglenote",
+      "community": 15,
+      "norm_label": ".togglenote()"
+    },
+    {
+      "label": ".checkout()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L451",
+      "id": "pos_pos_pos_checkout",
+      "community": 15,
+      "norm_label": ".checkout()"
+    },
+    {
+      "label": ".newSale()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L483",
+      "id": "pos_pos_pos_newsale",
+      "community": 15,
+      "norm_label": ".newsale()"
+    },
+    {
+      "label": ".refocus()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L498",
+      "id": "pos_pos_pos_refocus",
+      "community": 15,
+      "norm_label": ".refocus()"
+    },
+    {
+      "label": ".flagNotice()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L504",
+      "id": "pos_pos_pos_flagnotice",
+      "community": 15,
+      "norm_label": ".flagnotice()"
+    },
+    {
+      "label": "sales.ts",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L1",
+      "id": "src_app_modules_pos_sales_ts",
+      "community": 23,
+      "norm_label": "sales.ts"
+    },
+    {
+      "label": "SelectOption",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L34",
+      "id": "pos_sales_selectoption",
+      "community": 23,
+      "norm_label": "selectoption"
+    },
+    {
+      "label": "Sales",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L62",
+      "id": "pos_sales_sales",
+      "community": 25,
+      "norm_label": "sales"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L100",
+      "id": "pos_sales_sales_constructor",
+      "community": 25,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": ".onLazyLoad()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L122",
+      "id": "pos_sales_sales_onlazyload",
+      "community": 25,
+      "norm_label": ".onlazyload()"
+    },
+    {
+      "label": ".applyFilters()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L131",
+      "id": "pos_sales_sales_applyfilters",
+      "community": 25,
+      "norm_label": ".applyfilters()"
+    },
+    {
+      "label": ".load()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L139",
+      "id": "pos_sales_sales_load",
+      "community": 25,
+      "norm_label": ".load()"
+    },
+    {
+      "label": ".syncSelection()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L178",
+      "id": "pos_sales_sales_syncselection",
+      "community": 25,
+      "norm_label": ".syncselection()"
+    },
+    {
+      "label": ".clearFilters()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L190",
+      "id": "pos_sales_sales_clearfilters",
+      "community": 25,
+      "norm_label": ".clearfilters()"
+    },
+    {
+      "label": ".selectSale()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L198",
+      "id": "pos_sales_sales_selectsale",
+      "community": 25,
+      "norm_label": ".selectsale()"
+    },
+    {
+      "label": ".onSelectionChange()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L203",
+      "id": "pos_sales_sales_onselectionchange",
+      "community": 25,
+      "norm_label": ".onselectionchange()"
+    },
+    {
+      "label": ".onChanged()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L210",
+      "id": "pos_sales_sales_onchanged",
+      "community": 25,
+      "norm_label": ".onchanged()"
+    },
+    {
+      "label": ".backToList()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L214",
+      "id": "pos_sales_sales_backtolist",
+      "community": 25,
+      "norm_label": ".backtolist()"
+    },
+    {
+      "label": ".methodLabel()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L218",
+      "id": "pos_sales_sales_methodlabel",
+      "community": 27,
+      "norm_label": ".methodlabel()"
+    },
+    {
+      "label": ".goToPos()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L222",
+      "id": "pos_sales_sales_gotopos",
+      "community": 25,
+      "norm_label": ".gotopos()"
+    },
+    {
+      "label": ".computeHasFilters()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L226",
+      "id": "pos_sales_sales_computehasfilters",
+      "community": 25,
+      "norm_label": ".computehasfilters()"
+    },
+    {
+      "label": ".startOfDayIso()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L235",
+      "id": "pos_sales_sales_startofdayiso",
+      "community": 25,
+      "norm_label": ".startofdayiso()"
+    },
+    {
+      "label": ".endOfDayIso()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L244",
+      "id": "pos_sales_sales_endofdayiso",
+      "community": 25,
+      "norm_label": ".endofdayiso()"
+    },
+    {
+      "label": "receipt.ts",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/components/receipt.ts",
+      "source_location": "L1",
+      "id": "src_app_modules_pos_components_receipt_ts",
+      "community": 23,
+      "norm_label": "receipt.ts"
+    },
+    {
+      "label": "Receipt",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/components/receipt.ts",
+      "source_location": "L19",
+      "id": "components_receipt_receipt",
+      "community": 27,
+      "norm_label": "receipt"
+    },
+    {
+      "label": ".paymentLabel()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/components/receipt.ts",
+      "source_location": "L22",
+      "id": "components_receipt_receipt_paymentlabel",
+      "community": 27,
+      "norm_label": ".paymentlabel()"
+    },
+    {
+      "label": "sale-status-badge.ts",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/components/sale-status-badge.ts",
+      "source_location": "L1",
+      "id": "src_app_modules_pos_components_sale_status_badge_ts",
+      "community": 23,
+      "norm_label": "sale-status-badge.ts"
+    },
+    {
+      "label": "TONE_CLASSES",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/components/sale-status-badge.ts",
+      "source_location": "L9",
+      "id": "components_sale_status_badge_tone_classes",
+      "community": 23,
+      "norm_label": "tone_classes"
+    },
+    {
+      "label": "SaleStatusBadge",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/components/sale-status-badge.ts",
+      "source_location": "L28",
+      "id": "components_sale_status_badge_salestatusbadge",
+      "community": 23,
+      "norm_label": "salestatusbadge"
+    },
+    {
+      "label": "sale-detail.ts",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L1",
+      "id": "src_app_modules_pos_detail_sale_detail_ts",
+      "community": 23,
+      "norm_label": "sale-detail.ts"
+    },
+    {
+      "label": "SaleDetail",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L47",
+      "id": "detail_sale_detail_saledetail",
+      "community": 26,
+      "norm_label": "saledetail"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L77",
+      "id": "detail_sale_detail_saledetail_constructor",
+      "community": 26,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": ".load()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L86",
+      "id": "detail_sale_detail_saledetail_load",
+      "community": 26,
+      "norm_label": ".load()"
+    },
+    {
+      "label": ".retry()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L116",
+      "id": "detail_sale_detail_saledetail_retry",
+      "community": 26,
+      "norm_label": ".retry()"
+    },
+    {
+      "label": ".startVoid()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L120",
+      "id": "detail_sale_detail_saledetail_startvoid",
+      "community": 26,
+      "norm_label": ".startvoid()"
+    },
+    {
+      "label": ".cancelVoid()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L125",
+      "id": "detail_sale_detail_saledetail_cancelvoid",
+      "community": 26,
+      "norm_label": ".cancelvoid()"
+    },
+    {
+      "label": ".confirmVoid()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L129",
+      "id": "detail_sale_detail_saledetail_confirmvoid",
+      "community": 26,
+      "norm_label": ".confirmvoid()"
+    },
+    {
+      "label": ".resetVoid()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L153",
+      "id": "detail_sale_detail_saledetail_resetvoid",
+      "community": 26,
+      "norm_label": ".resetvoid()"
+    },
+    {
+      "label": ".formatUser()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L160",
+      "id": "detail_sale_detail_saledetail_formatuser",
+      "community": 26,
+      "norm_label": ".formatuser()"
+    },
+    {
+      "label": "pos.service.ts",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L1",
+      "id": "src_app_modules_pos_services_pos_service_ts",
+      "community": 20,
+      "norm_label": "pos.service.ts"
+    },
+    {
+      "label": "SalesPage",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L20",
+      "id": "services_pos_service_salespage",
+      "community": 20,
+      "norm_label": "salespage"
+    },
+    {
+      "label": "PosService",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L32",
+      "id": "services_pos_service_posservice",
+      "community": 24,
+      "norm_label": "posservice"
+    },
+    {
+      "label": ".searchItems()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L37",
+      "id": "services_pos_service_posservice_searchitems",
+      "community": 24,
+      "norm_label": ".searchitems()"
+    },
+    {
+      "label": ".checkout()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L45",
+      "id": "services_pos_service_posservice_checkout",
+      "community": 24,
+      "norm_label": ".checkout()"
+    },
+    {
+      "label": ".listSales()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L52",
+      "id": "services_pos_service_posservice_listsales",
+      "community": 23,
+      "norm_label": ".listsales()"
+    },
+    {
+      "label": ".getSale()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L78",
+      "id": "services_pos_service_posservice_getsale",
+      "community": 24,
+      "norm_label": ".getsale()"
+    },
+    {
+      "label": ".voidSale()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L85",
+      "id": "services_pos_service_posservice_voidsale",
+      "community": 24,
+      "norm_label": ".voidsale()"
+    },
+    {
+      "label": "pos.types.ts",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L1",
+      "id": "src_app_modules_pos_types_pos_types_ts",
+      "community": 23,
+      "norm_label": "pos.types.ts"
+    },
+    {
+      "label": "SaleStatus",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L8",
+      "id": "types_pos_types_salestatus",
+      "community": 23,
+      "norm_label": "salestatus"
+    },
+    {
+      "label": "PaymentMethod",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L11",
+      "id": "types_pos_types_paymentmethod",
+      "community": 27,
+      "norm_label": "paymentmethod"
+    },
+    {
+      "label": "PosSearchItem",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L19",
+      "id": "types_pos_types_possearchitem",
+      "community": 24,
+      "norm_label": "possearchitem"
+    },
+    {
+      "label": "CheckoutItem",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L38",
+      "id": "types_pos_types_checkoutitem",
+      "community": 23,
+      "norm_label": "checkoutitem"
+    },
+    {
+      "label": "CheckoutRequest",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L45",
+      "id": "types_pos_types_checkoutrequest",
+      "community": 24,
+      "norm_label": "checkoutrequest"
+    },
+    {
+      "label": "ReceiptItemData",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L53",
+      "id": "types_pos_types_receiptitemdata",
+      "community": 23,
+      "norm_label": "receiptitemdata"
+    },
+    {
+      "label": "ReceiptData",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L70",
+      "id": "types_pos_types_receiptdata",
+      "community": 23,
+      "norm_label": "receiptdata"
+    },
+    {
+      "label": "PosUser",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L83",
+      "id": "types_pos_types_posuser",
+      "community": 26,
+      "norm_label": "posuser"
+    },
+    {
+      "label": "SaleListItem",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L92",
+      "id": "types_pos_types_salelistitem",
+      "community": 25,
+      "norm_label": "salelistitem"
+    },
+    {
+      "label": "SaleItem",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L111",
+      "id": "types_pos_types_saleitem",
+      "community": 23,
+      "norm_label": "saleitem"
+    },
+    {
+      "label": "SaleWithRelations",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L125",
+      "id": "types_pos_types_salewithrelations",
+      "community": 23,
+      "norm_label": "salewithrelations"
+    },
+    {
+      "label": "SaleResult",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L144",
+      "id": "types_pos_types_saleresult",
+      "community": 24,
+      "norm_label": "saleresult"
+    },
+    {
+      "label": "SalesListQuery",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L150",
+      "id": "types_pos_types_saleslistquery",
+      "community": 23,
+      "norm_label": "saleslistquery"
+    },
+    {
+      "label": "paymentMethodMeta",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L179",
+      "id": "types_pos_types_paymentmethodmeta",
+      "community": 23,
+      "norm_label": "paymentmethodmeta"
+    },
+    {
+      "label": "PAYMENT_METHODS",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L169",
+      "id": "types_pos_types_payment_methods",
+      "community": 24,
+      "norm_label": "payment_methods"
+    },
+    {
+      "label": "saleStatusMeta",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L196",
+      "id": "types_pos_types_salestatusmeta",
+      "community": 23,
+      "norm_label": "salestatusmeta"
+    },
+    {
+      "label": "SALE_STATUS_META",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L190",
+      "id": "types_pos_types_sale_status_meta",
+      "community": 23,
+      "norm_label": "sale_status_meta"
+    },
+    {
+      "label": "priceToCents()",
+      "file_type": "code",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L205",
+      "id": "types_pos_types_pricetocents",
+      "community": 24,
+      "norm_label": "pricetocents()"
     },
     {
       "label": "products.spec.ts",
@@ -2404,7 +3250,7 @@
       "source_file": "src/app/modules/products/services/products.service.ts",
       "source_location": "L1",
       "id": "src_app_modules_products_services_products_service_ts",
-      "community": 3,
+      "community": 20,
       "norm_label": "products.service.ts"
     },
     {
@@ -2413,7 +3259,7 @@
       "source_file": "src/app/modules/products/services/products.service.ts",
       "source_location": "L14",
       "id": "services_products_service_productpage",
-      "community": 3,
+      "community": 20,
       "norm_label": "productpage"
     },
     {
@@ -2485,7 +3331,7 @@
       "source_file": "src/app/modules/products/types/product-unit.types.ts",
       "source_location": "L10",
       "id": "types_product_unit_types_productunitstatus",
-      "community": 20,
+      "community": 22,
       "norm_label": "productunitstatus"
     },
     {
@@ -2494,7 +3340,7 @@
       "source_file": "src/app/modules/products/types/product-unit.types.ts",
       "source_location": "L19",
       "id": "types_product_unit_types_registermovementtype",
-      "community": 20,
+      "community": 3,
       "norm_label": "registermovementtype"
     },
     {
@@ -2530,7 +3376,7 @@
       "source_file": "src/app/modules/products/types/product-unit.types.ts",
       "source_location": "L63",
       "id": "types_product_unit_types_registerproductunitsresult",
-      "community": 20,
+      "community": 3,
       "norm_label": "registerproductunitsresult"
     },
     {
@@ -2719,7 +3565,7 @@
       "source_file": "src/app/modules/products/units/commission-session.ts",
       "source_location": "L1",
       "id": "src_app_modules_products_units_commission_session_ts",
-      "community": 20,
+      "community": 3,
       "norm_label": "commission-session.ts"
     },
     {
@@ -2728,7 +3574,7 @@
       "source_file": "src/app/modules/products/units/commission-session.ts",
       "source_location": "L38",
       "id": "units_commission_session_stagedunit",
-      "community": 20,
+      "community": 3,
       "norm_label": "stagedunit"
     },
     {
@@ -2737,7 +3583,7 @@
       "source_file": "src/app/modules/products/units/commission-session.ts",
       "source_location": "L47",
       "id": "units_commission_session_capturemode",
-      "community": 20,
+      "community": 3,
       "norm_label": "capturemode"
     },
     {
@@ -2746,7 +3592,7 @@
       "source_file": "src/app/modules/products/units/commission-session.ts",
       "source_location": "L49",
       "id": "units_commission_session_capturemodechip",
-      "community": 20,
+      "community": 3,
       "norm_label": "capturemodechip"
     },
     {
@@ -2755,7 +3601,7 @@
       "source_file": "src/app/modules/products/units/commission-session.ts",
       "source_location": "L58",
       "id": "units_commission_session_stagedrow",
-      "community": 20,
+      "community": 3,
       "norm_label": "stagedrow"
     },
     {
@@ -2764,7 +3610,7 @@
       "source_file": "src/app/modules/products/units/commission-session.ts",
       "source_location": "L65",
       "id": "units_commission_session_namedrecord",
-      "community": 20,
+      "community": 3,
       "norm_label": "namedrecord"
     },
     {
@@ -2773,7 +3619,7 @@
       "source_file": "src/app/modules/products/units/commission-session.ts",
       "source_location": "L70",
       "id": "units_commission_session_reasonchip",
-      "community": 20,
+      "community": 3,
       "norm_label": "reasonchip"
     },
     {
@@ -2998,7 +3844,7 @@
       "source_file": "src/app/modules/products/units/units-roster.ts",
       "source_location": "L1",
       "id": "src_app_modules_products_units_units_roster_ts",
-      "community": 20,
+      "community": 3,
       "norm_label": "units-roster.ts"
     },
     {
@@ -3007,7 +3853,7 @@
       "source_file": "src/app/modules/products/units/units-roster.ts",
       "source_location": "L38",
       "id": "units_units_roster_namedrecord",
-      "community": 20,
+      "community": 3,
       "norm_label": "namedrecord"
     },
     {
@@ -3016,7 +3862,7 @@
       "source_file": "src/app/modules/products/units/units-roster.ts",
       "source_location": "L43",
       "id": "units_units_roster_statusfilterchip",
-      "community": 20,
+      "community": 22,
       "norm_label": "statusfilterchip"
     },
     {
@@ -3025,7 +3871,7 @@
       "source_file": "src/app/modules/products/units/units-roster.ts",
       "source_location": "L49",
       "id": "units_units_roster_actionview",
-      "community": 20,
+      "community": 3,
       "norm_label": "actionview"
     },
     {
@@ -3142,7 +3988,7 @@
       "source_file": "src/app/modules/products/units/units-roster.ts",
       "source_location": "L307",
       "id": "units_units_roster_unitsroster_canwritetag",
-      "community": 20,
+      "community": 22,
       "norm_label": ".canwritetag()"
     },
     {
@@ -3151,7 +3997,7 @@
       "source_file": "src/app/modules/products/units/units-roster.ts",
       "source_location": "L311",
       "id": "units_units_roster_unitsroster_ontargetstatus",
-      "community": 20,
+      "community": 22,
       "norm_label": ".ontargetstatus()"
     },
     {
@@ -3475,7 +4321,7 @@
       "source_file": "src/app/modules/stock-movements/record/stock-movement-record.ts",
       "source_location": "L1",
       "id": "src_app_modules_stock_movements_record_stock_movement_record_ts",
-      "community": 3,
+      "community": 14,
       "norm_label": "stock-movement-record.ts"
     },
     {
@@ -3484,7 +4330,7 @@
       "source_file": "src/app/modules/stock-movements/record/stock-movement-record.ts",
       "source_location": "L37",
       "id": "record_stock_movement_record_namedrecord",
-      "community": 3,
+      "community": 14,
       "norm_label": "namedrecord"
     },
     {
@@ -3493,7 +4339,7 @@
       "source_file": "src/app/modules/stock-movements/record/stock-movement-record.ts",
       "source_location": "L64",
       "id": "record_stock_movement_record_stockmovementrecord",
-      "community": 15,
+      "community": 14,
       "norm_label": "stockmovementrecord"
     },
     {
@@ -3502,7 +4348,7 @@
       "source_file": "src/app/modules/stock-movements/record/stock-movement-record.ts",
       "source_location": "L110",
       "id": "record_stock_movement_record_stockmovementrecord_ngoninit",
-      "community": 15,
+      "community": 14,
       "norm_label": ".ngoninit()"
     },
     {
@@ -3511,7 +4357,7 @@
       "source_file": "src/app/modules/stock-movements/record/stock-movement-record.ts",
       "source_location": "L137",
       "id": "record_stock_movement_record_stockmovementrecord_searchproducts",
-      "community": 15,
+      "community": 14,
       "norm_label": ".searchproducts()"
     },
     {
@@ -3520,7 +4366,7 @@
       "source_file": "src/app/modules/stock-movements/record/stock-movement-record.ts",
       "source_location": "L141",
       "id": "record_stock_movement_record_stockmovementrecord_record",
-      "community": 15,
+      "community": 14,
       "norm_label": ".record()"
     },
     {
@@ -3529,7 +4375,7 @@
       "source_file": "src/app/modules/stock-movements/record/stock-movement-record.ts",
       "source_location": "L185",
       "id": "record_stock_movement_record_stockmovementrecord_resetfornextentry",
-      "community": 15,
+      "community": 14,
       "norm_label": ".resetfornextentry()"
     },
     {
@@ -3538,7 +4384,7 @@
       "source_file": "src/app/modules/stock-movements/record/stock-movement-record.ts",
       "source_location": "L192",
       "id": "record_stock_movement_record_stockmovementrecord_createsupplier",
-      "community": 15,
+      "community": 14,
       "norm_label": ".createsupplier()"
     },
     {
@@ -3547,7 +4393,7 @@
       "source_file": "src/app/modules/stock-movements/record/stock-movement-record.ts",
       "source_location": "L204",
       "id": "record_stock_movement_record_stockmovementrecord_createlocation",
-      "community": 15,
+      "community": 14,
       "norm_label": ".createlocation()"
     },
     {
@@ -3556,7 +4402,7 @@
       "source_file": "src/app/modules/stock-movements/record/stock-movement-record.ts",
       "source_location": "L216",
       "id": "record_stock_movement_record_stockmovementrecord_openquick",
-      "community": 15,
+      "community": 14,
       "norm_label": ".openquick()"
     },
     {
@@ -3565,7 +4411,7 @@
       "source_file": "src/app/modules/stock-movements/record/stock-movement-record.ts",
       "source_location": "L221",
       "id": "record_stock_movement_record_stockmovementrecord_runquickcreate",
-      "community": 15,
+      "community": 14,
       "norm_label": ".runquickcreate()"
     },
     {
@@ -3574,7 +4420,7 @@
       "source_file": "src/app/modules/stock-movements/record/stock-movement-record.ts",
       "source_location": "L251",
       "id": "record_stock_movement_record_stockmovementrecord_loadoptions",
-      "community": 15,
+      "community": 14,
       "norm_label": ".loadoptions()"
     },
     {
@@ -3583,7 +4429,7 @@
       "source_file": "src/app/modules/stock-movements/record/stock-movement-record.ts",
       "source_location": "L262",
       "id": "record_stock_movement_record_stockmovementrecord_validationmessage",
-      "community": 15,
+      "community": 14,
       "norm_label": ".validationmessage()"
     },
     {
@@ -4069,7 +4915,7 @@
       "source_file": "src/app/modules/suppliers/services/suppliers.service.ts",
       "source_location": "L1",
       "id": "src_app_modules_suppliers_services_suppliers_service_ts",
-      "community": 5,
+      "community": 20,
       "norm_label": "suppliers.service.ts"
     },
     {
@@ -4276,7 +5122,7 @@
       "source_file": "src/common/http/http-error-message.ts",
       "source_location": "L1",
       "id": "src_common_http_http_error_message_ts",
-      "community": 6,
+      "community": 3,
       "norm_label": "http-error-message.ts"
     },
     {
@@ -4285,7 +5131,7 @@
       "source_file": "src/common/http/http-error-message.ts",
       "source_location": "L4",
       "id": "http_http_error_message_backendmessage",
-      "community": 6,
+      "community": 3,
       "norm_label": "backendmessage()"
     },
     {
@@ -4294,7 +5140,7 @@
       "source_file": "src/common/http/http-error-message.ts",
       "source_location": "L18",
       "id": "http_http_error_message_httperrormessage",
-      "community": 6,
+      "community": 3,
       "norm_label": "httperrormessage()"
     },
     {
@@ -9825,6 +10671,2163 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_pos_ts",
+      "target": "components_receipt_receipt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_pos_ts",
+      "target": "http_http_error_message_httperrormessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_pos_ts",
+      "target": "pos_pos_cartline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L76",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_pos_ts",
+      "target": "pos_pos_pos",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_pos_ts",
+      "target": "pos_pos_tenderchip",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_pos_ts",
+      "target": "services_pos_service_posservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_pos_ts",
+      "target": "src_app_modules_pos_components_receipt_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_pos_ts",
+      "target": "src_app_modules_pos_services_pos_service_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_pos_ts",
+      "target": "src_app_modules_pos_types_pos_types_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_pos_ts",
+      "target": "src_app_modules_products_utils_money_pipe_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_pos_ts",
+      "target": "src_common_http_http_error_message_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_pos_ts",
+      "target": "types_pos_types_payment_methods",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_pos_ts",
+      "target": "types_pos_types_paymentmethod",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_pos_ts",
+      "target": "types_pos_types_paymentmethodmeta",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_pos_ts",
+      "target": "types_pos_types_possearchitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_pos_ts",
+      "target": "types_pos_types_pricetocents",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_pos_ts",
+      "target": "types_pos_types_saleresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_pos_ts",
+      "target": "utils_money_pipe_formatpeso",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_pos_ts",
+      "target": "utils_money_pipe_moneypipe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L315",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_additem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L374",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_afteradd",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L436",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_applytenderchip",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L451",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_checkout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L407",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_clearcart",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L293",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_closeresults",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L162",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L391",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_decrement",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L275",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_firstsellableindex",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L504",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_flagnotice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L289",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_highlight",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L266",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_identifiermatches",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L382",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_increment",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L417",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_linetotal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L280",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_movehighlight",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L483",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_newsale",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L297",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_onscanblur",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L210",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_onscanenter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L309",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_optionid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L413",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_overstock",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L345",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_productline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L498",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_refocus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L402",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_removeline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L232",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_resolveandadd",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L187",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_runlivesearch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L427",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_setmethod",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L445",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_togglenote",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L358",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_unitline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L421",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "pos_pos_pos_unitprice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L99",
+      "weight": 1.0,
+      "source": "pos_pos_pos",
+      "target": "types_pos_types_paymentmethodmeta",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L220",
+      "weight": 1.0,
+      "source": "pos_pos_pos_onscanenter",
+      "target": "pos_pos_pos_additem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L224",
+      "weight": 1.0,
+      "source": "pos_pos_pos_onscanenter",
+      "target": "pos_pos_pos_resolveandadd",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L266",
+      "weight": 1.0,
+      "source": "pos_pos_pos_identifiermatches",
+      "target": "types_pos_types_possearchitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L275",
+      "weight": 1.0,
+      "source": "pos_pos_pos_firstsellableindex",
+      "target": "types_pos_types_possearchitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L324",
+      "weight": 1.0,
+      "source": "pos_pos_pos_additem",
+      "target": "pos_pos_pos_afteradd",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L317",
+      "weight": 1.0,
+      "source": "pos_pos_pos_additem",
+      "target": "pos_pos_pos_flagnotice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L315",
+      "weight": 1.0,
+      "source": "pos_pos_pos_additem",
+      "target": "types_pos_types_possearchitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L345",
+      "weight": 1.0,
+      "source": "pos_pos_pos_productline",
+      "target": "types_pos_types_possearchitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L351",
+      "weight": 1.0,
+      "source": "pos_pos_pos_productline",
+      "target": "types_pos_types_pricetocents"
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L358",
+      "weight": 1.0,
+      "source": "pos_pos_pos_unitline",
+      "target": "types_pos_types_possearchitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L366",
+      "weight": 1.0,
+      "source": "pos_pos_pos_unitline",
+      "target": "types_pos_types_pricetocents"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L379",
+      "weight": 1.0,
+      "source": "pos_pos_pos_afteradd",
+      "target": "pos_pos_pos_refocus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L388",
+      "weight": 1.0,
+      "source": "pos_pos_pos_increment",
+      "target": "pos_pos_pos_refocus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L399",
+      "weight": 1.0,
+      "source": "pos_pos_pos_decrement",
+      "target": "pos_pos_pos_refocus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L404",
+      "weight": 1.0,
+      "source": "pos_pos_pos_removeline",
+      "target": "pos_pos_pos_refocus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L410",
+      "weight": 1.0,
+      "source": "pos_pos_pos_clearcart",
+      "target": "pos_pos_pos_refocus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L418",
+      "weight": 1.0,
+      "source": "pos_pos_pos_linetotal",
+      "target": "utils_money_pipe_formatpeso"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L422",
+      "weight": 1.0,
+      "source": "pos_pos_pos_unitprice",
+      "target": "utils_money_pipe_formatpeso"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L433",
+      "weight": 1.0,
+      "source": "pos_pos_pos_setmethod",
+      "target": "pos_pos_pos_refocus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/pos.ts",
+      "source_location": "L427",
+      "weight": 1.0,
+      "source": "pos_pos_pos_setmethod",
+      "target": "types_pos_types_paymentmethod",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_sales_ts",
+      "target": "components_sale_status_badge_salestatusbadge",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_sales_ts",
+      "target": "detail_sale_detail_saledetail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_sales_ts",
+      "target": "http_http_error_message_httperrormessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L62",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_sales_ts",
+      "target": "pos_sales_sales",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_sales_ts",
+      "target": "pos_sales_selectoption",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_sales_ts",
+      "target": "services_pos_service_posservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_sales_ts",
+      "target": "src_app_modules_pos_components_sale_status_badge_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_sales_ts",
+      "target": "src_app_modules_pos_detail_sale_detail_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_sales_ts",
+      "target": "src_app_modules_pos_services_pos_service_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_sales_ts",
+      "target": "src_app_modules_pos_types_pos_types_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_sales_ts",
+      "target": "src_app_modules_products_utils_money_pipe_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_sales_ts",
+      "target": "src_common_http_http_error_message_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_sales_ts",
+      "target": "types_pos_types_payment_methods",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_sales_ts",
+      "target": "types_pos_types_paymentmethod",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_sales_ts",
+      "target": "types_pos_types_paymentmethodmeta",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_sales_ts",
+      "target": "types_pos_types_salelistitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_sales_ts",
+      "target": "types_pos_types_saleslistquery",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_sales_ts",
+      "target": "types_pos_types_salestatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_sales_ts",
+      "target": "utils_money_pipe_moneypipe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L131",
+      "weight": 1.0,
+      "source": "pos_sales_sales",
+      "target": "pos_sales_sales_applyfilters",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L214",
+      "weight": 1.0,
+      "source": "pos_sales_sales",
+      "target": "pos_sales_sales_backtolist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L190",
+      "weight": 1.0,
+      "source": "pos_sales_sales",
+      "target": "pos_sales_sales_clearfilters",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L226",
+      "weight": 1.0,
+      "source": "pos_sales_sales",
+      "target": "pos_sales_sales_computehasfilters",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L100",
+      "weight": 1.0,
+      "source": "pos_sales_sales",
+      "target": "pos_sales_sales_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L244",
+      "weight": 1.0,
+      "source": "pos_sales_sales",
+      "target": "pos_sales_sales_endofdayiso",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L222",
+      "weight": 1.0,
+      "source": "pos_sales_sales",
+      "target": "pos_sales_sales_gotopos",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L139",
+      "weight": 1.0,
+      "source": "pos_sales_sales",
+      "target": "pos_sales_sales_load",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L218",
+      "weight": 1.0,
+      "source": "pos_sales_sales",
+      "target": "pos_sales_sales_methodlabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L210",
+      "weight": 1.0,
+      "source": "pos_sales_sales",
+      "target": "pos_sales_sales_onchanged",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L122",
+      "weight": 1.0,
+      "source": "pos_sales_sales",
+      "target": "pos_sales_sales_onlazyload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L203",
+      "weight": 1.0,
+      "source": "pos_sales_sales",
+      "target": "pos_sales_sales_onselectionchange",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L198",
+      "weight": 1.0,
+      "source": "pos_sales_sales",
+      "target": "pos_sales_sales_selectsale",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L235",
+      "weight": 1.0,
+      "source": "pos_sales_sales",
+      "target": "pos_sales_sales_startofdayiso",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L178",
+      "weight": 1.0,
+      "source": "pos_sales_sales",
+      "target": "pos_sales_sales_syncselection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L86",
+      "weight": 1.0,
+      "source": "pos_sales_sales",
+      "target": "types_pos_types_paymentmethod",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L82",
+      "weight": 1.0,
+      "source": "pos_sales_sales",
+      "target": "types_pos_types_salestatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L118",
+      "weight": 1.0,
+      "source": "pos_sales_sales_constructor",
+      "target": "pos_sales_sales_load",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L128",
+      "weight": 1.0,
+      "source": "pos_sales_sales_onlazyload",
+      "target": "pos_sales_sales_load",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L136",
+      "weight": 1.0,
+      "source": "pos_sales_sales_applyfilters",
+      "target": "pos_sales_sales_load",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L195",
+      "weight": 1.0,
+      "source": "pos_sales_sales_clearfilters",
+      "target": "pos_sales_sales_applyfilters",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L142",
+      "weight": 1.0,
+      "source": "pos_sales_sales_load",
+      "target": "pos_sales_sales_computehasfilters",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L152",
+      "weight": 1.0,
+      "source": "pos_sales_sales_load",
+      "target": "pos_sales_sales_endofdayiso",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L151",
+      "weight": 1.0,
+      "source": "pos_sales_sales_load",
+      "target": "pos_sales_sales_startofdayiso",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L211",
+      "weight": 1.0,
+      "source": "pos_sales_sales_onchanged",
+      "target": "pos_sales_sales_load",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L178",
+      "weight": 1.0,
+      "source": "pos_sales_sales_syncselection",
+      "target": "types_pos_types_salelistitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L205",
+      "weight": 1.0,
+      "source": "pos_sales_sales_onselectionchange",
+      "target": "pos_sales_sales_selectsale",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L198",
+      "weight": 1.0,
+      "source": "pos_sales_sales_selectsale",
+      "target": "types_pos_types_salelistitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L203",
+      "weight": 1.0,
+      "source": "pos_sales_sales_onselectionchange",
+      "target": "types_pos_types_salelistitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/sales.ts",
+      "source_location": "L218",
+      "weight": 1.0,
+      "source": "pos_sales_sales_methodlabel",
+      "target": "types_pos_types_paymentmethod",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/components/receipt.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_components_receipt_ts",
+      "target": "components_receipt_receipt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/components/receipt.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_components_receipt_ts",
+      "target": "src_app_modules_pos_types_pos_types_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/components/receipt.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_components_receipt_ts",
+      "target": "src_app_modules_products_utils_money_pipe_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/components/receipt.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_components_receipt_ts",
+      "target": "types_pos_types_paymentmethod",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/components/receipt.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_components_receipt_ts",
+      "target": "types_pos_types_paymentmethodmeta",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/components/receipt.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_components_receipt_ts",
+      "target": "types_pos_types_receiptdata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/components/receipt.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_components_receipt_ts",
+      "target": "utils_money_pipe_moneypipe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_detail_sale_detail_ts",
+      "target": "src_app_modules_pos_components_receipt_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/components/receipt.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "components_receipt_receipt",
+      "target": "components_receipt_receipt_paymentlabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_detail_sale_detail_ts",
+      "target": "components_receipt_receipt",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/components/receipt.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "components_receipt_receipt_paymentlabel",
+      "target": "types_pos_types_paymentmethod",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/components/sale-status-badge.ts",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_components_sale_status_badge_ts",
+      "target": "components_sale_status_badge_salestatusbadge",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/components/sale-status-badge.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_components_sale_status_badge_ts",
+      "target": "components_sale_status_badge_tone_classes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/components/sale-status-badge.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_components_sale_status_badge_ts",
+      "target": "src_app_modules_pos_types_pos_types_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/components/sale-status-badge.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_components_sale_status_badge_ts",
+      "target": "types_pos_types_salestatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/components/sale-status-badge.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_components_sale_status_badge_ts",
+      "target": "types_pos_types_salestatusmeta",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_detail_sale_detail_ts",
+      "target": "src_app_modules_pos_components_sale_status_badge_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_detail_sale_detail_ts",
+      "target": "components_sale_status_badge_salestatusbadge",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L47",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_detail_sale_detail_ts",
+      "target": "detail_sale_detail_saledetail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_detail_sale_detail_ts",
+      "target": "http_http_error_message_httperrormessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_detail_sale_detail_ts",
+      "target": "services_pos_service_posservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_detail_sale_detail_ts",
+      "target": "src_app_modules_pos_services_pos_service_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_detail_sale_detail_ts",
+      "target": "src_app_modules_pos_types_pos_types_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_detail_sale_detail_ts",
+      "target": "src_app_modules_products_utils_money_pipe_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_detail_sale_detail_ts",
+      "target": "src_common_http_http_error_message_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_detail_sale_detail_ts",
+      "target": "types_pos_types_posuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_detail_sale_detail_ts",
+      "target": "types_pos_types_salelistitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_detail_sale_detail_ts",
+      "target": "types_pos_types_saleresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_detail_sale_detail_ts",
+      "target": "types_pos_types_salestatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_detail_sale_detail_ts",
+      "target": "utils_money_pipe_moneypipe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L125",
+      "weight": 1.0,
+      "source": "detail_sale_detail_saledetail",
+      "target": "detail_sale_detail_saledetail_cancelvoid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L129",
+      "weight": 1.0,
+      "source": "detail_sale_detail_saledetail",
+      "target": "detail_sale_detail_saledetail_confirmvoid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L77",
+      "weight": 1.0,
+      "source": "detail_sale_detail_saledetail",
+      "target": "detail_sale_detail_saledetail_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L160",
+      "weight": 1.0,
+      "source": "detail_sale_detail_saledetail",
+      "target": "detail_sale_detail_saledetail_formatuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L86",
+      "weight": 1.0,
+      "source": "detail_sale_detail_saledetail",
+      "target": "detail_sale_detail_saledetail_load",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L153",
+      "weight": 1.0,
+      "source": "detail_sale_detail_saledetail",
+      "target": "detail_sale_detail_saledetail_resetvoid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L116",
+      "weight": 1.0,
+      "source": "detail_sale_detail_saledetail",
+      "target": "detail_sale_detail_saledetail_retry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L120",
+      "weight": 1.0,
+      "source": "detail_sale_detail_saledetail",
+      "target": "detail_sale_detail_saledetail_startvoid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L117",
+      "weight": 1.0,
+      "source": "detail_sale_detail_saledetail_retry",
+      "target": "detail_sale_detail_saledetail_load",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L126",
+      "weight": 1.0,
+      "source": "detail_sale_detail_saledetail_cancelvoid",
+      "target": "detail_sale_detail_saledetail_resetvoid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/detail/sale-detail.ts",
+      "source_location": "L160",
+      "weight": 1.0,
+      "source": "detail_sale_detail_saledetail_formatuser",
+      "target": "types_pos_types_posuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_services_pos_service_ts",
+      "target": "environments_environment_environment",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_services_pos_service_ts",
+      "target": "responses_api_response_apiresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_services_pos_service_ts",
+      "target": "responses_api_response_pagemeta",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_services_pos_service_ts",
+      "target": "responses_api_response_paginatedapiresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_services_pos_service_ts",
+      "target": "services_pos_service_posservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_services_pos_service_ts",
+      "target": "services_pos_service_salespage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_services_pos_service_ts",
+      "target": "src_app_modules_pos_types_pos_types_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_services_pos_service_ts",
+      "target": "src_common_responses_api_response_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_services_pos_service_ts",
+      "target": "src_environments_environment_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_services_pos_service_ts",
+      "target": "types_pos_types_checkoutrequest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_services_pos_service_ts",
+      "target": "types_pos_types_possearchitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_services_pos_service_ts",
+      "target": "types_pos_types_salelistitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_services_pos_service_ts",
+      "target": "types_pos_types_saleresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_services_pos_service_ts",
+      "target": "types_pos_types_saleslistquery",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "services_pos_service_salespage",
+      "target": "responses_api_response_pagemeta",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "services_pos_service_salespage",
+      "target": "types_pos_types_salelistitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "services_pos_service_posservice",
+      "target": "services_pos_service_posservice_checkout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L78",
+      "weight": 1.0,
+      "source": "services_pos_service_posservice",
+      "target": "services_pos_service_posservice_getsale",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "services_pos_service_posservice",
+      "target": "services_pos_service_posservice_listsales",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L37",
+      "weight": 1.0,
+      "source": "services_pos_service_posservice",
+      "target": "services_pos_service_posservice_searchitems",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L85",
+      "weight": 1.0,
+      "source": "services_pos_service_posservice",
+      "target": "services_pos_service_posservice_voidsale",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L37",
+      "weight": 1.0,
+      "source": "services_pos_service_posservice_searchitems",
+      "target": "types_pos_types_possearchitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "services_pos_service_posservice_checkout",
+      "target": "types_pos_types_checkoutrequest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "services_pos_service_posservice_checkout",
+      "target": "types_pos_types_saleresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "services_pos_service_posservice_listsales",
+      "target": "types_pos_types_saleslistquery",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L78",
+      "weight": 1.0,
+      "source": "services_pos_service_posservice_getsale",
+      "target": "types_pos_types_saleresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/services/pos.service.ts",
+      "source_location": "L85",
+      "weight": 1.0,
+      "source": "services_pos_service_posservice_voidsale",
+      "target": "types_pos_types_saleresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_types_pos_types_ts",
+      "target": "types_pos_types_checkoutitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_types_pos_types_ts",
+      "target": "types_pos_types_checkoutrequest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L169",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_types_pos_types_ts",
+      "target": "types_pos_types_payment_methods",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_types_pos_types_ts",
+      "target": "types_pos_types_paymentmethod",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L179",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_types_pos_types_ts",
+      "target": "types_pos_types_paymentmethodmeta",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_types_pos_types_ts",
+      "target": "types_pos_types_possearchitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L83",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_types_pos_types_ts",
+      "target": "types_pos_types_posuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L205",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_types_pos_types_ts",
+      "target": "types_pos_types_pricetocents",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L70",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_types_pos_types_ts",
+      "target": "types_pos_types_receiptdata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L53",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_types_pos_types_ts",
+      "target": "types_pos_types_receiptitemdata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L190",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_types_pos_types_ts",
+      "target": "types_pos_types_sale_status_meta",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L111",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_types_pos_types_ts",
+      "target": "types_pos_types_saleitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L92",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_types_pos_types_ts",
+      "target": "types_pos_types_salelistitem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L144",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_types_pos_types_ts",
+      "target": "types_pos_types_saleresult",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L150",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_types_pos_types_ts",
+      "target": "types_pos_types_saleslistquery",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_types_pos_types_ts",
+      "target": "types_pos_types_salestatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L196",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_types_pos_types_ts",
+      "target": "types_pos_types_salestatusmeta",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/modules/pos/types/pos.types.ts",
+      "source_location": "L125",
+      "weight": 1.0,
+      "source": "src_app_modules_pos_types_pos_types_ts",
+      "target": "types_pos_types_salewithrelations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "src/app/modules/products/products.spec.ts",
       "source_location": "L5",
       "weight": 1.0,
@@ -12947,9 +15950,9 @@
       "source_file": "src/app/modules/products/units/commission-session.ts",
       "source_location": "L47",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app_modules_products_units_commission_session_ts",
-      "target": "units_commission_session_capturemode",
-      "confidence_score": 1.0
+      "target": "units_commission_session_capturemode"
     },
     {
       "relation": "contains",
@@ -12957,9 +15960,9 @@
       "source_file": "src/app/modules/products/units/commission-session.ts",
       "source_location": "L49",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app_modules_products_units_commission_session_ts",
-      "target": "units_commission_session_capturemodechip",
-      "confidence_score": 1.0
+      "target": "units_commission_session_capturemodechip"
     },
     {
       "relation": "contains",
@@ -12997,9 +16000,9 @@
       "source_file": "src/app/modules/products/units/commission-session.ts",
       "source_location": "L58",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app_modules_products_units_commission_session_ts",
-      "target": "units_commission_session_stagedrow",
-      "confidence_score": 1.0
+      "target": "units_commission_session_stagedrow"
     },
     {
       "relation": "contains",
@@ -13197,9 +16200,9 @@
       "source_file": "src/app/modules/products/units/commission-session.ts",
       "source_location": "L270",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "units_commission_session_commissionsession",
-      "target": "units_commission_session_commissionsession_setcapturemode",
-      "confidence_score": 1.0
+      "target": "units_commission_session_commissionsession_setcapturemode"
     },
     {
       "relation": "method",
@@ -13273,9 +16276,9 @@
       "source_file": "src/app/modules/products/units/commission-session.ts",
       "source_location": "L272",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "units_commission_session_commissionsession_setcapturemode",
-      "target": "units_commission_session_commissionsession_refocus",
-      "confidence_score": 1.0
+      "target": "units_commission_session_commissionsession_refocus"
     },
     {
       "relation": "calls",
@@ -18174,5 +21177,5 @@
       "source_file": "src/main.ts"
     }
   ],
-  "built_at_commit": "ff37812b6024288d0ce2914d3d6de3fac8f1fc52"
+  "built_at_commit": "3215db1fd8e0052f42ce89ccf64a5ce28cfc42fa"
 }

@@ -1,0 +1,369 @@
+<div class="mx-auto max-w-7xl pb-28 lg:pb-0">
+  @if (phase() === 'receipt' && result(); as sale) {
+    <!-- Success: the captured receipt -->
+    <div class="mx-auto max-w-md">
+      <div class="rounded-lg border border-line bg-counter p-6 sm:p-8">
+        <div class="flex flex-col items-center text-center">
+          <span class="grid h-12 w-12 place-items-center rounded-full bg-success/10 text-success">
+            <i class="pi pi-check text-xl" aria-hidden="true"></i>
+          </span>
+          <h2 class="mt-3 text-lg font-semibold text-ink">Sale complete</h2>
+          <p class="mt-1 text-sm text-muted">
+            Change due
+            <span class="font-semibold tabular-nums text-ink">{{ sale.receiptData.payment.changeDue | money }}</span>
+          </p>
+        </div>
+
+        <div class="mt-6 border-t border-line pt-6">
+          <app-receipt [data]="sale.receiptData" />
+        </div>
+      </div>
+
+      <div class="mt-4 flex justify-center">
+        <p-button
+          type="button"
+          label="New sale"
+          icon="pi pi-plus"
+          (onClick)="newSale()"
+          styleClass="font-medium"
+        />
+      </div>
+    </div>
+  } @else {
+    <!-- Selling -->
+    <p class="max-w-prose text-sm text-muted">
+      Scan or search to drop items into the cart, take payment, and complete the sale. The scan field
+      stays focused, so a barcode or RFID sweep always lands in it.
+    </p>
+
+    <div class="mt-5 lg:grid lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start lg:gap-5">
+      <!-- Left: scan field + cart -->
+      <main class="min-w-0">
+        <!-- Scan / search -->
+        <div class="relative">
+          <label for="pos-scan" class="sr-only">Scan or search items</label>
+          <i
+            class="pi pi-search pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-muted"
+            aria-hidden="true"
+          ></i>
+          <input
+            #scanInput
+            pInputText
+            id="pos-scan"
+            type="search"
+            [formControl]="searchControl"
+            placeholder="Scan barcode or search name, SKU, serial…"
+            autocomplete="off"
+            role="combobox"
+            aria-autocomplete="list"
+            aria-controls="pos-results"
+            [attr.aria-expanded]="resultsOpen()"
+            [attr.aria-activedescendant]="resultsOpen() ? optionId(highlighted()) : null"
+            (keydown.enter)="onScanEnter($event)"
+            (keydown.arrowdown)="moveHighlight(1, $event)"
+            (keydown.arrowup)="moveHighlight(-1, $event)"
+            (keydown.escape)="closeResults()"
+            (blur)="onScanBlur()"
+            class="w-full pl-10 text-base"
+          />
+          @if (searching()) {
+            <i
+              class="pi pi-spin pi-spinner absolute right-3.5 top-1/2 -translate-y-1/2 text-sm text-muted"
+              aria-hidden="true"
+            ></i>
+          }
+
+          <!-- Results pick list -->
+          @if (resultsOpen()) {
+            <ul
+              id="pos-results"
+              role="listbox"
+              aria-label="Search results"
+              class="absolute inset-x-0 top-full z-20 mt-1.5 max-h-80 overflow-auto rounded-lg border border-line bg-counter py-1 shadow-lg shadow-ink/5"
+            >
+              @for (item of results(); track item.productUnitId ?? item.productId; let i = $index) {
+                <li
+                  role="option"
+                  [id]="optionId(i)"
+                  [attr.aria-selected]="i === highlighted()"
+                  [attr.aria-disabled]="!item.isSellable"
+                  (mousedown)="$event.preventDefault()"
+                  (mouseenter)="highlight(i)"
+                  (click)="addItem(item)"
+                  class="flex items-center gap-3 px-3 py-2 text-sm"
+                  [class]="
+                    (i === highlighted() ? 'bg-signal/10 ' : '') +
+                    (item.isSellable ? 'cursor-pointer' : 'cursor-not-allowed opacity-60')
+                  "
+                >
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate font-medium text-ink">{{ item.name }}</p>
+                    <p class="truncate text-xs tabular-nums text-muted">
+                      {{ item.sku }}@if (item.unitIdentifier) {
+                        · <span class="text-ink">{{ item.unitIdentifier }}</span>
+                      }@else if (item.brand) {
+                        · {{ item.brand }}
+                      }
+                    </p>
+                  </div>
+                  <div class="shrink-0 text-right">
+                    <p class="text-sm font-medium tabular-nums text-ink">{{ item.sellingPrice | money }}</p>
+                    @if (!item.isSellable) {
+                      <p class="text-xs font-medium text-danger">Unavailable</p>
+                    } @else if (item.kind === 'PRODUCT_UNIT') {
+                      <p class="text-xs text-muted">1 unit</p>
+                    } @else {
+                      <p class="text-xs tabular-nums text-muted">{{ item.quantityOnHand }} on hand</p>
+                    }
+                  </div>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+
+        @if (searchNotice(); as notice) {
+          <p
+            role="status"
+            class="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-danger"
+          >
+            <i class="pi pi-exclamation-circle text-[0.7rem]" aria-hidden="true"></i>
+            {{ notice }}
+          </p>
+        }
+
+        <!-- Cart -->
+        @if (cart().length === 0) {
+          <div class="mt-4 rounded-lg border border-dashed border-line px-6 py-16 text-center">
+            <span class="mx-auto grid h-11 w-11 place-items-center rounded-full bg-panel text-muted">
+              <i class="pi pi-shopping-cart text-xl" aria-hidden="true"></i>
+            </span>
+            <p class="mt-3 text-sm font-medium text-ink">Cart is empty</p>
+            <p class="mx-auto mt-1 max-w-xs text-sm text-muted">
+              Scan or search an item above to start a sale.
+            </p>
+          </div>
+        } @else {
+          <section
+            aria-label="Cart"
+            class="mt-4 overflow-hidden rounded-lg border border-line bg-counter"
+          >
+            <div class="flex items-center justify-between border-b border-line px-4 py-2.5">
+              <h2 class="text-sm font-medium text-ink">
+                Cart
+                <span class="tabular-nums text-muted">· {{ itemCount() }}</span>
+              </h2>
+              <button
+                type="button"
+                (click)="clearCart()"
+                class="rounded-md px-2 py-1 text-xs font-medium text-muted outline-none transition-colors hover:text-danger focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+              >
+                Clear
+              </button>
+            </div>
+
+            <ul>
+              @for (line of cart(); track line.key) {
+                <li class="flex items-center gap-3 border-b border-line px-4 py-3 last:border-0">
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-medium text-ink">{{ line.name }}</p>
+                    <p class="truncate text-xs tabular-nums text-muted">
+                      {{ line.sku }}@if (line.unitIdentifier) {
+                        · <span class="text-ink">{{ line.unitIdentifier }}</span>
+                      }
+                      · {{ unitPrice(line) }} each
+                    </p>
+                    @if (overStock(line)) {
+                      <p class="mt-0.5 inline-flex items-center gap-1 text-xs font-medium text-danger">
+                        <i class="pi pi-exclamation-triangle text-[0.65rem]" aria-hidden="true"></i>
+                        Over stock ({{ line.quantityOnHand }} on hand)
+                      </p>
+                    }
+                  </div>
+
+                  @if (line.isSerialized) {
+                    <span
+                      class="shrink-0 rounded-md bg-line/70 px-2 py-0.5 text-xs font-medium text-muted"
+                    >
+                      Unit
+                    </span>
+                  } @else {
+                    <div class="flex shrink-0 items-center gap-1" role="group" [attr.aria-label]="'Quantity for ' + line.name">
+                      <button
+                        type="button"
+                        (click)="decrement(line.key)"
+                        [disabled]="line.quantity <= 1"
+                        aria-label="Decrease quantity"
+                        class="grid h-7 w-7 place-items-center rounded-md border border-line text-muted outline-none transition-colors hover:text-ink disabled:opacity-40 disabled:hover:text-muted focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+                      >
+                        <i class="pi pi-minus text-[0.7rem]" aria-hidden="true"></i>
+                      </button>
+                      <span class="w-7 text-center text-sm font-medium tabular-nums text-ink">{{ line.quantity }}</span>
+                      <button
+                        type="button"
+                        (click)="increment(line.key)"
+                        aria-label="Increase quantity"
+                        class="grid h-7 w-7 place-items-center rounded-md border border-line text-muted outline-none transition-colors hover:text-ink focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+                      >
+                        <i class="pi pi-plus text-[0.7rem]" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  }
+
+                  <p class="w-20 shrink-0 text-right text-sm font-medium tabular-nums text-ink">
+                    {{ lineTotal(line) }}
+                  </p>
+
+                  <button
+                    type="button"
+                    (click)="removeLine(line.key)"
+                    [attr.aria-label]="'Remove ' + line.name"
+                    class="grid h-7 w-7 shrink-0 place-items-center rounded-md text-muted outline-none transition-colors hover:text-danger focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+                  >
+                    <i class="pi pi-times text-xs" aria-hidden="true"></i>
+                  </button>
+                </li>
+              }
+            </ul>
+          </section>
+        }
+      </main>
+
+      <!-- Right: tender rail -->
+      <aside aria-label="Payment" class="mt-4 lg:mt-0 lg:sticky lg:top-6">
+        <div class="rounded-lg border border-line bg-counter p-4 lg:p-5">
+          <!-- Total -->
+          <div>
+            <p class="text-xs font-medium text-muted">Total due</p>
+            <p class="text-3xl font-semibold leading-tight tabular-nums text-signal">{{ totalDisplay() }}</p>
+            @if (itemCount() > 0) {
+              <p class="mt-0.5 text-xs tabular-nums text-muted">
+                {{ itemCount() }} item{{ itemCount() === 1 ? '' : 's' }} · subtotal {{ subtotalDisplay() }}
+              </p>
+            }
+          </div>
+
+          <!-- Payment method -->
+          <fieldset class="mt-5">
+            <legend class="text-xs font-medium text-muted">Payment method</legend>
+            <div class="mt-2 flex flex-wrap gap-1.5">
+              @for (m of methods; track m.value) {
+                <button
+                  type="button"
+                  (click)="setMethod(m.value)"
+                  [attr.aria-pressed]="method() === m.value"
+                  class="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+                  [class]="method() === m.value ? 'border-ink bg-ink text-counter' : 'border-line text-muted hover:text-ink'"
+                >
+                  <i [class]="m.icon" class="text-[0.7rem]" aria-hidden="true"></i>
+                  {{ m.label }}
+                </button>
+              }
+            </div>
+          </fieldset>
+
+          <!-- Cash tender -->
+          @if (method() === 'CASH') {
+            <div class="mt-5">
+              <label for="pos-tendered" class="text-xs font-medium text-muted">Amount tendered</label>
+              <input
+                pInputText
+                id="pos-tendered"
+                type="number"
+                inputmode="decimal"
+                min="0"
+                step="0.01"
+                [formControl]="tenderControl"
+                placeholder="0.00"
+                class="mt-1.5 w-full text-right text-lg tabular-nums"
+              />
+              <div class="mt-2 flex flex-wrap gap-1.5">
+                @for (chip of tenderChips; track chip.label) {
+                  <button
+                    type="button"
+                    (click)="applyTenderChip(chip)"
+                    class="rounded-md border border-line px-2.5 py-1 text-xs font-medium tabular-nums text-muted outline-none transition-colors hover:text-ink focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+                  >
+                    {{ chip.label }}
+                  </button>
+                }
+              </div>
+
+              <div class="mt-4 flex items-baseline justify-between border-t border-line pt-3">
+                <span class="text-sm font-medium text-ink">Change due</span>
+                <span class="text-xl font-semibold tabular-nums text-ink">{{ changeDueDisplay() }}</span>
+              </div>
+            </div>
+          }
+
+          <!-- Note -->
+          <div class="mt-5">
+            @if (showNote()) {
+              <label for="pos-note" class="text-xs font-medium text-muted">Note</label>
+              <textarea
+                pTextarea
+                id="pos-note"
+                [formControl]="noteControl"
+                rows="2"
+                maxlength="255"
+                placeholder="Optional note for this sale"
+                class="mt-1.5 w-full resize-none text-sm"
+              ></textarea>
+            } @else {
+              <button
+                type="button"
+                (click)="toggleNote()"
+                class="inline-flex items-center gap-1.5 rounded-md text-xs font-medium text-muted outline-none transition-colors hover:text-ink focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+              >
+                <i class="pi pi-plus text-[0.65rem]" aria-hidden="true"></i>
+                Add note
+              </button>
+            }
+          </div>
+
+          @if (checkoutError(); as error) {
+            <p role="alert" class="mt-4 flex items-start gap-1.5 text-xs font-medium text-danger">
+              <i class="pi pi-exclamation-circle mt-px text-[0.7rem]" aria-hidden="true"></i>
+              <span>{{ error }}</span>
+            </p>
+          }
+
+          <!-- Complete (desktop) -->
+          <div class="mt-5 hidden lg:block">
+            <p-button
+              type="button"
+              label="Complete sale"
+              icon="pi pi-check"
+              [disabled]="!canComplete()"
+              [loading]="committing()"
+              (onClick)="checkout()"
+              styleClass="w-full justify-center font-semibold"
+            />
+            @if (completeHint(); as hint) {
+              <p class="mt-2 text-center text-xs text-muted">{{ hint }}</p>
+            }
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Mobile action bar -->
+    <div class="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-panel px-4 py-3 lg:hidden">
+      <div class="mx-auto flex max-w-7xl items-center justify-between gap-4">
+        <div class="min-w-0">
+          <p class="text-xs text-muted">Total due</p>
+          <p class="truncate text-xl font-semibold tabular-nums text-signal">{{ totalDisplay() }}</p>
+        </div>
+        <p-button
+          type="button"
+          label="Complete sale"
+          icon="pi pi-check"
+          [disabled]="!canComplete()"
+          [loading]="committing()"
+          (onClick)="checkout()"
+          styleClass="shrink-0 font-semibold"
+        />
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,66 @@
+<div class="mx-auto max-w-sm text-ink">
+  <header class="text-center">
+    <p class="text-sm font-semibold tracking-tight">asset-wise</p>
+    <p class="mt-0.5 text-xs text-muted">Sales receipt</p>
+  </header>
+
+  <dl class="mt-4 space-y-1 text-xs">
+    <div class="flex items-center justify-between gap-3">
+      <dt class="text-muted">Receipt</dt>
+      <dd class="font-medium tabular-nums">{{ data().receiptNo }}</dd>
+    </div>
+    <div class="flex items-center justify-between gap-3">
+      <dt class="text-muted">Date</dt>
+      <dd class="tabular-nums">{{ data().completedAt | date: 'MMM d, y, h:mm a' }}</dd>
+    </div>
+    <div class="flex items-center justify-between gap-3">
+      <dt class="text-muted">Cashier</dt>
+      <dd class="min-w-0 truncate text-right">{{ data().cashier.name }}</dd>
+    </div>
+  </dl>
+
+  <ul class="mt-3 border-t border-dashed border-line pt-1">
+    @for (item of data().items; track item.productUnitId ?? item.productId) {
+      <li class="flex items-start justify-between gap-3 border-b border-line/70 py-2 last:border-0">
+        <div class="min-w-0">
+          <p class="truncate text-sm font-medium">{{ item.name }}</p>
+          <p class="truncate text-xs tabular-nums text-muted">
+            {{ item.sku }}@if (item.unitIdentifier) { · {{ item.unitIdentifier }} }
+          </p>
+          <p class="mt-0.5 text-xs tabular-nums text-muted">
+            {{ item.quantity }} &times; {{ item.unitPrice | money }}
+          </p>
+        </div>
+        <p class="shrink-0 text-sm font-medium tabular-nums">{{ item.lineTotal | money }}</p>
+      </li>
+    }
+  </ul>
+
+  <dl class="border-t border-dashed border-line pt-3 text-sm">
+    <div class="flex items-center justify-between gap-3 text-muted">
+      <dt>Subtotal</dt>
+      <dd class="tabular-nums">{{ data().totals.subtotal | money }}</dd>
+    </div>
+    <div class="mt-1 flex items-baseline justify-between gap-3">
+      <dt class="font-semibold">Total</dt>
+      <dd class="text-lg font-semibold tabular-nums">{{ data().totals.total | money }}</dd>
+    </div>
+  </dl>
+
+  <dl class="mt-3 border-t border-dashed border-line pt-3 text-sm">
+    <div class="flex items-center justify-between gap-3">
+      <dt class="text-muted">{{ paymentLabel(data().payment.method) }}</dt>
+      <dd class="tabular-nums">{{ data().payment.amountTendered | money }}</dd>
+    </div>
+    <div class="mt-1 flex items-baseline justify-between gap-3">
+      <dt class="font-medium">Change</dt>
+      <dd class="text-base font-semibold tabular-nums">{{ data().payment.changeDue | money }}</dd>
+    </div>
+  </dl>
+
+  @if (data().note; as note) {
+    <p class="mt-3 border-t border-dashed border-line pt-3 text-xs text-muted">
+      <span class="font-medium text-ink">Note:</span> {{ note }}
+    </p>
+  }
+</div>

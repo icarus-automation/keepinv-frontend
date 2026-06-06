@@ -24,6 +24,8 @@ model User {
 
   stockMovements                StockMovement[]
   inventoryAudits               InventoryAudit[]
+  sales                         Sale[]                    @relation("SaleCashier")
+  voidedSales                   Sale[]                    @relation("SaleVoider")
 
   @@map("users")
 }
@@ -137,6 +139,7 @@ model Product {
 
   units                         ProductUnit[]
   stockMovements                StockMovement[]
+  saleItems                     SaleItem[]
 
   @@index([categoryId])
   @@index([supplierId])
@@ -163,6 +166,7 @@ model ProductUnit {
 
   stockMovements                StockMovement[]
   inventoryAuditScans           InventoryAuditScan[]
+  saleItems                     SaleItem[]
 
   @@index([productId])
   @@index([locationId])
@@ -192,13 +196,86 @@ model StockMovement {
   userId                        String                    @map("user_id")
   user                          User                      @relation(fields: [userId], references: [id])
 
+  saleId                        String?                   @map("sale_id")
+  sale                          Sale?                     @relation(fields: [saleId], references: [id], onDelete: SetNull)
+
+  saleItemId                    String?                   @map("sale_item_id")
+  saleItem                      SaleItem?                 @relation(fields: [saleItemId], references: [id], onDelete: SetNull)
+
   createdAt                     DateTime                  @default(now()) @map("created_at")
 
   @@index([productId])
   @@index([productUnitId])
   @@index([supplierId])
   @@index([userId])
+  @@index([saleId])
+  @@index([saleItemId])
   @@map("stock_movements")
+}
+
+model Sale {
+  id                            String                    @id @default(uuid())
+  receiptNo                     String                    @unique @map("receipt_no")
+  status                        SaleStatus                @default(COMPLETED)
+  subtotal                      Decimal                   @db.Decimal(12, 2)
+  total                         Decimal                   @db.Decimal(12, 2)
+  amountTendered                Decimal                   @map("amount_tendered") @db.Decimal(12, 2)
+  changeDue                     Decimal                   @map("change_due") @db.Decimal(12, 2)
+  paymentMethod                 PaymentMethod             @map("payment_method")
+  note                          String?
+  receiptSnapshot               Json                      @map("receipt_snapshot")
+  paidAt                        DateTime                  @default(now()) @map("paid_at")
+  completedAt                   DateTime                  @default(now()) @map("completed_at")
+  voidedAt                      DateTime?                 @map("voided_at")
+  voidReason                    String?                   @map("void_reason")
+
+  cashierId                     String                    @map("cashier_id")
+  cashier                       User                      @relation("SaleCashier", fields: [cashierId], references: [id])
+
+  voidedById                    String?                   @map("voided_by_id")
+  voidedBy                      User?                     @relation("SaleVoider", fields: [voidedById], references: [id], onDelete: SetNull)
+
+  createdAt                     DateTime                  @default(now()) @map("created_at")
+  updatedAt                     DateTime                  @updatedAt @map("updated_at")
+
+  items                         SaleItem[]
+  stockMovements                StockMovement[]
+
+  @@index([cashierId])
+  @@index([voidedById])
+  @@index([completedAt])
+  @@index([status])
+  @@index([paymentMethod])
+  @@map("sales")
+}
+
+model SaleItem {
+  id                            String                    @id @default(uuid())
+  quantity                      Int
+  unitPrice                     Decimal                   @map("unit_price") @db.Decimal(12, 2)
+  lineTotal                     Decimal                   @map("line_total") @db.Decimal(12, 2)
+  productName                   String                    @map("product_name")
+  productSku                    String                    @map("product_sku")
+  productBarcode                String?                   @map("product_barcode")
+  unitIdentifier                String?                   @map("unit_identifier")
+
+  saleId                        String                    @map("sale_id")
+  sale                          Sale                      @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  productId                     String                    @map("product_id")
+  product                       Product                   @relation(fields: [productId], references: [id])
+
+  productUnitId                 String?                   @map("product_unit_id")
+  productUnit                   ProductUnit?              @relation(fields: [productUnitId], references: [id], onDelete: SetNull)
+
+  createdAt                     DateTime                  @default(now()) @map("created_at")
+
+  stockMovements                StockMovement[]
+
+  @@index([saleId])
+  @@index([productId])
+  @@index([productUnitId])
+  @@map("sale_items")
 }
 
 model InventoryAudit {
@@ -291,4 +368,18 @@ enum InventoryAuditScanMode {
   RFID
   BARCODE
   MANUAL
+}
+
+enum SaleStatus {
+  COMPLETED
+  VOIDED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  GCASH
+  MAYA
+  BANK_TRANSFER
+  OTHER
 }

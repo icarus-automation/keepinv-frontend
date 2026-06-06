@@ -1,0 +1,110 @@
+<!-- Header -->
+<div class="flex items-start justify-between gap-3 border-b border-line px-5 py-4">
+  <div class="min-w-0">
+    <div class="flex items-center gap-2">
+      <h2 class="truncate text-base font-semibold tabular-nums text-ink">{{ sale().receiptNo }}</h2>
+      <app-sale-status-badge [status]="status()" />
+    </div>
+    <p class="mt-0.5 text-xs tabular-nums text-muted">
+      {{ sale().completedAt | date: 'MMM d, y, h:mm a' }}
+    </p>
+  </div>
+  <p class="shrink-0 text-right text-base font-semibold tabular-nums text-ink">
+    {{ sale().total | money }}
+  </p>
+</div>
+
+<div class="p-5">
+  @if (loading()) {
+    <div class="space-y-3">
+      @for (placeholder of [0, 1, 2, 3]; track placeholder) {
+        <div class="flex items-center justify-between gap-3">
+          <div class="h-3.5 w-40 animate-pulse rounded bg-line motion-reduce:animate-none"></div>
+          <div class="h-3.5 w-16 animate-pulse rounded bg-line motion-reduce:animate-none"></div>
+        </div>
+      }
+    </div>
+  } @else if (loadError(); as error) {
+    <div class="px-2 py-10 text-center">
+      <p class="text-sm font-medium text-ink">Couldn't load this sale</p>
+      <p class="mx-auto mt-1 max-w-sm text-sm text-muted">{{ error }}</p>
+      <p-button type="button" label="Retry" [text]="true" (onClick)="retry()" styleClass="mt-3 font-medium" />
+    </div>
+  } @else if (result(); as sale) {
+    <!-- Voided banner -->
+    @if (status() === 'VOIDED') {
+      <div class="mb-5 rounded-lg bg-danger/10 px-4 py-3">
+        <p class="flex items-center gap-1.5 text-sm font-medium text-danger">
+          <i class="pi pi-ban text-xs" aria-hidden="true"></i>
+          Voided@if (voidedAt(); as at) { · {{ at | date: 'MMM d, y, h:mm a' }} }
+        </p>
+        <p class="mt-1 text-xs text-ink">
+          @if (voidedBy(); as who) { Voided by {{ who }}. }
+          @if (voidReasonText(); as reason) { Reason: {{ reason }} }
+        </p>
+      </div>
+    }
+
+    <app-receipt [data]="sale.receiptData" />
+
+    <!-- Void action -->
+    @if (canVoid()) {
+      <div class="mt-6 border-t border-line pt-5">
+        @if (showVoidConfirm()) {
+          <div class="rounded-lg border border-line bg-panel p-4">
+            <p class="text-sm font-medium text-ink">Void this sale?</p>
+            <p class="mt-1 text-xs text-muted">
+              This returns every item to stock and marks the sale voided. It can't be undone.
+            </p>
+            <label for="void-reason" class="mt-3 block text-xs font-medium text-muted">Reason (optional)</label>
+            <textarea
+              pTextarea
+              id="void-reason"
+              [formControl]="voidReason"
+              rows="2"
+              maxlength="255"
+              placeholder="e.g. Customer changed their mind"
+              class="mt-1.5 w-full resize-none text-sm"
+            ></textarea>
+
+            @if (voidError(); as error) {
+              <p role="alert" class="mt-3 flex items-start gap-1.5 text-xs font-medium text-danger">
+                <i class="pi pi-exclamation-circle mt-px text-[0.7rem]" aria-hidden="true"></i>
+                <span>{{ error }}</span>
+              </p>
+            }
+
+            <div class="mt-4 flex items-center justify-end gap-2">
+              <p-button
+                type="button"
+                label="Cancel"
+                [text]="true"
+                [disabled]="voiding()"
+                (onClick)="cancelVoid()"
+                styleClass="font-medium text-muted"
+              />
+              <p-button
+                type="button"
+                label="Void sale"
+                icon="pi pi-ban"
+                severity="danger"
+                [loading]="voiding()"
+                (onClick)="confirmVoid()"
+                styleClass="font-medium"
+              />
+            </div>
+          </div>
+        } @else {
+          <button
+            type="button"
+            (click)="startVoid()"
+            class="inline-flex items-center gap-1.5 rounded-md border border-line px-3 py-2 text-sm font-medium text-danger outline-none transition-colors hover:bg-danger/5 focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+          >
+            <i class="pi pi-ban text-xs" aria-hidden="true"></i>
+            Void sale
+          </button>
+        }
+      </div>
+    }
+  }
+</div>

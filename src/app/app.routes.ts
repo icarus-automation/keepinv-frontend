@@ -16,6 +16,14 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'categories', pathMatch: 'full' },
       {
+        path: 'pos',
+        loadComponent: () => import('./modules/pos/pos').then((m) => m.Pos),
+      },
+      {
+        path: 'sales',
+        loadComponent: () => import('./modules/pos/sales').then((m) => m.Sales),
+      },
+      {
         path: 'categories',
         loadComponent: () => import('./modules/categories/categories').then((m) => m.Categories),
       },
