@@ -1,0 +1,227 @@
+<div class="mx-auto max-w-5xl">
+  <!-- Header -->
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <p class="max-w-prose text-sm text-muted">
+      How the shop is doing at a glance: revenue, sales, how people paid, and recent activity for the
+      period you pick. Built from completed sales; voided sales are reported separately.
+    </p>
+    <div class="flex shrink-0 items-center gap-3">
+      @if (asOf(); as at) {
+        <span class="text-xs tabular-nums text-muted">as of {{ at | date: 'h:mm a' }}</span>
+      }
+      <p-button
+        type="button"
+        label="Refresh"
+        icon="pi pi-refresh"
+        [text]="true"
+        [loading]="loading()"
+        (onClick)="refresh()"
+        styleClass="font-medium"
+      />
+    </div>
+  </div>
+
+  <!-- Period selector -->
+  <div class="mt-5 flex flex-wrap items-center gap-2">
+    <div class="flex flex-wrap gap-1.5" role="group" aria-label="Report period">
+      @for (chip of periods; track chip.value) {
+        <button
+          type="button"
+          (click)="setPeriod(chip.value)"
+          [attr.aria-pressed]="period() === chip.value"
+          class="rounded-md border px-3 py-1.5 text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+          [class]="period() === chip.value ? 'border-signal bg-signal/10 text-ink' : 'border-line text-muted hover:text-ink'"
+        >
+          {{ chip.label }}
+        </button>
+      }
+    </div>
+    @if (period() === 'custom') {
+      <p-datepicker
+        [formControl]="customRange"
+        selectionMode="range"
+        [readonlyInput]="true"
+        [showButtonBar]="true"
+        dateFormat="M d, yy"
+        placeholder="Pick a date range"
+        appendTo="body"
+        inputStyleClass="text-sm"
+        ariaLabel="Custom date range"
+      />
+    }
+  </div>
+
+  @if (loading()) {
+    <!-- Loading -->
+    <div class="mt-6 space-y-6">
+      <div class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-4">
+        @for (placeholder of [0, 1, 2, 3]; track placeholder) {
+          <div class="bg-counter p-4 sm:p-5">
+            <div class="h-3 w-16 animate-pulse rounded bg-line motion-reduce:animate-none"></div>
+            <div class="mt-3 h-6 w-24 animate-pulse rounded bg-line motion-reduce:animate-none"></div>
+          </div>
+        }
+      </div>
+      <div class="h-56 animate-pulse rounded-lg border border-line bg-counter motion-reduce:animate-none"></div>
+    </div>
+  } @else if (loadError(); as error) {
+    <div class="mt-6 rounded-lg border border-line bg-counter px-6 py-12 text-center">
+      <p class="text-sm font-medium text-ink">Couldn't load the report</p>
+      <p class="mx-auto mt-1 max-w-sm text-sm text-muted">{{ error }}</p>
+      <p-button type="button" label="Retry" [text]="true" (onClick)="refresh()" styleClass="mt-3 font-medium" />
+    </div>
+  } @else if (awaitingCustomRange()) {
+    <div class="mt-6 rounded-lg border border-dashed border-line px-6 py-16 text-center">
+      <span class="mx-auto grid h-11 w-11 place-items-center rounded-full bg-panel text-muted">
+        <i class="pi pi-calendar text-xl" aria-hidden="true"></i>
+      </span>
+      <p class="mt-3 text-sm font-medium text-ink">Pick a date range</p>
+      <p class="mx-auto mt-1 max-w-xs text-sm text-muted">
+        Choose a start and end date above to report on a custom period.
+      </p>
+    </div>
+  } @else if (isEmpty()) {
+    <div class="mt-6 rounded-lg border border-dashed border-line px-6 py-16 text-center">
+      <span class="mx-auto grid h-11 w-11 place-items-center rounded-full bg-panel text-muted">
+        <i class="pi pi-chart-bar text-xl" aria-hidden="true"></i>
+      </span>
+      <p class="mt-3 text-sm font-medium text-ink">No sales in this period</p>
+      <p class="mx-auto mt-1 max-w-xs text-sm text-muted">
+        Nothing was sold in {{ periodLabel() }}. Try a wider range.
+      </p>
+    </div>
+  } @else {
+    @let s = summary();
+
+    @if (truncated()) {
+      <p role="status" class="mt-4 flex items-start gap-1.5 text-xs text-muted">
+        <i class="pi pi-info-circle mt-px text-[0.7rem]" aria-hidden="true"></i>
+        <span>This period has a lot of sales. Showing the most recent ones; narrow the range for an exact total.</span>
+      </p>
+    }
+
+    <!-- Summary band -->
+    <section aria-label="Summary" class="mt-6">
+      <dl class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-4">
+        <div class="bg-counter p-4 sm:p-5">
+          <dt class="text-xs font-medium text-muted">Revenue</dt>
+          <dd class="mt-1 text-2xl font-semibold tabular-nums text-ink">{{ peso(s.revenueCents) }}</dd>
+        </div>
+        <div class="bg-counter p-4 sm:p-5">
+          <dt class="text-xs font-medium text-muted">Sales</dt>
+          <dd class="mt-1 text-2xl font-semibold tabular-nums text-ink">{{ s.salesCount }}</dd>
+        </div>
+        <div class="bg-counter p-4 sm:p-5">
+          <dt class="text-xs font-medium text-muted">Items sold</dt>
+          <dd class="mt-1 text-2xl font-semibold tabular-nums text-ink">{{ s.itemsSold }}</dd>
+        </div>
+        <div class="bg-counter p-4 sm:p-5">
+          <dt class="text-xs font-medium text-muted">Avg ticket</dt>
+          <dd class="mt-1 text-2xl font-semibold tabular-nums text-ink">{{ peso(s.avgTicketCents) }}</dd>
+        </div>
+      </dl>
+
+      @if (s.voidCount > 0) {
+        <p class="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-danger">
+          <i class="pi pi-ban text-[0.7rem]" aria-hidden="true"></i>
+          {{ s.voidCount }} sale{{ s.voidCount === 1 ? '' : 's' }} voided in {{ periodLabel() }} · {{ peso(s.voidAmountCents) }} returned
+        </p>
+      }
+    </section>
+
+    <!-- Revenue trend -->
+    <section aria-label="Revenue trend" class="mt-6 rounded-lg border border-line bg-counter p-5">
+      <div class="flex items-baseline justify-between gap-3">
+        <h2 class="text-sm font-medium text-ink">Revenue by {{ granularityLabel() }}</h2>
+        <span class="text-xs tabular-nums text-muted">{{ periodLabel() }}</span>
+      </div>
+
+      @if (s.trend.length === 0) {
+        <p class="mt-8 text-center text-sm text-muted">No completed sales to chart.</p>
+      } @else {
+        <div class="mt-5 flex items-end gap-1.5" style="height: 10rem">
+          @for (bucket of s.trend; track bucket.key) {
+            <div class="flex h-full min-w-0 flex-1 items-end">
+              <div
+                class="w-full rounded-t"
+                [class]="$last ? 'bg-ink' : 'bg-ink/55'"
+                [style.height.%]="barHeight(bucket)"
+                [title]="bucket.fullLabel + ': ' + peso(bucket.revenueCents)"
+              ></div>
+            </div>
+          }
+        </div>
+        <div class="mt-1.5 flex gap-1.5">
+          @for (bucket of s.trend; track bucket.key; let i = $index) {
+            <span class="min-w-0 flex-1 truncate text-center text-[0.65rem] tabular-nums text-muted">
+              @if (showLabel(i)) {
+                {{ bucket.label }}
+              }
+            </span>
+          }
+        </div>
+      }
+    </section>
+
+    <!-- Payment mix -->
+    <section aria-label="Payment mix" class="mt-6 rounded-lg border border-line bg-counter p-5">
+      <h2 class="text-sm font-medium text-ink">Payment mix</h2>
+      @if (s.payments.length === 0) {
+        <p class="mt-4 text-sm text-muted">No completed sales in this period.</p>
+      } @else {
+        <ul class="mt-4 space-y-3">
+          @for (slice of s.payments; track slice.method) {
+            <li>
+              <div class="flex items-baseline justify-between gap-3 text-sm">
+                <span class="text-ink">
+                  {{ slice.label }}
+                  <span class="tabular-nums text-muted">· {{ slice.count }}</span>
+                </span>
+                <span class="tabular-nums text-ink">
+                  {{ peso(slice.amountCents) }}
+                  <span class="text-muted">· {{ slice.pct }}%</span>
+                </span>
+              </div>
+              <div class="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-line">
+                <div class="h-full rounded-full bg-ink/55" [style.width.%]="slice.pct"></div>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+    <!-- Recent sales -->
+    @if (recentSales().length) {
+      <section aria-label="Recent sales" class="mt-6 overflow-hidden rounded-lg border border-line bg-counter">
+        <div class="flex items-center justify-between border-b border-line px-5 py-3">
+          <h2 class="text-sm font-medium text-ink">Recent sales</h2>
+          <a
+            routerLink="/sales"
+            class="rounded-md text-xs font-medium text-muted outline-none transition-colors hover:text-ink focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+          >
+            View all
+          </a>
+        </div>
+        <ul>
+          @for (sale of recentSales(); track sale.id) {
+            <li class="flex items-center gap-3 border-b border-line px-5 py-3 last:border-0">
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="truncate text-sm font-medium tabular-nums text-ink">{{ sale.receiptNo }}</span>
+                  @if (sale.status === 'VOIDED') {
+                    <app-sale-status-badge [status]="sale.status" />
+                  }
+                </div>
+                <p class="truncate text-xs tabular-nums text-muted">
+                  {{ sale.completedAt | date: 'MMM d, h:mm a' }} · {{ sale._count.items }} item{{ sale._count.items === 1 ? '' : 's' }} · {{ methodLabel(sale.paymentMethod) }}
+                </p>
+              </div>
+              <p class="shrink-0 text-sm font-medium tabular-nums text-ink">{{ sale.total | money }}</p>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  }
+</div>

@@ -68,6 +68,7 @@ export class Layout {
       items: [
         { label: 'Point of Sale', icon: 'pi pi-shopping-cart', path: 'pos' },
         { label: 'Sales', icon: 'pi pi-chart-line', path: 'sales' },
+        { label: 'Sales Report', icon: 'pi pi-chart-bar', path: 'reports' },
         { label: 'Stock Movements', icon: 'pi pi-arrows-v', path: 'stock-movements' },
         {
           label: 'Inventory Audit',

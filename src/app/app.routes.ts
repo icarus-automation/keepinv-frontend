@@ -24,6 +24,10 @@ export const routes: Routes = [
         loadComponent: () => import('./modules/pos/sales').then((m) => m.Sales),
       },
       {
+        path: 'reports',
+        loadComponent: () => import('./modules/pos/report/sales-report').then((m) => m.SalesReport),
+      },
+      {
         path: 'categories',
         loadComponent: () => import('./modules/categories/categories').then((m) => m.Categories),
       },

@@ -41,6 +41,19 @@ export class PosService {
       .pipe(map((response) => response.data));
   }
 
+  /**
+   * List a serialized product's sellable units for the unit picker. The cashier scans
+   * the model barcode, then chooses which physical unit leaves the shelf — every sale
+   * still maps to a specific serial, so traceability is preserved. Returns `PRODUCT_UNIT`
+   * search items so the picker reuses the same row shape as search results.
+   */
+  listAvailableUnits(productId: string, limit = 50): Observable<PosSearchItem[]> {
+    const params = new HttpParams().set('limit', limit);
+    return this.http
+      .get<ApiResponse<PosSearchItem[]>>(`${this.baseUrl}/products/${productId}/units`, { params })
+      .pipe(map((response) => response.data));
+  }
+
   /** Ring up a sale. Returns the persisted sale and its receipt snapshot. */
   checkout(body: CheckoutRequest): Observable<SaleResult> {
     return this.http

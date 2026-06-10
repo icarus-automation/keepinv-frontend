@@ -78,6 +78,8 @@ export class Pos {
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly scanInput = viewChild<ElementRef<HTMLInputElement>>('scanInput');
+  private readonly unitPickerPanel = viewChild<ElementRef<HTMLElement>>('unitPickerPanel');
+  private readonly unitPickerList = viewChild<ElementRef<HTMLElement>>('unitPickerList');
 
   protected readonly phase = signal<'selling' | 'receipt'>('selling');
 
@@ -94,6 +96,14 @@ export class Pos {
   /** A transient note under the field: a not-found miss or a duplicate-unit rejection. */
   protected readonly searchNotice = signal<string | null>(null);
   private noticeTimer: ReturnType<typeof setTimeout> | null = null;
+
+  // --- Unit picker (serialized products prompt for which physical unit to sell) ---
+  /** The serialized product whose units are being chosen, or null when the picker is closed. */
+  protected readonly unitPickerProduct = signal<PosSearchItem | null>(null);
+  protected readonly unitPickerUnits = signal<PosSearchItem[]>([]);
+  protected readonly unitPickerLoading = signal(false);
+  protected readonly unitPickerError = signal<string | null>(null);
+  protected readonly unitPickerHighlighted = signal(0);
 
   // --- Tender ---
   protected readonly methods: readonly PaymentMethodMeta[] = PAYMENT_METHODS;
@@ -170,9 +180,19 @@ export class Pos {
     // always lands in it. The receipt phase releases focus to its own actions.
     effect(() => {
       const el = this.scanInput();
-      if (el && this.phase() === 'selling') {
+      if (el && this.phase() === 'selling' && !this.unitPickerProduct()) {
         el.nativeElement.focus();
       }
+    });
+
+    // Move focus into the unit picker when it opens so arrow/Enter/Escape work: the
+    // list takes focus once loaded, the panel holds it while units are still loading.
+    effect(() => {
+      if (!this.unitPickerProduct()) {
+        return;
+      }
+      const target = this.unitPickerList() ?? this.unitPickerPanel();
+      target?.nativeElement.focus();
     });
 
     this.destroyRef.onDestroy(() => {
@@ -198,7 +218,7 @@ export class Pos {
       .subscribe({
         next: (items) => {
           this.results.set(items);
-          this.highlighted.set(this.firstSellableIndex(items));
+          this.highlighted.set(this.firstSelectableIndex(items));
           this.resultsOpen.set(items.length > 0);
           this.searching.set(false);
         },
@@ -216,7 +236,7 @@ export class Pos {
     const results = this.results();
     if (this.resultsOpen() && results.length) {
       const pick = results[this.highlighted()];
-      if (pick?.isSellable) {
+      if (pick && this.canSelect(pick)) {
         this.addItem(pick);
         return;
       }
@@ -249,6 +269,12 @@ export class Pos {
             this.addItem(sellable[0]);
             return;
           }
+          // A scanned model barcode that lands on one serialized product → prompt for its unit.
+          const pickable = items.filter((item) => this.needsUnitPick(item));
+          if (sellable.length === 0 && pickable.length === 1) {
+            this.openUnitPicker(pickable[0]);
+            return;
+          }
           if (items.length === 0) {
             this.flagNotice(`No item found for "${term}".`);
             this.results.set([]);
@@ -256,7 +282,7 @@ export class Pos {
             return;
           }
           this.results.set(items);
-          this.highlighted.set(this.firstSellableIndex(items));
+          this.highlighted.set(this.firstSelectableIndex(items));
           this.resultsOpen.set(true);
         },
         error: (error: unknown) => this.flagNotice(httpErrorMessage(error)),
@@ -272,9 +298,19 @@ export class Pos {
     );
   }
 
-  private firstSellableIndex(items: PosSearchItem[]): number {
-    const index = items.findIndex((item) => item.isSellable);
+  private firstSelectableIndex(items: PosSearchItem[]): number {
+    const index = items.findIndex((item) => this.canSelect(item));
     return index === -1 ? 0 : index;
+  }
+
+  /** A serialized product with stock isn't sold directly — selecting it prompts for a unit. */
+  protected needsUnitPick(item: PosSearchItem): boolean {
+    return item.kind === 'PRODUCT' && item.isSerialized && item.quantityOnHand > 0;
+  }
+
+  /** A row is actionable when it's directly sellable or a serialized product to drill into. */
+  protected canSelect(item: PosSearchItem): boolean {
+    return item.isSellable || this.needsUnitPick(item);
   }
 
   protected moveHighlight(delta: number, event: Event): void {
@@ -313,6 +349,10 @@ export class Pos {
   // --- Cart ---
 
   protected addItem(item: PosSearchItem): void {
+    if (this.needsUnitPick(item)) {
+      this.openUnitPicker(item);
+      return;
+    }
     if (!item.isSellable) {
       this.flagNotice(`${item.name} is not available to sell.`);
       return;
@@ -377,6 +417,91 @@ export class Pos {
     this.resultsOpen.set(false);
     this.checkoutError.set(null);
     this.refocus();
+  }
+
+  // --- Unit picker ---
+
+  /**
+   * Open the unit picker for a serialized product and load its sellable units. The
+   * cashier chooses which physical unit leaves the shelf; that exact serial is what
+   * gets sold, so every sale still maps to a specific unit. Units already in the cart
+   * are filtered out so they can't be double-added.
+   */
+  private openUnitPicker(product: PosSearchItem): void {
+    this.unitPickerProduct.set(product);
+    this.unitPickerUnits.set([]);
+    this.unitPickerError.set(null);
+    this.unitPickerHighlighted.set(0);
+    this.unitPickerLoading.set(true);
+    this.results.set([]);
+    this.resultsOpen.set(false);
+    this.searchControl.setValue('', { emitEvent: false });
+
+    this.service
+      .listAvailableUnits(product.productId)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.unitPickerLoading.set(false)),
+      )
+      .subscribe({
+        next: (units) => {
+          const inCart = new Set(
+            this.cart()
+              .map((line) => line.productUnitId)
+              .filter((id): id is string => !!id),
+          );
+          const available = units.filter(
+            (unit) => unit.isSellable && !!unit.productUnitId && !inCart.has(unit.productUnitId),
+          );
+          this.unitPickerUnits.set(available);
+          if (available.length === 0) {
+            this.unitPickerError.set('No available units left for this product.');
+          }
+        },
+        error: (error: unknown) => this.unitPickerError.set(httpErrorMessage(error)),
+      });
+  }
+
+  /** Add the chosen unit to the cart and close the picker. */
+  protected pickUnit(unit: PosSearchItem): void {
+    this.closeUnitPicker();
+    this.addItem(unit);
+  }
+
+  /** Pick the currently highlighted unit (Enter from the picker). */
+  protected pickHighlightedUnit(event: Event): void {
+    event.preventDefault();
+    const unit = this.unitPickerUnits()[this.unitPickerHighlighted()];
+    if (unit) {
+      this.pickUnit(unit);
+    }
+  }
+
+  /** Roving highlight inside the unit picker (Arrow keys). */
+  protected moveUnitHighlight(delta: number, event: Event): void {
+    const count = this.unitPickerUnits().length;
+    if (count === 0) {
+      return;
+    }
+    event.preventDefault();
+    this.unitPickerHighlighted.update((current) => (current + delta + count) % count);
+  }
+
+  protected setUnitHighlight(index: number): void {
+    this.unitPickerHighlighted.set(index);
+  }
+
+  /** Dismiss the unit picker and return focus to the scanner. */
+  protected closeUnitPicker(): void {
+    this.unitPickerProduct.set(null);
+    this.unitPickerUnits.set([]);
+    this.unitPickerError.set(null);
+    this.unitPickerHighlighted.set(0);
+    this.refocus();
+  }
+
+  protected unitOptionId(index: number): string {
+    return `pos-unit-${index}`;
   }
 
   protected increment(key: string): void {
