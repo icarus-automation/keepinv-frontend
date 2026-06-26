@@ -56,6 +56,8 @@ export class EntitlementsService {
   readonly entitlements = this.state.asReadonly();
 
   readonly plan = computed(() => this.state().plan);
+  /** PRO-tier tenant: gates PRO-only surfaces such as the barcode catalog sheet. */
+  readonly isPro = computed(() => this.state().plan === 'PRO');
   readonly printerType = computed(() => this.state().printerType);
   readonly canUsePos = computed(() => this.state().features.pos);
   readonly canPrintLabels = computed(() => this.state().features.labelPrinting);

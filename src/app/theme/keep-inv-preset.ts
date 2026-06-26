@@ -7,7 +7,7 @@ import Aura from '@primeuix/themes/aura';
  * signal as the primary color. Mirrors the Tailwind @theme tokens in styles.css
  * so PrimeNG components and hand-built markup share one visual language.
  */
-export const AssetWisePreset = definePreset(Aura, {
+export const KeepInvPreset = definePreset(Aura, {
   semantic: {
     primary: {
       50: 'oklch(97% 0.02 80)',

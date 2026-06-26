@@ -21,6 +21,7 @@ import { Product, stockState } from '../types/product.types';
 import { httpErrorMessage } from '../../../../common/http/http-error-message';
 import { MoneyPipe } from '../utils/money.pipe';
 import { ProductForm } from '../form/product-form';
+import { ProductImage } from './product-image';
 import { PrintLabelButton } from '../../../../common/printing/print-label-button';
 import { UnitsRoster } from '../units/units-roster';
 import { CommissionSession } from '../units/commission-session';
@@ -41,6 +42,7 @@ type DetailTab = 'overview' | 'units';
     DecimalPipe,
     MoneyPipe,
     ProductForm,
+    ProductImage,
     UnitsRoster,
     CommissionSession,
     PrintLabelButton,

@@ -41,7 +41,7 @@ interface Channel {
 }
 
 export class NiimbotWebBluetoothPrinter implements LabelPrinter {
-  private readonly client = new AssetWiseNiimbotBluetoothClient();
+  private readonly client = new KeepInvNiimbotBluetoothClient();
   private onDisconnect?: () => void;
 
   constructor() {
@@ -123,7 +123,7 @@ export class NiimbotWebBluetoothPrinter implements LabelPrinter {
   }
 }
 
-class AssetWiseNiimbotBluetoothClient extends NiimbotAbstractClient {
+class KeepInvNiimbotBluetoothClient extends NiimbotAbstractClient {
   private device?: BluetoothDevice;
   private gattServer?: BluetoothRemoteGATTServer;
   private writeChar?: BluetoothRemoteGATTCharacteristic;

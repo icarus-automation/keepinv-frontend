@@ -23,12 +23,13 @@
           </div>
         </div>
       } @else {
-        <div class="flex items-baseline gap-px text-lg font-semibold tracking-tight">
-          <span>asset</span><span class="text-muted">-wise</span>
+        <div class="flex items-center gap-3">
+          <app-keep-inv-mark class="h-11 w-11 shrink-0" />
+          <div class="min-w-0">
+            <p class="text-lg font-semibold tracking-tight"><span class="text-brand">keep</span> inv</p>
+            <p class="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted">Counter terminal</p>
+          </div>
         </div>
-        <p class="mt-1.5 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted">
-          Counter terminal
-        </p>
       }
 
       <h1 class="mt-9 text-2xl font-semibold tracking-tight">Sign in</h1>
@@ -95,7 +96,7 @@
 
   <footer class="border-t border-line px-6 py-4">
     <p class="mx-auto max-w-sm font-mono text-[0.7rem] tracking-wide text-muted">
-      Authorized access only · asset-wise
+      Authorized access only · keep inv
     </p>
   </footer>
 </div>

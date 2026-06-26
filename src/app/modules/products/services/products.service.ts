@@ -75,4 +75,20 @@ export class ProductsService {
       .delete<ApiResponse<Product>>(`${this.baseUrl}/${id}`)
       .pipe(map((response) => response.data));
   }
+
+  /** Upload (or replace) a product's photo. Field name `image`; returns the hydrated product. */
+  uploadImage(id: string, file: File): Observable<Product> {
+    const form = new FormData();
+    form.append('image', file);
+    return this.http
+      .post<ApiResponse<Product>>(`${this.baseUrl}/${id}/image`, form)
+      .pipe(map((response) => response.data));
+  }
+
+  /** Remove a product's photo. Returns the product with `imageUrl` cleared. */
+  removeImage(id: string): Observable<Product> {
+    return this.http
+      .delete<ApiResponse<Product>>(`${this.baseUrl}/${id}/image`)
+      .pipe(map((response) => response.data));
+  }
 }

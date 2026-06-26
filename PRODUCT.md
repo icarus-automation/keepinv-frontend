@@ -21,7 +21,7 @@ than hard-coded.
 
 ## Product Purpose
 
-asset-wise is an inventory management system with an integrated point of sale.
+keep inv is an inventory management system with an integrated point of sale.
 It exists to make stock and sales operations fast and accurate for small
 businesses that move physical goods. It is barcode-driven end to end:
 integrated with a barcode scanner for input, an asset/label printer for tagging

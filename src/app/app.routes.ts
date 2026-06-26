@@ -2,7 +2,12 @@ import { Routes } from '@angular/router';
 
 import { authGuard } from './modules/auth/guards/auth.guard';
 import { guestGuard } from './modules/auth/guards/guest.guard';
-import { accessGuard, lockedGuard, posGuard } from '../common/entitlements/entitlement.guards';
+import {
+  accessGuard,
+  lockedGuard,
+  posGuard,
+  proGuard,
+} from '../common/entitlements/entitlement.guards';
 
 export const routes: Routes = [
   {
@@ -51,6 +56,12 @@ export const routes: Routes = [
       {
         path: 'products',
         loadComponent: () => import('./modules/products/products').then((m) => m.Products),
+      },
+      {
+        path: 'barcode-sheet',
+        canActivate: [proGuard],
+        loadComponent: () =>
+          import('./modules/catalog-sheet/catalog-sheet').then((m) => m.CatalogSheet),
       },
       {
         path: 'stock-movements',

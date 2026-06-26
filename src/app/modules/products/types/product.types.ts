@@ -2,6 +2,13 @@ import { Category } from '../../categories/types/category.types';
 import { Supplier } from '../../suppliers/types/supplier.types';
 import { Location } from '../../locations/types/location.types';
 
+/** Shown wherever a product has no uploaded photo. Lives in the app's `public/` folder. */
+export const PRODUCT_IMAGE_PLACEHOLDER = '/pxl-default-image.png';
+
+/** Image types and size ceiling the photo upload accepts; mirrors the backend's validation. */
+export const PRODUCT_IMAGE_ACCEPT = 'image/jpeg,image/png,image/webp';
+export const PRODUCT_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+
 /**
  * A sellable item in the catalog. The core inventory record: identity (name,
  * SKU, barcode, brand), pricing, stock level, and classification.
@@ -20,6 +27,12 @@ export interface Product {
   sku: string;
   barcode: string | null;
   brand: string | null;
+  /**
+   * Cloudinary-hosted product photo (optimised delivery URL), or null when none has been uploaded.
+   * Shown in the detail pane and the barcode catalog sheet, never in the list. Managed through the
+   * dedicated image endpoints, not the create/update payload.
+   */
+  imageUrl: string | null;
   /** Decimal serialized as a string, e.g. "42850". */
   costPrice: string;
   /** Decimal serialized as a string, e.g. "54990". */

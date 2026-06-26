@@ -2,7 +2,7 @@
 
 - **Date:** 2026-06-05
 - **Status:** Approved design, pending implementation plan
-- **Scope:** Frontend-only feature in the existing `asset-wise/frontend` Angular app
+- **Scope:** Frontend-only feature in the existing `keep-inv/frontend` Angular app
 
 ## Context
 

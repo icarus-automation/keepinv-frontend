@@ -27,16 +27,12 @@
           {{ orgMonogram() }}
         </span>
       } @else {
-        <span class="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-ink text-counter">
-          <i class="pi pi-box text-lg" aria-hidden="true"></i>
-        </span>
+        <app-keep-inv-mark class="h-7 w-7 shrink-0" />
       }
       @if (orgName(); as name) {
         <span [class]="labelClasses()" class="truncate text-base font-semibold tracking-tight">{{ name }}</span>
       } @else {
-        <span [class]="labelClasses()" class="flex items-baseline gap-px text-base font-semibold tracking-tight">
-          <span>asset</span><span class="text-muted">-wise</span>
-        </span>
+        <span [class]="labelClasses()" class="truncate text-base font-semibold tracking-tight"><span class="text-brand">keep</span> inv</span>
       }
     </div>
 
@@ -99,7 +95,7 @@
           [class.lg:justify-center]="collapsed()"
         >
           <i class="pi pi-box text-sm" aria-hidden="true"></i>
-          <span [class]="labelClasses()">Powered by <span class="font-medium text-muted">asset-wise</span></span>
+          <span [class]="labelClasses()">Powered by <span class="font-medium text-muted">keep inv</span></span>
         </p>
       </div>
     }

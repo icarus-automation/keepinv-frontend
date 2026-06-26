@@ -10,7 +10,7 @@ import { providePrimeNG } from 'primeng/config';
 import { forkJoin, of, switchMap } from 'rxjs';
 
 import { routes } from './app.routes';
-import { AssetWisePreset } from './theme/asset-wise-preset';
+import { KeepInvPreset } from './theme/keep-inv-preset';
 import { authInterceptor } from './modules/auth/interceptors/auth.interceptor';
 import { AuthService } from './modules/auth/services/auth.service';
 import { OrganizationService } from './modules/organization/services/organization.service';
@@ -42,7 +42,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     providePrimeNG({
       theme: {
-        preset: AssetWisePreset,
+        preset: KeepInvPreset,
         options: {
           // Light-only for now; point dark mode at a class that is never applied.
           darkModeSelector: '.app-dark',

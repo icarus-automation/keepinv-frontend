@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "keep-inv",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -20,6 +20,7 @@
     "@mmote/niimbluelib": "0.0.1-alpha.38",
     "@primeuix/themes": "^2.0.3",
     "jsbarcode": "^3.12.3",
+    "jspdf": "^4.2.1",
     "primeicons": "^7.0.0",
     "primeng": "^21.1.8",
     "rxjs": "~7.8.0",

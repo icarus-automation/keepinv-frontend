@@ -10,6 +10,13 @@ export const posGuard: CanActivateFn = () => {
   return entitlements.canUsePos() ? true : router.parseUrl('/');
 };
 
+/** Blocks PRO-only routes (the barcode catalog sheet) for BASIC tenants. Redirects home. */
+export const proGuard: CanActivateFn = () => {
+  const entitlements = inject(EntitlementsService);
+  const router = inject(Router);
+  return entitlements.isPro() ? true : router.parseUrl('/');
+};
+
 /** Sends a locked tenant (expired trial / deactivated org) to the lock screen. */
 export const accessGuard: CanActivateFn = () => {
   const entitlements = inject(EntitlementsService);

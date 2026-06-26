@@ -18,6 +18,7 @@ import { AuthService } from '../modules/auth/services/auth.service';
 import { OrganizationService } from '../modules/organization/services/organization.service';
 import { orgMonogram } from '../modules/organization/organization.util';
 import { EntitlementsService } from '../../common/entitlements/entitlements.service';
+import { KeepInvMark } from '../shared/keep-inv-mark';
 
 interface NavItem {
   readonly label: string;
@@ -52,7 +53,7 @@ const NEW_SHORTCUTS: Record<string, { readonly path: string }> = {
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterOutlet, RouterLink, MenuModule, Tooltip],
+  imports: [RouterOutlet, RouterLink, MenuModule, Tooltip, KeepInvMark],
   templateUrl: './layout.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -69,6 +70,9 @@ export class Layout {
 
   /** Paths that belong to the POS module — hidden for BASIC (Inventory-only) tenants. */
   private static readonly POS_PATHS = new Set(['pos', 'sales', 'reports']);
+
+  /** PRO-only paths (the barcode catalog sheet) — hidden for BASIC tenants. */
+  private static readonly PRO_PATHS = new Set(['barcode-sheet']);
 
   private static readonly ALL_SECTIONS: readonly NavSection[] = [
     {
@@ -90,6 +94,7 @@ export class Layout {
       label: 'Catalog',
       items: [
         { label: 'Products', icon: 'pi pi-box', path: 'products', newShortcut: { key: 'p', verb: 'New product' } },
+        { label: 'Barcode Sheet', icon: 'pi pi-qrcode', path: 'barcode-sheet' },
         { label: 'Suppliers', icon: 'pi pi-truck', path: 'suppliers' },
         { label: 'Categories', icon: 'pi pi-th-large', path: 'categories' },
         { label: 'Locations', icon: 'pi pi-map-marker', path: 'locations' },
@@ -101,15 +106,26 @@ export class Layout {
     },
   ];
 
-  // POS items (Point of Sale, Sales, Sales Report) only show when the plan includes POS (PRO).
-  // Sections left empty by the filter are dropped so no orphan caption renders.
+  // POS items (Point of Sale, Sales, Sales Report) and PRO-only items (Barcode Sheet) only show on
+  // the plans that include them. Sections left empty by the filter are dropped so no orphan caption
+  // renders.
   protected readonly navSections = computed<readonly NavSection[]>(() => {
-    if (this.entitlements.canUsePos()) {
+    const canUsePos = this.entitlements.canUsePos();
+    const isPro = this.entitlements.isPro();
+    if (canUsePos && isPro) {
       return Layout.ALL_SECTIONS;
     }
     return Layout.ALL_SECTIONS.map((section) => ({
       ...section,
-      items: section.items.filter((item) => !item.path || !Layout.POS_PATHS.has(item.path)),
+      items: section.items.filter((item) => {
+        if (!item.path) {
+          return true;
+        }
+        if (!canUsePos && Layout.POS_PATHS.has(item.path)) {
+          return false;
+        }
+        return isPro || !Layout.PRO_PATHS.has(item.path);
+      }),
     })).filter((section) => section.items.length > 0);
   });
 
@@ -139,7 +155,7 @@ export class Layout {
         return match.label;
       }
     }
-    return 'asset-wise';
+    return 'keep inv';
   });
 
   private readonly organization = this.organizationService.organization;

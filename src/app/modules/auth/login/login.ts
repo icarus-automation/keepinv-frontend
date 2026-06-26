@@ -18,10 +18,11 @@ import { AuthService } from '../services/auth.service';
 import { OrganizationService } from '../../organization/services/organization.service';
 import { orgMonogram } from '../../organization/organization.util';
 import { EntitlementsService } from '../../../../common/entitlements/entitlements.service';
+import { KeepInvMark } from '../../../shared/keep-inv-mark';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, ButtonModule, InputTextModule, PasswordModule],
+  imports: [ReactiveFormsModule, ButtonModule, InputTextModule, PasswordModule, KeepInvMark],
   templateUrl: './login.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

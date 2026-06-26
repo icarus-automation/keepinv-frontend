@@ -1,10 +1,10 @@
 <!-- SEED: re-run /impeccable document once there's code to capture the actual tokens and components. -->
 ---
-name: asset-wise
+name: keep inv
 description: A fast, barcode-driven inventory and point-of-sale tool built for the counter.
 ---
 
-# Design System: asset-wise
+# Design System: keep inv
 
 ## 1. Overview
 
