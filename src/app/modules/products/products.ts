@@ -21,6 +21,7 @@ import { CategoriesService } from '../categories/services/categories.service';
 import { LocationsService } from '../locations/services/locations.service';
 import { ProductsService } from './services/products.service';
 import { Product, ProductListQuery, StockState, stockState } from './types/product.types';
+import { platformMeta } from '../suppliers/types/supplier.types';
 import { httpErrorMessage } from '../../../common/http/http-error-message';
 import { MoneyPipe } from './utils/money.pipe';
 import { ProductDetail } from './detail/product-detail';
@@ -295,6 +296,16 @@ export class Products {
 
   protected stockOf(product: Product): StockState {
     return stockState(product);
+  }
+
+  /** Platform label for a row's reorder shortcut (drives the link's accessible name). */
+  protected reorderLabel(product: Product): string {
+    return product.reorderPlatform ? platformMeta(product.reorderPlatform).label : 'supplier store';
+  }
+
+  /** Platform icon for a row's reorder shortcut; a generic cart when none is set. */
+  protected reorderIcon(product: Product): string {
+    return product.reorderPlatform ? platformMeta(product.reorderPlatform).icon : 'pi pi-shopping-cart';
   }
 
   private computeHasFilters(): boolean {

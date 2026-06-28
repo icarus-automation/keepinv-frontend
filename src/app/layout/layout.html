@@ -27,7 +27,15 @@
           {{ orgMonogram() }}
         </span>
       } @else {
-        <app-keep-inv-mark class="h-7 w-7 shrink-0" />
+        <img
+          ngSrc="/brand-logo.png"
+          width="28"
+          height="28"
+          priority
+          alt=""
+          aria-hidden="true"
+          class="h-7 w-7 shrink-0 rounded"
+        />
       }
       @if (orgName(); as name) {
         <span [class]="labelClasses()" class="truncate text-base font-semibold tracking-tight">{{ name }}</span>

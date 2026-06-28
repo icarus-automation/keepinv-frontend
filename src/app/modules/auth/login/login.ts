@@ -13,16 +13,15 @@ import { forkJoin, switchMap } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
+import { NgOptimizedImage } from '@angular/common';
 
 import { AuthService } from '../services/auth.service';
 import { OrganizationService } from '../../organization/services/organization.service';
-import { orgMonogram } from '../../organization/organization.util';
 import { EntitlementsService } from '../../../../common/entitlements/entitlements.service';
-import { KeepInvMark } from '../../../shared/keep-inv-mark';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, ButtonModule, InputTextModule, PasswordModule, KeepInvMark],
+  imports: [ReactiveFormsModule, ButtonModule, InputTextModule, PasswordModule, NgOptimizedImage],
   templateUrl: './login.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -34,13 +33,6 @@ export class Login {
   private readonly router = inject(Router);
 
   private readonly emailInput = viewChild<ElementRef<HTMLInputElement>>('emailInput');
-
-  /**
-   * The org this device last belonged to, if any. Brands the (pre-auth) sign-in
-   * screen for a returning counter terminal; a fresh device shows the product mark.
-   */
-  protected readonly orgIdentity = this.organizationService.readCachedIdentity();
-  protected readonly orgMonogram = orgMonogram(this.orgIdentity?.name);
 
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);

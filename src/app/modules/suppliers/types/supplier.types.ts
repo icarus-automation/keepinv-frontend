@@ -25,14 +25,14 @@ export interface SupplierRequest {
 /** Contact platforms a supplier link can use. Mirrors the backend `SupplierPlatform` enum. */
 export type SupplierPlatform =
   | 'MESSENGER'
-  | 'VIBER'
   | 'SHOPEE'
   | 'LAZADA'
+  | 'ALIBABA'
   | 'FACEBOOK'
   | 'WEBSITE'
   | 'OTHER';
 
-/** A saved contact channel for a supplier (Messenger, Viber, Facebook, ...): the reorder shortcut. */
+/** A saved contact channel for a supplier (Messenger, Facebook, ...): the reorder shortcut. */
 export interface SupplierLink {
   id: string;
   supplierId: string;
@@ -66,9 +66,9 @@ export interface PlatformOption {
  */
 export const SUPPLIER_PLATFORMS: readonly PlatformOption[] = [
   { label: 'Messenger', value: 'MESSENGER', icon: 'pi pi-comments' },
-  { label: 'Viber', value: 'VIBER', icon: 'pi pi-phone' },
   { label: 'Shopee', value: 'SHOPEE', icon: 'pi pi-shopping-bag' },
   { label: 'Lazada', value: 'LAZADA', icon: 'pi pi-shopping-cart' },
+  { label: 'Alibaba', value: 'ALIBABA', icon: 'pi pi-building' },
   { label: 'Facebook', value: 'FACEBOOK', icon: 'pi pi-facebook' },
   { label: 'Website', value: 'WEBSITE', icon: 'pi pi-globe' },
   { label: 'Other', value: 'OTHER', icon: 'pi pi-link' },

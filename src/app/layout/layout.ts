@@ -13,12 +13,12 @@ import { filter, map } from 'rxjs';
 import { MenuModule } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
 import { Tooltip } from 'primeng/tooltip';
+import { NgOptimizedImage } from '@angular/common';
 
 import { AuthService } from '../modules/auth/services/auth.service';
 import { OrganizationService } from '../modules/organization/services/organization.service';
 import { orgMonogram } from '../modules/organization/organization.util';
 import { EntitlementsService } from '../../common/entitlements/entitlements.service';
-import { KeepInvMark } from '../shared/keep-inv-mark';
 
 interface NavItem {
   readonly label: string;
@@ -53,7 +53,7 @@ const NEW_SHORTCUTS: Record<string, { readonly path: string }> = {
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterOutlet, RouterLink, MenuModule, Tooltip, KeepInvMark],
+  imports: [RouterOutlet, RouterLink, MenuModule, Tooltip, NgOptimizedImage],
   templateUrl: './layout.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {

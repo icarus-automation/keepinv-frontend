@@ -163,6 +163,65 @@
       </div>
     </fieldset>
 
+    <!-- Reorder -->
+    <fieldset class="space-y-4">
+      <legend class="text-sm font-semibold tracking-tight text-ink">Reorder</legend>
+      <div class="grid gap-4 sm:grid-cols-[minmax(0,1fr)_11rem]">
+        <div class="flex flex-col gap-1.5">
+          <label for="pf-reorder-url" class="text-sm font-medium">
+            Reorder link <span class="font-normal text-muted">(optional)</span>
+          </label>
+          <input
+            pInputText
+            id="pf-reorder-url"
+            type="url"
+            formControlName="reorderUrl"
+            autocomplete="off"
+            inputmode="url"
+            maxlength="2048"
+            placeholder="https://shopee.ph/..."
+            aria-describedby="pf-reorder-url-help"
+            [invalid]="form.controls.reorderUrl.touched && form.controls.reorderUrl.invalid"
+            class="w-full text-sm"
+          />
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label for="pf-reorder-platform" class="text-sm font-medium">Platform</label>
+          <p-select
+            inputId="pf-reorder-platform"
+            formControlName="reorderPlatform"
+            [options]="platformOptions"
+            optionLabel="label"
+            optionValue="value"
+            [showClear]="true"
+            placeholder="Auto"
+            appendTo="body"
+            ariaLabel="Reorder platform"
+            (onChange)="platformPinned.set(true)"
+            (onClear)="platformPinned.set(true)"
+            styleClass="w-full text-sm"
+          >
+            <ng-template let-option pTemplate="selectedItem">
+              <span class="inline-flex items-center gap-2">
+                <i [class]="option.icon" class="text-sm text-muted" aria-hidden="true"></i>
+                {{ option.label }}
+              </span>
+            </ng-template>
+            <ng-template let-option pTemplate="item">
+              <span class="inline-flex items-center gap-2">
+                <i [class]="option.icon" class="text-sm text-muted" aria-hidden="true"></i>
+                {{ option.label }}
+              </span>
+            </ng-template>
+          </p-select>
+        </div>
+        <p id="pf-reorder-url-help" class="text-xs text-muted sm:col-span-2">
+          A direct link to buy this exact item again. The Reorder button uses it to open the store in
+          one click when stock runs low. The platform sets the icon and fills itself from the link.
+        </p>
+      </div>
+    </fieldset>
+
     <!-- Classification -->
     <fieldset class="space-y-4">
       <legend class="text-sm font-semibold tracking-tight text-ink">Classification</legend>

@@ -172,6 +172,18 @@
                       }
                     }
                   </div>
+                  @if (product.reorderUrl && stockOf(product) !== 'ok') {
+                    <a
+                      [href]="product.reorderUrl"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      (click)="$event.stopPropagation()"
+                      [attr.aria-label]="'Reorder ' + product.name + ' from ' + reorderLabel(product) + ' (opens in a new tab)'"
+                      class="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-line text-ink outline-none transition-colors hover:bg-line/60 focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+                    >
+                      <i [class]="reorderIcon(product)" class="text-sm" aria-hidden="true"></i>
+                    </a>
+                  }
                   <i class="pi pi-angle-right shrink-0 text-muted lg:hidden" aria-hidden="true"></i>
                 </div>
               </td>

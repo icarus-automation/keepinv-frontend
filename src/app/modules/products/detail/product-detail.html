@@ -159,6 +159,55 @@
               </div>
             </dl>
 
+            <!-- Reorder: amber primary only when stock is low/out (the action that matters now) -->
+            @if (reorder(); as r) {
+              @if (stock() === 'ok') {
+                <a
+                  [href]="r.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  [attr.aria-label]="'Reorder from ' + r.label + ' (opens in a new tab)'"
+                  class="mt-5 inline-flex items-center gap-2 rounded-md border border-line bg-counter px-4 py-2.5 text-sm font-medium text-ink outline-none transition-colors hover:bg-line/60 focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+                >
+                  <i [class]="r.icon" class="text-base" aria-hidden="true"></i>
+                  Reorder
+                  <span class="text-muted">· {{ r.label }}</span>
+                  <i class="pi pi-external-link text-xs" aria-hidden="true"></i>
+                </a>
+              } @else {
+                <div class="mt-5">
+                  <a
+                    [href]="r.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    [attr.aria-label]="'Reorder now from ' + r.label + ' (opens in a new tab)'"
+                    class="inline-flex items-center gap-2 rounded-md bg-signal px-4 py-2.5 text-sm font-semibold text-ink outline-none transition-colors hover:bg-signal-hover focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+                  >
+                    <i [class]="r.icon" class="text-base" aria-hidden="true"></i>
+                    Reorder now
+                    <i class="pi pi-external-link text-xs" aria-hidden="true"></i>
+                  </a>
+                  <p class="mt-2 text-xs text-muted">
+                    Stock is {{ stock() === 'out' ? 'out' : 'low' }} — reorder from {{ r.label }}.
+                  </p>
+                </div>
+              }
+            } @else if (stock() !== 'ok') {
+              <div class="mt-5 rounded-lg border border-dashed border-line px-4 py-3">
+                <p class="text-sm text-muted">
+                  No reorder link yet.
+                  <button
+                    type="button"
+                    (click)="startEdit()"
+                    class="rounded font-medium text-ink underline decoration-line underline-offset-2 outline-none hover:decoration-ink focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+                  >
+                    Add one
+                  </button>
+                  to reorder this item in one click.
+                </p>
+              </div>
+            }
+
             <!-- Full record -->
             <section class="mt-6" aria-label="Product details">
               <dl class="grid gap-x-6 gap-y-4 sm:grid-cols-2">
@@ -203,6 +252,26 @@
                       {{ product().reorderPoint | number }}
                     } @else {
                       Not set
+                    }
+                  </dd>
+                </div>
+                <div class="min-w-0 sm:col-span-2">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-muted">Reorder link</dt>
+                  <dd class="mt-0.5 text-sm">
+                    @if (reorder(); as r) {
+                      <a
+                        [href]="r.url"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        [attr.aria-label]="'Open ' + r.label + ' reorder page in a new tab'"
+                        class="inline-flex max-w-full items-center gap-1.5 rounded text-ink underline decoration-line underline-offset-2 outline-none hover:decoration-ink focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+                      >
+                        <i [class]="r.icon" class="shrink-0 text-sm text-muted" aria-hidden="true"></i>
+                        <span class="truncate">{{ r.url }}</span>
+                        <i class="pi pi-external-link shrink-0 text-[0.7rem]" aria-hidden="true"></i>
+                      </a>
+                    } @else {
+                      <span class="text-muted">Not set</span>
                     }
                   </dd>
                 </div>

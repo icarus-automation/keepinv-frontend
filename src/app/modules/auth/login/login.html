@@ -1,36 +1,22 @@
 <div class="flex min-h-dvh flex-col bg-counter text-ink antialiased">
   <main class="flex flex-1 items-center justify-center px-6 pb-20 pt-12">
     <div class="w-full max-w-sm">
-      @if (orgIdentity; as org) {
-        <div class="flex items-center gap-3">
-          @if (org.logo) {
-            <img
-              [src]="org.logo"
-              [alt]="org.name + ' logo'"
-              class="h-11 w-11 shrink-0 rounded-md border border-line bg-counter object-contain"
-            />
-          } @else {
-            <span
-              class="grid h-11 w-11 shrink-0 place-items-center rounded-md bg-ink text-sm font-semibold text-counter"
-              aria-hidden="true"
-            >
-              {{ orgMonogram }}
-            </span>
-          }
-          <div class="min-w-0">
-            <p class="truncate text-lg font-semibold tracking-tight">{{ org.name }}</p>
-            <p class="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted">Counter terminal</p>
-          </div>
+      <!-- Sign-in always wears the keep inv mark, even on org-bound terminals: it's the one surface we keep ours. -->
+      <div class="flex items-center gap-3">
+        <img
+          ngSrc="/brand-logo.png"
+          width="44"
+          height="44"
+          priority
+          alt=""
+          aria-hidden="true"
+          class="h-11 w-11 shrink-0 rounded-md"
+        />
+        <div class="min-w-0">
+          <p class="text-lg font-semibold tracking-tight"><span class="text-brand">keep</span> inv</p>
+          <p class="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted">Counter terminal</p>
         </div>
-      } @else {
-        <div class="flex items-center gap-3">
-          <app-keep-inv-mark class="h-11 w-11 shrink-0" />
-          <div class="min-w-0">
-            <p class="text-lg font-semibold tracking-tight"><span class="text-brand">keep</span> inv</p>
-            <p class="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted">Counter terminal</p>
-          </div>
-        </div>
-      }
+      </div>
 
       <h1 class="mt-9 text-2xl font-semibold tracking-tight">Sign in</h1>
       <p class="mt-1.5 text-sm text-muted">Enter your credentials to open the counter.</p>

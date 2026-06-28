@@ -1,5 +1,5 @@
 import { Category } from '../../categories/types/category.types';
-import { Supplier } from '../../suppliers/types/supplier.types';
+import { Supplier, SupplierPlatform } from '../../suppliers/types/supplier.types';
 import { Location } from '../../locations/types/location.types';
 
 /** Shown wherever a product has no uploaded photo. Lives in the app's `public/` folder. */
@@ -39,6 +39,13 @@ export interface Product {
   sellingPrice: string;
   quantityOnHand: number;
   reorderPoint: number | null;
+  /**
+   * Direct "buy this exact item again" link to the supplier's store page
+   * (Shopee/Lazada/Alibaba/...), or null when none is set. Powers the Reorder
+   * action; `reorderPlatform` only drives the icon/label shown beside it.
+   */
+  reorderUrl: string | null;
+  reorderPlatform: SupplierPlatform | null;
   isSerialized: boolean;
   isArchived: boolean;
 
@@ -69,6 +76,8 @@ export interface ProductRequest {
   costPrice: number;
   sellingPrice: number;
   reorderPoint?: number | null;
+  reorderUrl?: string | null;
+  reorderPlatform?: SupplierPlatform | null;
   isSerialized: boolean;
   categoryId: string;
   supplierId?: string | null;
@@ -84,6 +93,32 @@ export interface ProductListQuery {
   categoryId?: string;
   locationId?: string;
   lowStock?: boolean;
+}
+
+/**
+ * Best-guess the reorder platform from the pasted link's host so the operator
+ * rarely has to pick it by hand (the fast path stays the correct path). Returns
+ * `null` for anything that isn't a parseable http(s) URL, so the picker simply
+ * stays empty until the link is valid. A recognised store wins; any other valid
+ * URL resolves to `WEBSITE`.
+ */
+export function detectReorderPlatform(rawUrl: string): SupplierPlatform | null {
+  const value = rawUrl.trim();
+  if (!value) {
+    return null;
+  }
+  let host: string;
+  try {
+    host = new URL(value).hostname.toLowerCase();
+  } catch {
+    return null;
+  }
+  if (host.includes('shopee')) return 'SHOPEE';
+  if (host.includes('lazada')) return 'LAZADA';
+  if (host.includes('alibaba') || host.includes('aliexpress') || host.endsWith('1688.com')) return 'ALIBABA';
+  if (host === 'm.me' || host.includes('messenger.')) return 'MESSENGER';
+  if (host.includes('facebook.') || host === 'fb.com' || host === 'fb.me') return 'FACEBOOK';
+  return 'WEBSITE';
 }
 
 /** Stock standing derived from on-hand vs reorder point. Drives the non-amber warning treatment. */

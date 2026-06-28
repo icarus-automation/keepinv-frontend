@@ -33,11 +33,10 @@
 
   /*
    * Brand green — a quiet nod to Minecraft's keepInventory. Identity ONLY: the
-   * wordmark and brand mark on the sign-in and sidebar surfaces. It is never an
+   * "keep" in the wordmark on the sign-in and sidebar surfaces. It is never an
    * interactive signal, so amber stays the sole action/focus/selection color and
    * the One Signal Rule holds. Kept dark enough to clear AA large-text contrast on
-   * the counter surface; the grass tint is decorative (sits in an aria-hidden mark).
+   * the counter surface. The logo artwork itself lives in /brand-logo.png.
    */
-  --color-brand: oklch(52% 0.15 148); /* wordmark + mark body */
-  --color-brand-grass: oklch(68% 0.16 145); /* lighter "grass" top, decorative */
+  --color-brand: oklch(52% 0.15 148); /* "keep" wordmark accent */
 }

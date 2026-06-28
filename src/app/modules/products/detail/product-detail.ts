@@ -18,6 +18,7 @@ import { ButtonModule } from 'primeng/button';
 
 import { ProductsService } from '../services/products.service';
 import { Product, stockState } from '../types/product.types';
+import { platformMeta } from '../../suppliers/types/supplier.types';
 import { httpErrorMessage } from '../../../../common/http/http-error-message';
 import { MoneyPipe } from '../utils/money.pipe';
 import { ProductForm } from '../form/product-form';
@@ -74,6 +75,24 @@ export class ProductDetail {
 
   protected readonly stock = computed(() => stockState(this.product()));
   protected readonly isSerialized = computed(() => this.product().isSerialized);
+
+  /**
+   * The reorder shortcut for this product, or null when no link is set. Resolves
+   * the platform to its icon/label, falling back to a generic store link so a
+   * link without a platform still renders cleanly.
+   */
+  protected readonly reorder = computed(() => {
+    const product = this.product();
+    if (!product.reorderUrl) {
+      return null;
+    }
+    const meta = product.reorderPlatform ? platformMeta(product.reorderPlatform) : null;
+    return {
+      url: product.reorderUrl,
+      label: meta?.label ?? 'supplier store',
+      icon: meta?.icon ?? 'pi pi-shopping-cart',
+    };
+  });
   protected readonly margin = computed(() => {
     const product = this.product();
     const selling = Number(product.sellingPrice);

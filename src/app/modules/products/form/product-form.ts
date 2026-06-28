@@ -13,7 +13,14 @@ import {
   viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { Observable, finalize, forkJoin } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -30,13 +37,34 @@ import { Category } from '../../categories/types/category.types';
 import { Supplier } from '../../suppliers/types/supplier.types';
 import { Location } from '../../locations/types/location.types';
 import { ProductsService } from '../services/products.service';
-import { Product, ProductRequest } from '../types/product.types';
+import { Product, ProductRequest, detectReorderPlatform } from '../types/product.types';
+import {
+  SUPPLIER_PLATFORMS,
+  SupplierPlatform,
+} from '../../suppliers/types/supplier.types';
 import { httpErrorMessage } from '../../../../common/http/http-error-message';
 
 /** A record with the minimum a `p-select` option needs: an id and a name to show. */
 interface NamedRecord {
   id: string;
   name: string;
+}
+
+/**
+ * Reorder link must be an http(s) URL with a protocol, mirroring the backend's
+ * `@IsUrl({ require_protocol: true })`. Empty is allowed (the field is optional).
+ */
+function reorderUrlValidator(control: AbstractControl): ValidationErrors | null {
+  const value = (control.value ?? '').trim();
+  if (!value) {
+    return null;
+  }
+  try {
+    const { protocol } = new URL(value);
+    return protocol === 'http:' || protocol === 'https:' ? null : { reorderUrl: true };
+  } catch {
+    return { reorderUrl: true };
+  }
 }
 
 /**
@@ -96,6 +124,8 @@ export class ProductForm implements OnInit {
     costPrice: this.formBuilder.control<number | null>(0, [Validators.min(0)]),
     sellingPrice: this.formBuilder.control<number | null>(0, [Validators.min(0)]),
     reorderPoint: this.formBuilder.control<number | null>(null, [Validators.min(0)]),
+    reorderUrl: ['', [reorderUrlValidator, Validators.maxLength(2048)]],
+    reorderPlatform: this.formBuilder.control<SupplierPlatform | null>(null),
     isSerialized: [false],
     categoryId: ['', [Validators.required]],
     supplierId: this.formBuilder.control<string | null>(null),
@@ -109,6 +139,11 @@ export class ProductForm implements OnInit {
   /** True once the field holds any code (manufacturer or internal). Generate hides behind this. */
   protected readonly hasBarcode = computed(() => this.barcodeValue().trim().length > 0);
 
+  /** Reorder platform choices (icon + label), shared with the suppliers channel picker. */
+  protected readonly platformOptions = [...SUPPLIER_PLATFORMS];
+  /** Set once the operator touches the platform select: stop auto-detecting from the URL after that. */
+  protected readonly platformPinned = signal(false);
+
   /** Quick-create controls live outside the main form so they never affect its validity. */
   protected readonly quickCategoryName = new FormControl('', { nonNullable: true });
   protected readonly quickSupplierName = new FormControl('', { nonNullable: true });
@@ -118,6 +153,20 @@ export class ProductForm implements OnInit {
 
   constructor() {
     afterNextRender(() => this.nameInput()?.nativeElement.focus());
+
+    // Auto-pick the platform from the pasted link so the operator rarely sets it
+    // by hand. Stops the moment they choose one themselves (platformPinned), and
+    // writes silently (emitEvent: false) so this never counts as a manual touch.
+    this.form.controls.reorderUrl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        if (this.platformPinned()) {
+          return;
+        }
+        this.form.controls.reorderPlatform.setValue(detectReorderPlatform(value ?? ''), {
+          emitEvent: false,
+        });
+      });
   }
 
   ngOnInit(): void {
@@ -141,11 +190,17 @@ export class ProductForm implements OnInit {
       costPrice: Number(product.costPrice),
       sellingPrice: Number(product.sellingPrice),
       reorderPoint: product.reorderPoint,
+      reorderUrl: product.reorderUrl ?? '',
+      reorderPlatform: product.reorderPlatform,
       isSerialized: product.isSerialized,
       categoryId: product.categoryId,
       supplierId: product.supplierId,
       locationId: product.locationId,
     });
+    // Respect a platform the product already carries: don't let URL auto-detect overwrite it.
+    if (product.reorderPlatform) {
+      this.platformPinned.set(true);
+    }
   }
 
   private loadOptions(): void {
@@ -199,6 +254,8 @@ export class ProductForm implements OnInit {
     }
 
     const raw = this.form.getRawValue();
+    // Platform is meaningless without a link, so only send it alongside one.
+    const reorderUrl = this.optional(raw.reorderUrl) ?? null;
     const body: ProductRequest = {
       name: raw.name.trim(),
       sku: raw.sku.trim(),
@@ -208,6 +265,8 @@ export class ProductForm implements OnInit {
       costPrice: raw.costPrice ?? 0,
       sellingPrice: raw.sellingPrice ?? 0,
       reorderPoint: raw.reorderPoint ?? null,
+      reorderUrl,
+      reorderPlatform: reorderUrl ? raw.reorderPlatform ?? null : null,
       isSerialized: raw.isSerialized,
       categoryId: raw.categoryId,
       supplierId: raw.supplierId || null,
@@ -340,6 +399,9 @@ export class ProductForm implements OnInit {
     }
     if (controls.categoryId.invalid) {
       return 'Choose a category for this product.';
+    }
+    if (controls.reorderUrl.invalid) {
+      return 'Enter a valid reorder link starting with http:// or https://.';
     }
     return 'Check the highlighted fields and try again.';
   }
