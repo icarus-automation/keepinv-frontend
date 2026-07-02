@@ -76,27 +76,34 @@ export class Layout {
 
   private static readonly ALL_SECTIONS: readonly NavSection[] = [
     {
+      label: 'Overview',
+      items: [{ label: 'Dashboard', icon: 'pi pi-home', path: 'dashboard' }],
+    },
+    {
       label: 'Operations',
       items: [
         { label: 'Point of Sale', icon: 'pi pi-shopping-cart', path: 'pos' },
         { label: 'Sales', icon: 'pi pi-chart-line', path: 'sales' },
-        { label: 'Sales Report', icon: 'pi pi-chart-bar', path: 'reports' },
-        { label: 'Stock Movements', icon: 'pi pi-arrows-v', path: 'stock-movements' },
         {
           label: 'Inventory Audit',
           icon: 'pi pi-check-square',
           path: 'inventory-audit',
           newShortcut: { key: 'a', verb: 'New audit' },
         },
+        { label: 'Stock Movements', icon: 'pi pi-arrows-v', path: 'stock-movements' },
       ],
+    },
+    {
+      label: 'Reports',
+      items: [{ label: 'Sales Report', icon: 'pi pi-chart-bar', path: 'reports' }],
     },
     {
       label: 'Catalog',
       items: [
         { label: 'Products', icon: 'pi pi-box', path: 'products', newShortcut: { key: 'p', verb: 'New product' } },
-        { label: 'Suppliers', icon: 'pi pi-truck', path: 'suppliers' },
         { label: 'Categories', icon: 'pi pi-th-large', path: 'categories' },
         { label: 'Locations', icon: 'pi pi-map-marker', path: 'locations' },
+        { label: 'Suppliers', icon: 'pi pi-truck', path: 'suppliers' },
         { label: 'Movement Types', icon: 'pi pi-tags', path: 'stock-movement-types' },
       ],
     },

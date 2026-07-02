@@ -25,7 +25,11 @@ export const routes: Routes = [
     canActivate: [authGuard, accessGuard],
     loadComponent: () => import('./layout/layout').then((m) => m.Layout),
     children: [
-      { path: '', redirectTo: 'categories', pathMatch: 'full' },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./modules/dashboard/dashboard').then((m) => m.Dashboard),
+      },
       {
         path: 'pos',
         canActivate: [posGuard],

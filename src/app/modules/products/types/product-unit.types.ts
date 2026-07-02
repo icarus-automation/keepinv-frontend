@@ -10,10 +10,13 @@ import { Product } from './product.types';
 export type ProductUnitStatus =
   | 'IN_STOCK'
   | 'RESERVED'
+  | 'MISPLACED'
   | 'SOLD'
   | 'DAMAGED'
   | 'RETURNED'
-  | 'LOST';
+  | 'MISSING'
+  | 'LOST'
+  | 'DISPOSED';
 
 /** Movement reasons the register endpoint accepts (the backend rejects the rest). */
 export type RegisterMovementType = 'INITIAL' | 'PURCHASE';
@@ -89,7 +92,7 @@ export interface ChangeProductUnitStatusRequest {
   note?: string;
 }
 
-/** Retire (soft) a unit: the backend marks it `LOST` and records a movement. */
+/** Dispose (soft) of a unit: the backend marks it `DISPOSED` and records a movement. */
 export interface RetireProductUnitRequest {
   note?: string;
 }
@@ -111,19 +114,22 @@ export interface ProductUnitListQuery {
 }
 
 /**
- * Statuses that count toward `Product.quantityOnHand`. The other three
- * (`SOLD`, `DAMAGED`, `LOST`) are off-hand. Keep in sync with the backend.
+ * Statuses that count toward `Product.quantityOnHand`. `MISPLACED` counts (the unit is physically
+ * present, just in the wrong spot); the off-hand ones are `SOLD`, `DAMAGED`, `MISSING`, `LOST`,
+ * `DISPOSED`. Keep in sync with the backend.
  */
 export const STOCK_COUNTED_STATUSES: ReadonlySet<ProductUnitStatus> = new Set<ProductUnitStatus>([
   'IN_STOCK',
   'RESERVED',
   'RETURNED',
+  'MISPLACED',
 ]);
 
 /** Statuses a unit can't keep its RFID tag while in (the tag write is rejected). */
 export const TAG_WRITE_BLOCKED_STATUSES: ReadonlySet<ProductUnitStatus> = new Set<ProductUnitStatus>([
   'SOLD',
   'LOST',
+  'DISPOSED',
 ]);
 
 /** Visual + semantic treatment for one status. `tone` keys into the status colour classes. */
@@ -147,19 +153,25 @@ export const PRODUCT_UNIT_STATUSES: Record<ProductUnitStatus, ProductUnitStatusM
   IN_STOCK: { status: 'IN_STOCK', label: 'In stock', icon: 'pi pi-check-circle', tone: 'success', countsOnHand: true },
   RESERVED: { status: 'RESERVED', label: 'Reserved', icon: 'pi pi-bookmark-fill', tone: 'info', countsOnHand: true },
   RETURNED: { status: 'RETURNED', label: 'Returned', icon: 'pi pi-replay', tone: 'info', countsOnHand: true },
+  MISPLACED: { status: 'MISPLACED', label: 'Misplaced', icon: 'pi pi-map-marker', tone: 'info', countsOnHand: true },
   DAMAGED: { status: 'DAMAGED', label: 'Damaged', icon: 'pi pi-exclamation-triangle', tone: 'danger', countsOnHand: false },
+  MISSING: { status: 'MISSING', label: 'Missing', icon: 'pi pi-question-circle', tone: 'danger', countsOnHand: false },
   SOLD: { status: 'SOLD', label: 'Sold', icon: 'pi pi-shopping-cart', tone: 'muted', countsOnHand: false },
   LOST: { status: 'LOST', label: 'Lost', icon: 'pi pi-ban', tone: 'danger', countsOnHand: false },
+  DISPOSED: { status: 'DISPOSED', label: 'Disposed', icon: 'pi pi-trash', tone: 'muted', countsOnHand: false },
 };
 
-/** Ordered for filter chips and status pickers: live states first, terminal states last. */
+/** Ordered for filter chips and status pickers: live states first, problems, terminal states last. */
 export const PRODUCT_UNIT_STATUS_ORDER: readonly ProductUnitStatus[] = [
   'IN_STOCK',
   'RESERVED',
   'RETURNED',
+  'MISPLACED',
+  'MISSING',
   'DAMAGED',
   'SOLD',
   'LOST',
+  'DISPOSED',
 ];
 
 export function productUnitStatusMeta(status: ProductUnitStatus): ProductUnitStatusMeta {

@@ -77,6 +77,28 @@ export function effectMeta(effect: StockMovementEffect): EffectMeta {
   return EFFECT_META[effect] ?? EFFECT_META.ADJUSTMENT;
 }
 
+/**
+ * Distinct glyphs for the built-in types, keyed by `systemKey`, so each reads on sight
+ * (a sale is a bag, a return is a replay) rather than as a generic effect arrow. Custom
+ * types carry no system key and fall back to their effect's directional arrow.
+ */
+const SYSTEM_KEY_ICONS: Record<string, string> = {
+  PURCHASE: 'pi pi-shopping-cart',
+  SALE: 'pi pi-shopping-bag',
+  ADJUSTMENT: 'pi pi-sliders-h',
+  RETURN: 'pi pi-replay',
+  INITIAL: 'pi pi-flag',
+  TRANSFER: 'pi pi-arrow-right-arrow-left',
+};
+
+/** The icon to show for a type: a distinct glyph for built-in types, else the effect arrow. */
+export function typeIcon(type: Pick<StockMovementType, 'systemKey' | 'effect'>): string {
+  if (type.systemKey && SYSTEM_KEY_ICONS[type.systemKey]) {
+    return SYSTEM_KEY_ICONS[type.systemKey];
+  }
+  return effectMeta(type.effect).icon;
+}
+
 /** The three effects in the order the record form and pickers present them. */
 export const EFFECT_OPTIONS: readonly StockMovementEffect[] = ['INCREASE', 'DECREASE', 'ADJUSTMENT'];
 

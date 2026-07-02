@@ -1,0 +1,196 @@
+<div class="mx-auto max-w-5xl">
+  <!-- Header -->
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <p class="max-w-prose text-sm text-muted">
+      Where your inventory stands right now: stock on hand and its value, and what needs chasing —
+      assets missing, misplaced, without an RFID tag, or written off.
+    </p>
+    <div class="flex shrink-0 items-center gap-3">
+      @if (report(); as r) {
+        <span class="text-xs tabular-nums text-muted">as of {{ r.generatedAt | date: 'h:mm a' }}</span>
+      }
+      <p-button
+        type="button"
+        label="Refresh"
+        icon="pi pi-refresh"
+        [text]="true"
+        [loading]="loading()"
+        (onClick)="refresh()"
+        styleClass="font-medium"
+      />
+    </div>
+  </div>
+
+  @if (loading()) {
+    <!-- Loading -->
+    <div class="mt-6 space-y-6">
+      <div class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-4">
+        @for (placeholder of [0, 1, 2, 3]; track placeholder) {
+          <div class="bg-counter p-4 sm:p-5">
+            <div class="h-3 w-16 animate-pulse rounded bg-line motion-reduce:animate-none"></div>
+            <div class="mt-3 h-6 w-24 animate-pulse rounded bg-line motion-reduce:animate-none"></div>
+          </div>
+        }
+      </div>
+      <div class="h-40 animate-pulse rounded-lg border border-line bg-counter motion-reduce:animate-none"></div>
+    </div>
+  } @else if (loadError(); as error) {
+    <div class="mt-6 rounded-lg border border-line bg-counter px-6 py-12 text-center">
+      <p class="text-sm font-medium text-ink">Couldn't load the dashboard</p>
+      <p class="mx-auto mt-1 max-w-sm text-sm text-muted">{{ error }}</p>
+      <p-button type="button" label="Retry" [text]="true" (onClick)="refresh()" styleClass="mt-3 font-medium" />
+    </div>
+  } @else if (isEmpty()) {
+    <div class="mt-6 rounded-lg border border-dashed border-line px-6 py-16 text-center">
+      <span class="mx-auto grid h-11 w-11 place-items-center rounded-full bg-panel text-muted">
+        <i class="pi pi-box text-xl" aria-hidden="true"></i>
+      </span>
+      <p class="mt-3 text-sm font-medium text-ink">No inventory yet</p>
+      <p class="mx-auto mt-1 max-w-xs text-sm text-muted">
+        Add your first products and the dashboard will show stock, value, and anything that needs
+        attention.
+      </p>
+      <p-button
+        type="button"
+        label="Go to Products"
+        routerLink="/products"
+        [text]="true"
+        styleClass="mt-3 font-medium"
+      />
+    </div>
+  } @else if (report(); as r) {
+    <!-- Stock KPIs -->
+    <section aria-label="Stock overview" class="mt-6">
+      <dl class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-4">
+        <div class="bg-counter p-4 sm:p-5">
+          <dt class="text-xs font-medium text-muted">Products</dt>
+          <dd class="mt-1 text-2xl font-semibold tabular-nums text-ink">{{ r.totals.productCount }}</dd>
+        </div>
+        <div class="bg-counter p-4 sm:p-5">
+          <dt class="text-xs font-medium text-muted">Assets tracked</dt>
+          <dd class="mt-1 text-2xl font-semibold tabular-nums text-ink">{{ r.totals.trackedUnitCount }}</dd>
+        </div>
+        <div class="bg-counter p-4 sm:p-5">
+          <dt class="text-xs font-medium text-muted">Stock value</dt>
+          <dd class="mt-1 text-2xl font-semibold tabular-nums text-ink">{{ r.totals.stockValue | money }}</dd>
+        </div>
+        <div class="bg-counter p-4 sm:p-5">
+          <dt class="text-xs font-medium text-muted">Low stock</dt>
+          <dd
+            class="mt-1 text-2xl font-semibold tabular-nums"
+            [class]="r.totals.lowStockCount > 0 ? 'text-danger' : 'text-ink'"
+          >
+            {{ r.totals.lowStockCount }}
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- Needs attention -->
+    <section aria-label="Needs attention" class="mt-6">
+      <h2 class="text-sm font-medium text-ink">Needs attention</h2>
+      <div
+        class="mt-3 grid grid-cols-2 divide-line overflow-hidden rounded-lg border border-line sm:grid-cols-4 sm:divide-x"
+      >
+        @for (tile of attentionTiles(); track tile.label) {
+          <div class="px-4 py-3">
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium" [class]="tile.tone">
+              <i [class]="tile.icon" class="text-[0.7rem]" aria-hidden="true"></i>
+              {{ tile.label }}
+            </span>
+            <p class="mt-1 text-2xl font-semibold tabular-nums" [class]="tile.tone">{{ tile.count }}</p>
+          </div>
+        }
+      </div>
+      @if (allClear()) {
+        <p class="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-success">
+          <i class="pi pi-check-circle text-[0.7rem]" aria-hidden="true"></i>
+          Every tracked asset is accounted for.
+        </p>
+      }
+    </section>
+
+    <!-- Assets by category / location -->
+    <div class="mt-6 grid gap-6 lg:grid-cols-2">
+      <section aria-label="Assets by category" class="rounded-lg border border-line bg-counter p-5">
+        <h2 class="text-sm font-medium text-ink">Assets by category</h2>
+        @if (categoryRows().length === 0) {
+          <p class="mt-4 text-sm text-muted">No products yet.</p>
+        } @else {
+          <ul class="mt-4 space-y-3">
+            @for (row of categoryRows(); track row.label) {
+              <li>
+                <div class="flex items-baseline justify-between gap-3 text-sm">
+                  <span class="min-w-0 truncate text-ink">
+                    {{ row.label }}
+                    @if (row.sublabel) {
+                      <span class="tabular-nums text-muted">· {{ row.sublabel }}</span>
+                    }
+                  </span>
+                  <span class="shrink-0 tabular-nums text-ink">{{ row.quantity }}</span>
+                </div>
+                <div class="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-line">
+                  <div class="h-full rounded-full bg-ink/55" [style.width.%]="categoryBarWidth(row.quantity)"></div>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+
+      <section aria-label="Assets by location" class="rounded-lg border border-line bg-counter p-5">
+        <h2 class="text-sm font-medium text-ink">Assets by location</h2>
+        @if (locationRows().length === 0) {
+          <p class="mt-4 text-sm text-muted">No stock placed yet.</p>
+        } @else {
+          <ul class="mt-4 space-y-3">
+            @for (row of locationRows(); track row.label) {
+              <li>
+                <div class="flex items-baseline justify-between gap-3 text-sm">
+                  <span class="min-w-0 truncate text-ink">{{ row.label }}</span>
+                  <span class="shrink-0 tabular-nums text-ink">{{ row.quantity }}</span>
+                </div>
+                <div class="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-line">
+                  <div class="h-full rounded-full bg-ink/55" [style.width.%]="locationBarWidth(row.quantity)"></div>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    </div>
+
+    <!-- Attention preview lists -->
+    @for (list of attentionLists(); track list.key) {
+      <section [attr.aria-label]="list.label" class="mt-6 overflow-hidden rounded-lg border border-line bg-counter">
+        <div class="flex items-center justify-between border-b border-line px-5 py-3">
+          <h2 class="text-sm font-medium text-ink">{{ list.label }}</h2>
+          <span class="text-xs tabular-nums text-muted">{{ list.bucket.count }} total</span>
+        </div>
+        <ul>
+          @for (unit of list.bucket.units; track unit.id) {
+            <li class="flex items-center gap-3 border-b border-line px-5 py-3 last:border-0">
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="truncate text-sm font-medium text-ink">{{ unit.productName }}</span>
+                  <app-product-unit-status-badge [status]="unit.status" />
+                </div>
+                <p class="truncate text-xs tabular-nums text-muted">
+                  {{ unit.identifier ?? '—' }} · {{ unit.productSku }}
+                  @if (unit.locationName) {
+                    · {{ unit.locationName }}
+                  }
+                </p>
+              </div>
+            </li>
+          }
+        </ul>
+        @if (list.bucket.count > list.bucket.units.length) {
+          <p class="border-t border-line px-5 py-2.5 text-xs text-muted">
+            + {{ list.bucket.count - list.bucket.units.length }} more
+          </p>
+        }
+      </section>
+    }
+  }
+</div>

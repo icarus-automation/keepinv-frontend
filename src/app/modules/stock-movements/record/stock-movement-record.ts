@@ -28,10 +28,9 @@ import { StockMovementsService } from '../services/stock-movements.service';
 import { StockMovement } from '../types/stock-movement.types';
 import { StockMovementTypesService } from '../../stock-movement-types/services/stock-movement-types.service';
 import {
-  StockMovementEffect,
   StockMovementType,
-  effectMeta,
   isRecordableType,
+  typeIcon,
 } from '../../stock-movement-types/types/stock-movement-type.types';
 
 /** A record with the minimum a `p-select` option needs: an id and a name. */
@@ -260,9 +259,9 @@ export class StockMovementRecord implements OnInit {
       });
   }
 
-  /** PrimeIcons class for a type's effect, for the type picker's option rows. */
-  protected effectIcon(effectValue: StockMovementEffect): string {
-    return effectMeta(effectValue).icon;
+  /** PrimeIcons class for a type, for the type picker's option rows. */
+  protected iconFor(type: StockMovementType): string {
+    return typeIcon(type);
   }
 
   private loadOptions(): void {

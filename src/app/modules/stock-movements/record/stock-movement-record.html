@@ -56,7 +56,7 @@
         >
           <ng-template let-type pTemplate="item">
             <span class="flex items-center gap-2">
-              <i [class]="effectIcon(type.effect)" class="text-sm text-muted" aria-hidden="true"></i>
+              <i [class]="iconFor(type)" class="text-sm text-muted" aria-hidden="true"></i>
               {{ type.name }}
             </span>
           </ng-template>

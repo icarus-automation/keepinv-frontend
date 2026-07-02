@@ -24,6 +24,7 @@ import {
   StockMovementType,
   effectMeta,
   isSystemType,
+  typeIcon,
 } from './types/stock-movement-type.types';
 
 /** An effect plus its display metadata, ready for the segmented picker. */
@@ -251,6 +252,11 @@ export class StockMovementTypes {
 
   protected meta(effectValue: StockMovementEffect): EffectMeta {
     return effectMeta(effectValue);
+  }
+
+  /** The glyph for a type's leading chip: distinct for built-in types, effect arrow otherwise. */
+  protected iconFor(type: StockMovementType): string {
+    return typeIcon(type);
   }
 
   /** Tailwind tint/text classes for a type's leading icon chip, keyed off its direction. */

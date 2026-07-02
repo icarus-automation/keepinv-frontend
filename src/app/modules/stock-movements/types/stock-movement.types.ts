@@ -6,6 +6,7 @@ import {
   StockMovementEffect,
   StockMovementType,
   effectMeta,
+  typeIcon,
 } from '../../stock-movement-types/types/stock-movement-type.types';
 
 /**
@@ -97,10 +98,12 @@ export interface StockMovementListQuery {
   dateTo?: string;
 }
 
-/** Resolved label + effect metadata for a ledger row, ready to render. */
+/** Resolved label, icon, and effect metadata for a ledger row, ready to render. */
 export interface MovementDisplay {
   readonly name: string;
   readonly effect: StockMovementEffect;
+  /** The type's glyph (distinct for built-in types, effect arrow otherwise). */
+  readonly icon: string;
   readonly meta: EffectMeta;
 }
 
@@ -123,9 +126,12 @@ export function movementDisplay(
 ): MovementDisplay {
   const type = movement.stockMovementType;
   if (type) {
-    return { name: type.name, effect: type.effect, meta: effectMeta(type.effect) };
+    return { name: type.name, effect: type.effect, icon: typeIcon(type), meta: effectMeta(type.effect) };
   }
-  const legacy = movement.legacyType ? LEGACY_DISPLAY[movement.legacyType] : null;
+  const legacyKey = movement.legacyType ?? null;
+  const legacy = legacyKey ? LEGACY_DISPLAY[legacyKey] : null;
   const effect = legacy?.effect ?? 'ADJUSTMENT';
-  return { name: legacy?.name ?? 'Movement', effect, meta: effectMeta(effect) };
+  // Legacy enum values match the system keys, so the same icon map applies to old rows.
+  const icon = typeIcon({ systemKey: legacyKey, effect });
+  return { name: legacy?.name ?? 'Movement', effect, icon, meta: effectMeta(effect) };
 }
