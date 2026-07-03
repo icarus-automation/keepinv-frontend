@@ -1,0 +1,241 @@
+<div
+  class="border-b border-line last:border-0"
+  [class.bg-panel]="!line().included"
+>
+  <div
+    class="grid grid-cols-2 items-center gap-x-3 gap-y-2 px-3 py-2.5 sm:grid-cols-[6.75rem_minmax(0,1fr)_5.25rem_7.25rem_6.5rem_7rem]"
+  >
+    <!-- Status chip -->
+    <span
+      class="inline-flex w-fit items-center rounded-full border px-2 py-0.5 text-xs font-medium"
+      [class]="chip().classes"
+    >
+      {{ chip().label }}
+    </span>
+
+    <!-- Name + how it commits -->
+    <div class="col-span-2 min-w-0 sm:col-span-1">
+      @if (line().included && !line().rejected) {
+        <input
+          pInputText
+          type="text"
+          [ngModel]="line().name"
+          (ngModelChange)="onName($event)"
+          [attr.aria-label]="'Product name for line ' + line().key"
+          maxlength="150"
+          class="w-full text-sm"
+          pSize="small"
+        />
+        <p class="mt-1 truncate text-xs text-muted">{{ resolutionSummary() }}</p>
+      } @else {
+        <p class="truncate text-sm text-muted" [class.line-through]="line().rejected">
+          {{ line().name }}
+        </p>
+        <p class="mt-0.5 truncate text-xs text-muted/80">{{ line().scan.match.reason }}</p>
+      }
+    </div>
+
+    @if (line().included && !line().rejected) {
+      <!-- Quantity -->
+      <div class="min-w-0">
+        <label class="mb-0.5 block text-[0.6875rem] font-medium text-muted sm:sr-only" [for]="'qty-' + line().key">
+          Qty
+        </label>
+        <p-inputnumber
+          [inputId]="'qty-' + line().key"
+          [ngModel]="line().quantity"
+          (ngModelChange)="onQuantity($event)"
+          [min]="1"
+          [maxFractionDigits]="0"
+          [showButtons]="false"
+          [useGrouping]="false"
+          size="small"
+          inputStyleClass="w-full text-right tabular-nums"
+          styleClass="w-full"
+          [attr.aria-label]="'Quantity for ' + line().name"
+        />
+      </div>
+
+      <!-- Unit cost -->
+      <div class="min-w-0">
+        <label class="mb-0.5 block text-[0.6875rem] font-medium text-muted sm:sr-only" [for]="'cost-' + line().key">
+          Unit cost
+        </label>
+        <p-inputnumber
+          [inputId]="'cost-' + line().key"
+          [ngModel]="line().unitCost"
+          (ngModelChange)="onUnitCost($event)"
+          [min]="0"
+          mode="decimal"
+          [minFractionDigits]="2"
+          [maxFractionDigits]="2"
+          size="small"
+          inputStyleClass="w-full text-right tabular-nums"
+          styleClass="w-full"
+          [attr.aria-label]="'Unit cost for ' + line().name"
+        />
+      </div>
+
+      <!-- Line total -->
+      <p class="col-span-2 text-right text-sm font-medium tabular-nums sm:col-span-1">
+        <span class="text-xs font-normal text-muted sm:hidden">Total&nbsp;</span
+        >{{ lineTotal() | currency: currency() : 'symbol-narrow' : '1.2-2' }}
+      </p>
+
+      <!-- Actions -->
+      <div class="col-span-2 flex items-center justify-end gap-1 sm:col-span-1">
+        <button
+          type="button"
+          (click)="toggleExpanded()"
+          [attr.aria-expanded]="line().expanded"
+          [attr.aria-controls]="'line-panel-' + line().key"
+          class="inline-flex h-8 items-center gap-1 rounded-md px-2 text-xs font-medium text-muted outline-none transition-colors hover:bg-line/60 hover:text-ink focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+        >
+          {{ line().resolution === 'unresolved' ? 'Resolve' : 'Change' }}
+          <i class="pi text-[0.65rem]" [class.pi-chevron-down]="!line().expanded" [class.pi-chevron-up]="line().expanded" aria-hidden="true"></i>
+        </button>
+        <button
+          type="button"
+          (click)="skip()"
+          class="grid h-8 w-8 place-items-center rounded-md text-muted outline-none transition-colors hover:bg-line/60 hover:text-danger focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+          [attr.aria-label]="'Skip line: ' + line().name"
+        >
+          <i class="pi pi-times text-sm" aria-hidden="true"></i>
+        </button>
+      </div>
+    } @else {
+      <!-- Excluded row: keep the money columns aligned but muted (single summary line on mobile) -->
+      <p class="col-span-2 text-right text-sm tabular-nums text-muted/70 sm:hidden">
+        {{ line().quantity | number }} × {{ line().unitCost | currency: currency() : 'symbol-narrow' : '1.2-2' }}
+      </p>
+      <p class="hidden text-right text-sm tabular-nums text-muted/70 sm:col-start-3 sm:block">{{ line().quantity | number }}</p>
+      <p class="hidden text-right text-sm tabular-nums text-muted/70 sm:block">
+        {{ line().unitCost | currency: currency() : 'symbol-narrow' : '1.2-2' }}
+      </p>
+      <p class="hidden text-right text-sm tabular-nums text-muted/70 sm:block">
+        {{ lineTotal() | currency: currency() : 'symbol-narrow' : '1.2-2' }}
+      </p>
+      <div class="col-span-2 flex justify-end sm:col-span-1">
+        @if (!line().rejected) {
+          <button
+            type="button"
+            (click)="restore()"
+            class="inline-flex h-8 items-center rounded-md px-2 text-xs font-medium text-muted outline-none transition-colors hover:bg-line/60 hover:text-ink focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+          >
+            Restore
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Resolution panel -->
+  @if (line().expanded && line().included && !line().rejected) {
+    <div
+      [id]="'line-panel-' + line().key"
+      class="border-t border-line/70 bg-panel px-3 py-3 sm:px-4"
+    >
+      <p class="text-xs text-muted">
+        “<span class="font-medium text-ink">{{ line().scan.rawName }}</span>” on the receipt.
+        {{ line().scan.match.reason }}
+      </p>
+
+      @if (line().scan.match.suggestions.length > 0) {
+        <p class="mt-3 text-xs font-medium text-ink">Close matches in your catalog</p>
+        <ul class="mt-1.5 flex flex-col gap-1">
+          @for (suggestion of line().scan.match.suggestions; track suggestion.product.id) {
+            @let picked = line().linkedProduct?.id === suggestion.product.id;
+            <li>
+              <button
+                type="button"
+                (click)="acceptProduct(suggestion.product)"
+                class="flex w-full items-center gap-3 rounded-md border px-3 py-2 text-left outline-none transition-colors focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-panel"
+                [class]="picked ? 'border-signal bg-signal/10' : 'border-line bg-counter hover:border-field'"
+                [attr.aria-pressed]="picked"
+              >
+                <span class="min-w-0 flex-1">
+                  <span class="block truncate text-sm font-medium text-ink">{{ suggestion.product.name }}</span>
+                  <span class="block text-xs tabular-nums text-muted">
+                    {{ suggestion.product.sku }} · {{ suggestion.product.quantityOnHand | number }} on hand
+                  </span>
+                </span>
+                <span class="shrink-0 text-xs tabular-nums text-muted">
+                  {{ suggestion.similarity * 100 | number: '1.0-0' }}% similar
+                </span>
+                @if (picked) {
+                  <i class="pi pi-check shrink-0 text-sm text-ink" aria-hidden="true"></i>
+                }
+              </button>
+            </li>
+          }
+        </ul>
+      }
+
+      <!-- Manual link -->
+      <label class="mt-3 block text-xs font-medium text-ink" [for]="'line-search-' + line().key">
+        {{ line().scan.match.suggestions.length > 0 ? 'Or search your catalog' : 'Search your catalog' }}
+      </label>
+      <div class="relative mt-1.5 max-w-sm">
+        <i class="pi pi-search pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted" aria-hidden="true"></i>
+        <input
+          pInputText
+          [id]="'line-search-' + line().key"
+          type="search"
+          [ngModel]="searchTerm()"
+          (ngModelChange)="onSearch($event)"
+          placeholder="Name, SKU, or barcode"
+          class="w-full pl-8 text-sm"
+          pSize="small"
+        />
+      </div>
+      @if (searching()) {
+        <p class="mt-1.5 text-xs text-muted" role="status">Searching…</p>
+      } @else if (searchFailed()) {
+        <p class="mt-1.5 text-xs text-danger" role="alert">Search failed. Try again.</p>
+      } @else if (searchTerm().trim().length >= 2 && searchResults().length === 0) {
+        <p class="mt-1.5 text-xs text-muted" role="status">No products found.</p>
+      } @else if (searchResults().length > 0) {
+        <ul class="mt-1.5 flex max-w-sm flex-col gap-1">
+          @for (result of searchResults(); track result.id) {
+            <li>
+              <button
+                type="button"
+                (click)="acceptProduct(result)"
+                class="flex w-full items-center gap-3 rounded-md border border-line bg-counter px-3 py-2 text-left outline-none transition-colors hover:border-field focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-panel"
+              >
+                <span class="min-w-0 flex-1">
+                  <span class="block truncate text-sm font-medium text-ink">{{ result.name }}</span>
+                  <span class="block text-xs tabular-nums text-muted">
+                    {{ result.sku }} · {{ result.quantityOnHand | number }} on hand
+                  </span>
+                </span>
+                <i class="pi pi-link shrink-0 text-xs text-muted" aria-hidden="true"></i>
+              </button>
+            </li>
+          }
+        </ul>
+      }
+
+      <div class="mt-3 flex flex-wrap items-center gap-2 border-t border-line/70 pt-3">
+        <p-button
+          type="button"
+          label="Create as new product"
+          icon="pi pi-plus"
+          [outlined]="true"
+          size="small"
+          (onClick)="createAsNew()"
+          styleClass="font-medium"
+        />
+        <p-button
+          type="button"
+          label="Skip this line"
+          [text]="true"
+          size="small"
+          severity="secondary"
+          (onClick)="skip()"
+          styleClass="font-medium"
+        />
+      </div>
+    </div>
+  }
+</div>

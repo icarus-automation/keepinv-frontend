@@ -7,6 +7,7 @@ import {
   lockedGuard,
   posGuard,
   proGuard,
+  receiptScanGuard,
 } from '../common/entitlements/entitlement.guards';
 
 export const routes: Routes = [
@@ -73,6 +74,12 @@ export const routes: Routes = [
         canActivate: [proGuard],
         loadComponent: () =>
           import('./modules/catalog-sheet/catalog-sheet').then((m) => m.CatalogSheet),
+      },
+      {
+        path: 'scan-receipt',
+        canActivate: [receiptScanGuard],
+        loadComponent: () =>
+          import('./modules/scan-receipt/scan-receipt').then((m) => m.ScanReceipt),
       },
       {
         path: 'stock-movements',

@@ -59,7 +59,26 @@
             @for (item of section.items; track item.label) {
               @let active = isActive(item);
               <li>
-                @if (item.path) {
+                @if (isUpgradeTeaser(item)) {
+                  <button
+                    type="button"
+                    (click)="openUpgrade()"
+                    [class]="navLinkClasses(false)"
+                    class="w-full"
+                    [attr.aria-label]="item.label + ' — PRO plan feature'"
+                    [pTooltip]="collapsed() ? item.label + ' · PRO plan' : 'Included in the PRO plan'"
+                    tooltipPosition="right"
+                  >
+                    <i [class]="item.icon" class="shrink-0 text-xl" aria-hidden="true"></i>
+                    <span [class]="labelClasses()">{{ item.label }}</span>
+                    <span
+                      [class]="labelClasses()"
+                      class="ml-auto rounded border border-line px-1.5 py-0.5 text-[0.625rem] font-medium uppercase tracking-wide text-muted/70"
+                    >
+                      Pro
+                    </span>
+                  </button>
+                } @else if (item.path) {
                   <a
                     [routerLink]="item.path"
                     (click)="closeMobile()"
@@ -149,6 +168,8 @@
       <router-outlet />
     </main>
   </div>
+
+  <app-pro-upgrade-dialog [(visible)]="upgradeOpen" />
 
   @if (leader()) {
     <div

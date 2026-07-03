@@ -1,0 +1,444 @@
+<div class="mx-auto max-w-5xl">
+  <!-- Hidden pickers: regular file browse + rear-camera capture on phones. -->
+  <input #fileInput type="file" [accept]="accept" class="hidden" (change)="onFileSelected($event)" />
+  <input
+    #cameraInput
+    type="file"
+    accept="image/*"
+    capture="environment"
+    class="hidden"
+    (change)="onFileSelected($event)"
+  />
+
+  @switch (phase()) {
+    <!-- ============================== CAPTURE ============================== -->
+    @case ('capture') {
+      <p class="max-w-prose text-sm text-muted">
+        Photograph a supplier receipt and it becomes recorded stock: existing products gain
+        quantity, unfamiliar ones are created for you. You review every line before anything
+        is saved.
+      </p>
+
+      <div
+        class="mt-6 rounded-lg border-2 border-dashed px-6 py-14 text-center transition-colors"
+        [class]="dragOver() ? 'border-signal bg-signal/5' : 'border-line bg-counter'"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave()"
+        (drop)="onDrop($event)"
+      >
+        <span class="mx-auto grid h-12 w-12 place-items-center rounded-full bg-panel text-muted">
+          <i class="pi pi-receipt text-2xl" aria-hidden="true"></i>
+        </span>
+        <p class="mt-4 text-sm font-medium text-ink">Drop a receipt photo here</p>
+        <p class="mt-1 text-sm text-muted">or</p>
+        <div class="mt-4 flex flex-wrap items-center justify-center gap-2">
+          <p-button
+            type="button"
+            label="Upload receipt"
+            icon="pi pi-upload"
+            (onClick)="pickFile()"
+            styleClass="font-medium"
+          />
+          <p-button
+            type="button"
+            label="Take a photo"
+            icon="pi pi-camera"
+            [outlined]="true"
+            (onClick)="pickCamera()"
+            styleClass="font-medium"
+          />
+        </div>
+        <p class="mt-4 text-xs text-muted">JPG, PNG, BMP, TIFF, HEIC, or PDF · up to 10 MB</p>
+      </div>
+
+      @if (captureError()) {
+        <div
+          role="alert"
+          class="mt-4 flex items-start gap-2.5 rounded-lg border border-danger/30 bg-danger/10 px-4 py-3"
+        >
+          <i class="pi pi-exclamation-circle mt-0.5 shrink-0 text-sm text-danger" aria-hidden="true"></i>
+          <p class="text-sm text-danger">{{ captureError() }}</p>
+        </div>
+      }
+
+      <!-- The one honest 3-step sequence on this page. -->
+      <ol class="mt-8 grid gap-3 sm:grid-cols-3">
+        <li class="flex items-start gap-3">
+          <span class="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-panel text-xs font-semibold tabular-nums text-ink">1</span>
+          <p class="text-sm text-muted"><span class="font-medium text-ink">Snap or upload.</span> A flat, well-lit photo reads best.</p>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-panel text-xs font-semibold tabular-nums text-ink">2</span>
+          <p class="text-sm text-muted"><span class="font-medium text-ink">Review the lines.</span> Fix a name or quantity, link near-matches.</p>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-panel text-xs font-semibold tabular-nums text-ink">3</span>
+          <p class="text-sm text-muted"><span class="font-medium text-ink">Add to inventory.</span> Stock moves in as purchases, in one tap.</p>
+        </li>
+      </ol>
+    }
+
+    <!-- ============================== SCANNING ============================== -->
+    @case ('scanning') {
+      <div class="mx-auto max-w-xl">
+        <div class="rounded-lg border border-line bg-counter p-6">
+          <div class="flex items-start gap-4">
+            @if (previewUrl(); as url) {
+              <img
+                [src]="url"
+                alt="Receipt being scanned"
+                class="h-28 w-20 shrink-0 rounded-md border border-line object-cover"
+              />
+            } @else {
+              <span class="grid h-28 w-20 shrink-0 place-items-center rounded-md border border-line bg-panel text-muted">
+                <i class="pi pi-file-pdf text-2xl" aria-hidden="true"></i>
+              </span>
+            }
+            <div class="min-w-0 flex-1">
+              <p class="truncate text-sm font-medium text-ink">{{ fileName() }}</p>
+              <p class="mt-1 text-sm text-muted" role="status" aria-live="polite">{{ progressCopy() }}</p>
+              <div class="mt-4 flex flex-col gap-2" aria-hidden="true">
+                <div class="h-3 w-3/4 animate-pulse rounded bg-line motion-reduce:animate-none"></div>
+                <div class="h-3 w-2/3 animate-pulse rounded bg-line motion-reduce:animate-none"></div>
+                <div class="h-3 w-4/5 animate-pulse rounded bg-line motion-reduce:animate-none"></div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 flex justify-end border-t border-line pt-4">
+            <p-button
+              type="button"
+              label="Cancel"
+              [text]="true"
+              severity="secondary"
+              (onClick)="cancelScan()"
+              styleClass="font-medium"
+            />
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ============================== REVIEW ============================== -->
+    @case ('review') {
+      @if (scan(); as result) {
+        <div class="flex flex-col gap-5 pb-4">
+          <div>
+            <h2 #reviewHeading tabindex="-1" class="scroll-mt-20 text-lg font-semibold tracking-tight outline-none">
+              Review before adding
+            </h2>
+            <p class="mt-0.5 text-sm text-muted">
+              Nothing is saved yet. Fix anything the scanner misread, then add it all at once.
+            </p>
+          </div>
+
+          <!-- Receipt header -->
+          <form [formGroup]="form" class="rounded-lg border border-line bg-counter p-4">
+            <div class="grid gap-4 sm:grid-cols-[minmax(0,1fr)_10rem] lg:grid-cols-[minmax(0,1fr)_10rem_minmax(0,18rem)]">
+              <div class="min-w-0">
+                <label for="supplier-name" class="text-xs font-medium text-muted">Supplier</label>
+                <input
+                  pInputText
+                  id="supplier-name"
+                  type="text"
+                  formControlName="supplierName"
+                  maxlength="150"
+                  class="mt-1 w-full"
+                  placeholder="Who issued this receipt?"
+                />
+                <p class="mt-1 text-xs text-muted">
+                  @if (result.supplier.matchedSupplier) {
+                    <i class="pi pi-check-circle mr-1 text-[0.7rem] text-success" aria-hidden="true"></i>
+                    Existing supplier
+                  } @else {
+                    <i class="pi pi-plus-circle mr-1 text-[0.7rem]" aria-hidden="true"></i>
+                    New supplier will be created
+                  }
+                </p>
+                @if (form.controls.supplierName.invalid && form.controls.supplierName.touched) {
+                  <p role="alert" class="mt-1 text-xs text-danger">Supplier name is required.</p>
+                }
+              </div>
+
+              <div>
+                <label for="receipt-date" class="text-xs font-medium text-muted">Receipt date</label>
+                <input
+                  pInputText
+                  id="receipt-date"
+                  type="date"
+                  formControlName="date"
+                  class="mt-1 w-full tabular-nums"
+                />
+              </div>
+
+              <dl class="grid grid-cols-3 gap-2 self-end rounded-md bg-panel px-3 py-2 sm:col-span-2 lg:col-span-1">
+                <div>
+                  <dt class="text-[0.6875rem] text-muted">Subtotal</dt>
+                  <dd class="text-sm font-medium tabular-nums">
+                    {{ result.receipt.subtotal != null ? (result.receipt.subtotal | currency: currencyCode() : 'symbol-narrow' : '1.2-2') : '—' }}
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-[0.6875rem] text-muted">Tax</dt>
+                  <dd class="text-sm font-medium tabular-nums">
+                    {{ result.receipt.tax != null ? (result.receipt.tax | currency: currencyCode() : 'symbol-narrow' : '1.2-2') : '—' }}
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-[0.6875rem] text-muted">Printed total</dt>
+                  <dd class="text-sm font-semibold tabular-nums">
+                    {{ result.receipt.total != null ? (result.receipt.total | currency: currencyCode() : 'symbol-narrow' : '1.2-2') : '—' }}
+                  </dd>
+                </div>
+              </dl>
+            </div>
+          </form>
+
+          <!-- Line items -->
+          <div class="overflow-hidden rounded-lg border border-line bg-counter">
+            <div
+              class="hidden border-b border-line bg-panel px-3 py-2 text-[0.6875rem] font-medium text-muted sm:grid sm:grid-cols-[6.75rem_minmax(0,1fr)_5.25rem_7.25rem_6.5rem_7rem] sm:gap-x-3"
+            >
+              <span>Status</span>
+              <span>Item</span>
+              <span class="text-right">Qty</span>
+              <span class="text-right">Unit cost</span>
+              <span class="text-right">Total</span>
+              <span></span>
+            </div>
+            @for (line of lines(); track line.key) {
+              <app-review-line [line]="line" [currency]="currencyCode()" (update)="onLineUpdate($event)" />
+            }
+            <div class="flex items-center justify-between gap-3 border-t border-line bg-panel px-3 py-2.5">
+              <p class="text-xs text-muted">
+                {{ includedLines().length }} of {{ lines().length }}
+                {{ lines().length === 1 ? 'line' : 'lines' }} will be added
+              </p>
+              <p class="text-sm font-semibold tabular-nums">
+                {{ linesTotal() | currency: currencyCode() : 'symbol-narrow' : '1.2-2' }}
+              </p>
+            </div>
+          </div>
+
+          @if (totalMismatch()) {
+            <p class="flex items-start gap-2 text-xs text-muted" role="status">
+              <i class="pi pi-info-circle mt-0.5 shrink-0" aria-hidden="true"></i>
+              Your included lines add up to
+              {{ linesTotal() | currency: currencyCode() : 'symbol-narrow' : '1.2-2' }}, but the
+              receipt printed
+              {{ result.receipt.total | currency: currencyCode() : 'symbol-narrow' : '1.2-2' }}.
+              Skipped lines, taxes, or discounts usually explain the gap.
+            </p>
+          }
+
+          <!-- Import defaults -->
+          <div class="rounded-lg border border-line bg-counter">
+            <button
+              type="button"
+              (click)="toggleDefaults()"
+              [attr.aria-expanded]="defaultsOpen()"
+              aria-controls="defaults-panel"
+              class="flex w-full items-center justify-between gap-3 rounded-lg px-4 py-3 text-left outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+            >
+              <span>
+                <span class="text-sm font-medium text-ink">Defaults for new products</span>
+                <span class="mt-0.5 block text-xs text-muted">
+                  Category, location, reorder point, and selling-price markup applied to products created by this import.
+                </span>
+              </span>
+              <i class="pi shrink-0 text-sm text-muted" [class.pi-chevron-down]="!defaultsOpen()" [class.pi-chevron-up]="defaultsOpen()" aria-hidden="true"></i>
+            </button>
+            @if (defaultsOpen()) {
+              <form [formGroup]="form" id="defaults-panel" class="grid gap-4 border-t border-line px-4 py-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div>
+                  <label for="default-category" class="text-xs font-medium text-muted">Category</label>
+                  <p-select
+                    inputId="default-category"
+                    formControlName="categoryId"
+                    [options]="categoryOptions()"
+                    optionLabel="name"
+                    optionValue="id"
+                    placeholder="Uncategorized"
+                    [showClear]="true"
+                    styleClass="mt-1 w-full"
+                    appendTo="body"
+                  />
+                </div>
+                <div>
+                  <label for="default-location" class="text-xs font-medium text-muted">Location</label>
+                  <p-select
+                    inputId="default-location"
+                    formControlName="locationId"
+                    [options]="locationOptions()"
+                    optionLabel="name"
+                    optionValue="id"
+                    placeholder="No location"
+                    [showClear]="true"
+                    styleClass="mt-1 w-full"
+                    appendTo="body"
+                  />
+                </div>
+                <div>
+                  <label for="default-reorder" class="text-xs font-medium text-muted">Reorder point</label>
+                  <p-inputnumber
+                    inputId="default-reorder"
+                    formControlName="reorderPoint"
+                    [min]="0"
+                    [maxFractionDigits]="0"
+                    [useGrouping]="false"
+                    placeholder="None"
+                    styleClass="mt-1 w-full"
+                    inputStyleClass="w-full tabular-nums"
+                  />
+                </div>
+                <div>
+                  <label for="default-markup" class="text-xs font-medium text-muted">Selling-price markup</label>
+                  <p-inputnumber
+                    inputId="default-markup"
+                    formControlName="markupPercent"
+                    [min]="0"
+                    [max]="1000"
+                    suffix="%"
+                    placeholder="None"
+                    styleClass="mt-1 w-full"
+                    inputStyleClass="w-full tabular-nums"
+                  />
+                  <p class="mt-1 text-xs text-muted">Sets selling price from unit cost.</p>
+                </div>
+              </form>
+            }
+          </div>
+
+          @if (commitError()) {
+            <div
+              role="alert"
+              class="flex items-start gap-2.5 rounded-lg border border-danger/30 bg-danger/10 px-4 py-3"
+            >
+              <i class="pi pi-exclamation-circle mt-0.5 shrink-0 text-sm text-danger" aria-hidden="true"></i>
+              <p class="text-sm text-danger">{{ commitError() }}</p>
+            </div>
+          }
+
+          <!-- Action bar: genuinely floats over the list while scrolling. -->
+          <div class="sticky bottom-0 z-10 rounded-lg border border-line bg-counter px-4 py-3 shadow-[0_-2px_12px_-6px_rgb(0_0_0/0.12)]">
+            @if (confirmingCancel()) {
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <p class="text-sm font-medium text-ink">Discard this scan? Nothing has been saved.</p>
+                <div class="flex items-center gap-2">
+                  <p-button
+                    type="button"
+                    label="Keep reviewing"
+                    [text]="true"
+                    severity="secondary"
+                    (onClick)="keepReviewing()"
+                    styleClass="font-medium"
+                  />
+                  <p-button
+                    type="button"
+                    label="Discard scan"
+                    severity="danger"
+                    [outlined]="true"
+                    (onClick)="discardScan()"
+                    styleClass="font-medium"
+                  />
+                </div>
+              </div>
+            } @else {
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <p class="text-sm text-muted" aria-live="polite">
+                  <span class="font-medium tabular-nums text-ink">{{ stockingCount() }}</span> to restock
+                  · <span class="font-medium tabular-nums text-ink">{{ creatingCount() }}</span> new
+                  @if (skippedCount() > 0) {
+                    · <span class="tabular-nums">{{ skippedCount() }}</span> skipped
+                  }
+                  @if (unresolvedCount() > 0) {
+                    · <span class="font-medium tabular-nums text-ink">{{ unresolvedCount() }}</span> to review
+                  }
+                </p>
+                <div class="flex items-center gap-2">
+                  <p-button
+                    type="button"
+                    label="Cancel"
+                    [text]="true"
+                    severity="secondary"
+                    (onClick)="requestCancel()"
+                    styleClass="font-medium"
+                  />
+                  <p-button
+                    type="button"
+                    [label]="committing() ? 'Adding…' : 'Add to inventory'"
+                    icon="pi pi-check"
+                    [disabled]="!canCommit()"
+                    [loading]="committing()"
+                    (onClick)="commit()"
+                    styleClass="font-medium"
+                  />
+                </div>
+              </div>
+              @if (commitBlocker(); as blocker) {
+                <p class="mt-1.5 text-right text-xs text-muted">{{ blocker }}</p>
+              }
+            }
+          </div>
+        </div>
+      }
+    }
+
+    <!-- ============================== DONE ============================== -->
+    @case ('done') {
+      <div class="mx-auto max-w-xl">
+        <div class="rounded-lg border border-line bg-counter px-6 py-10 text-center">
+          @if (duplicate()) {
+            <span class="mx-auto grid h-12 w-12 place-items-center rounded-full bg-info/10 text-info">
+              <i class="pi pi-info-circle text-2xl" aria-hidden="true"></i>
+            </span>
+            <h2 #doneHeading tabindex="-1" class="mt-4 scroll-mt-24 text-lg font-semibold tracking-tight outline-none">
+              Already recorded
+            </h2>
+            <p class="mx-auto mt-1 max-w-sm text-sm text-muted">
+              This exact receipt was committed before, so nothing was added twice. Your stock is
+              unchanged.
+            </p>
+          } @else if (commitResult(); as result) {
+            <span class="mx-auto grid h-12 w-12 place-items-center rounded-full bg-success/10 text-success">
+              <i class="pi pi-check-circle text-2xl" aria-hidden="true"></i>
+            </span>
+            <h2 #doneHeading tabindex="-1" class="mt-4 scroll-mt-24 text-lg font-semibold tracking-tight outline-none">
+              Receipt recorded
+            </h2>
+            <p class="mx-auto mt-1 max-w-sm text-sm text-muted">Stock is up to date.</p>
+            <dl class="mx-auto mt-6 grid max-w-sm grid-cols-3 gap-2">
+              <div class="rounded-md bg-panel px-3 py-2.5">
+                <dd class="text-lg font-semibold tabular-nums">{{ result.stockMovementsCreated }}</dd>
+                <dt class="mt-0.5 text-[0.6875rem] text-muted">stock movements</dt>
+              </div>
+              <div class="rounded-md bg-panel px-3 py-2.5">
+                <dd class="text-lg font-semibold tabular-nums">{{ result.matchedProducts }}</dd>
+                <dt class="mt-0.5 text-[0.6875rem] text-muted">restocked</dt>
+              </div>
+              <div class="rounded-md bg-panel px-3 py-2.5">
+                <dd class="text-lg font-semibold tabular-nums">{{ result.createdProducts }}</dd>
+                <dt class="mt-0.5 text-[0.6875rem] text-muted">new products</dt>
+              </div>
+            </dl>
+          }
+          <div class="mt-8 flex flex-wrap items-center justify-center gap-2">
+            <p-button
+              type="button"
+              label="Scan another receipt"
+              icon="pi pi-camera"
+              (onClick)="reset()"
+              styleClass="font-medium"
+            />
+            <a
+              routerLink="/stock-movements"
+              class="inline-flex h-10 items-center gap-2 rounded-md px-4 text-sm font-medium text-muted outline-none transition-colors hover:bg-line/60 hover:text-ink focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+            >
+              View stock movements
+              <i class="pi pi-arrow-right text-xs" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>

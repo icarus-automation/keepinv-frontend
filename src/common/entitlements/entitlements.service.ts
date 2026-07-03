@@ -25,6 +25,7 @@ export interface Entitlements {
     pos: boolean;
     rfid: boolean;
     labelPrinting: boolean;
+    receiptScanning: boolean;
   };
 }
 
@@ -40,7 +41,7 @@ const FALLBACK: Entitlements = {
   trialActive: false,
   trialExpired: false,
   locked: false,
-  features: { inventory: true, pos: false, rfid: true, labelPrinting: false },
+  features: { inventory: true, pos: false, rfid: true, labelPrinting: false, receiptScanning: false },
 };
 
 /**
@@ -60,6 +61,8 @@ export class EntitlementsService {
   readonly isPro = computed(() => this.state().plan === 'PRO');
   readonly printerType = computed(() => this.state().printerType);
   readonly canUsePos = computed(() => this.state().features.pos);
+  /** PRO-only receipt scanning; BASIC sees the sidebar item but gets the upgrade dialog. */
+  readonly canScanReceipts = computed(() => this.state().features.receiptScanning);
   readonly canPrintLabels = computed(() => this.state().features.labelPrinting);
   readonly locked = computed(() => this.state().locked);
   readonly trialActive = computed(() => this.state().trialActive);

@@ -23,15 +23,17 @@ import {
   Product,
 } from '../types/product.types';
 import { httpErrorMessage } from '../../../../common/http/http-error-message';
+import { ImageCropDialog } from './image-crop-dialog';
 
 /**
  * The product photo and its controls in the detail pane. Shows the Cloudinary image (or a
- * placeholder when none), and lets any plan upload, replace, or remove it. The backend returns the
+ * placeholder when none), and lets any plan upload, replace, or remove it. Every upload passes
+ * through a mandatory square crop so the whole catalog stays 1:1. The backend returns the
  * hydrated product after each change, which we hand up so the catalog and detail stay in sync.
  */
 @Component({
   selector: 'app-product-image',
-  imports: [ButtonModule],
+  imports: [ButtonModule, ImageCropDialog],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex items-start gap-4">
@@ -99,6 +101,12 @@ import { httpErrorMessage } from '../../../../common/http/http-error-message';
       class="hidden"
       (change)="onFileSelected($event)"
     />
+
+    <app-image-crop-dialog
+      [file]="pendingFile()"
+      (cropped)="onCropped($event)"
+      (cancelled)="pendingFile.set(null)"
+    />
   `,
 })
 export class ProductImage {
@@ -113,6 +121,8 @@ export class ProductImage {
   protected readonly accept = PRODUCT_IMAGE_ACCEPT;
   protected readonly busy = signal(false);
   protected readonly error = signal<string | null>(null);
+  /** A picked file awaiting its mandatory square crop; non-null opens the crop dialog. */
+  protected readonly pendingFile = signal<File | null>(null);
   /** Set when the hosted image 404s (e.g. Cloudinary bg-removal add-on not enabled); shows placeholder. */
   private readonly broken = signal(false);
 
@@ -158,6 +168,16 @@ export class ProductImage {
     }
     if (file.size > PRODUCT_IMAGE_MAX_BYTES) {
       this.error.set('Image must be 5 MB or smaller.');
+      return;
+    }
+    // Uploads are always square: the crop dialog takes over from here.
+    this.pendingFile.set(file);
+  }
+
+  protected onCropped(file: File): void {
+    this.pendingFile.set(null);
+    if (file.size > PRODUCT_IMAGE_MAX_BYTES) {
+      this.error.set('Cropped image is over 5 MB. Use a smaller photo.');
       return;
     }
     this.upload(file);

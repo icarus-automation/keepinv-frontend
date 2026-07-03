@@ -19,6 +19,7 @@ import { AuthService } from '../modules/auth/services/auth.service';
 import { OrganizationService } from '../modules/organization/services/organization.service';
 import { orgMonogram } from '../modules/organization/organization.util';
 import { EntitlementsService } from '../../common/entitlements/entitlements.service';
+import { ProUpgradeDialog } from './pro-upgrade-dialog';
 
 interface NavItem {
   readonly label: string;
@@ -53,7 +54,7 @@ const NEW_SHORTCUTS: Record<string, { readonly path: string }> = {
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterOutlet, RouterLink, MenuModule, Tooltip, NgOptimizedImage],
+  imports: [RouterOutlet, RouterLink, MenuModule, Tooltip, NgOptimizedImage, ProUpgradeDialog],
   templateUrl: './layout.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -73,6 +74,12 @@ export class Layout {
 
   /** PRO-only paths (the barcode catalog sheet) — hidden for BASIC tenants. */
   private static readonly PRO_PATHS = new Set(['barcode-sheet']);
+
+  /**
+   * Paths the backend restricts to org owners/admins — hidden for members entirely.
+   * Unlike PRO_PATHS, these stay visible on BASIC as an upgrade teaser (see upgradeTeaserPaths).
+   */
+  private static readonly MANAGER_PATHS = new Set(['scan-receipt']);
 
   private static readonly ALL_SECTIONS: readonly NavSection[] = [
     {
@@ -109,7 +116,10 @@ export class Layout {
     },
     {
       label: 'Tools',
-      items: [{ label: 'Barcode Sheet', icon: 'pi pi-qrcode', path: 'barcode-sheet' }],
+      items: [
+        { label: 'Barcode Sheet', icon: 'pi pi-qrcode', path: 'barcode-sheet' },
+        { label: 'Scan Receipt', icon: 'pi pi-receipt', path: 'scan-receipt' },
+      ],
     },
     {
       label: 'System',
@@ -118,14 +128,12 @@ export class Layout {
   ];
 
   // POS items (Point of Sale, Sales, Sales Report) and PRO-only items (Barcode Sheet) only show on
-  // the plans that include them. Sections left empty by the filter are dropped so no orphan caption
-  // renders.
+  // the plans that include them; owner/admin-only items (Scan Receipt) are hidden from members.
+  // Sections left empty by the filter are dropped so no orphan caption renders.
   protected readonly navSections = computed<readonly NavSection[]>(() => {
     const canUsePos = this.entitlements.canUsePos();
     const isPro = this.entitlements.isPro();
-    if (canUsePos && isPro) {
-      return Layout.ALL_SECTIONS;
-    }
+    const canManage = this.organizationService.canManage();
     return Layout.ALL_SECTIONS.map((section) => ({
       ...section,
       items: section.items.filter((item) => {
@@ -135,10 +143,29 @@ export class Layout {
         if (!canUsePos && Layout.POS_PATHS.has(item.path)) {
           return false;
         }
+        if (!canManage && Layout.MANAGER_PATHS.has(item.path)) {
+          return false;
+        }
         return isPro || !Layout.PRO_PATHS.has(item.path);
       }),
     })).filter((section) => section.items.length > 0);
   });
+
+  /**
+   * Scan Receipt stays visible on BASIC as a discoverable teaser: clicking it opens the
+   * upgrade dialog instead of navigating.
+   */
+  protected isUpgradeTeaser(item: NavItem): boolean {
+    return item.path === 'scan-receipt' && !this.entitlements.canScanReceipts();
+  }
+
+  /** The PRO upgrade dialog, opened from teaser items. */
+  protected readonly upgradeOpen = signal(false);
+
+  protected openUpgrade(): void {
+    this.closeMobile();
+    this.upgradeOpen.set(true);
+  }
 
   /** Leader-chord state: true while waiting for the second key after `N`. */
   protected readonly leader = signal(false);

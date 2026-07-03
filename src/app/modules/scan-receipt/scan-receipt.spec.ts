@@ -3,20 +3,21 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 
-import { Products } from './products';
+import { ScanReceipt } from './scan-receipt';
 
-describe('Products', () => {
-  let component: Products;
-  let fixture: ComponentFixture<Products>;
+describe('ScanReceipt', () => {
+  let component: ScanReceipt;
+  let fixture: ComponentFixture<ScanReceipt>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Products],
+      imports: [ScanReceipt],
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Products);
+    fixture = TestBed.createComponent(ScanReceipt);
     component = fixture.componentInstance;
+    await fixture.whenStable();
   });
 
   it('should create', () => {
