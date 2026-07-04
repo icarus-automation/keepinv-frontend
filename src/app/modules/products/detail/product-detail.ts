@@ -59,6 +59,9 @@ export class ProductDetail {
 
   readonly product = input.required<Product>();
   readonly updated = output<Product>();
+  /** The photo changed (upload/replace/remove). Its response is already fully hydrated, unlike
+   *  a form save, so the catalog can apply it directly without a re-fetch. */
+  readonly photoChanged = output<Product>();
   readonly archived = output<string>();
   /** A unit mutation may have shifted on-hand; the catalog should re-hydrate this product. */
   readonly unitsChanged = output<void>();
@@ -146,6 +149,10 @@ export class ProductDetail {
   protected onSaved(product: Product): void {
     this.editing.set(false);
     this.updated.emit(product);
+  }
+
+  protected onPhotoChanged(product: Product): void {
+    this.photoChanged.emit(product);
   }
 
   protected confirmArchive(): void {

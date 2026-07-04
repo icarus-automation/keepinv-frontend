@@ -426,8 +426,8 @@ export class ScanReceipt {
       if (line.resolution === 'matched' || line.resolution === 'linked') {
         item.productId = line.linkedProduct?.id;
       }
-      if (line.scan.productCode) {
-        item.sku = line.scan.productCode;
+      if (line.sku.trim()) {
+        item.sku = line.sku.trim();
       }
       // Untouched lines keep the OCR confidence; any user decision or edit means the line was
       // reviewed, so confidence is omitted and the backend skips its minimum-confidence gate.

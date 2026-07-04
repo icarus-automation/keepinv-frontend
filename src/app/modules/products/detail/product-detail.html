@@ -104,7 +104,7 @@
           <div class="min-h-0 flex-1 overflow-y-auto px-5 py-5">
             <!-- Product photo: upload / replace / remove (every plan) -->
             <div class="mb-5">
-              <app-product-image [product]="product()" (changed)="onSaved($event)" />
+              <app-product-image [product]="product()" (changed)="onPhotoChanged($event)" />
             </div>
 
             <!-- Label printing: register-then-print, and reprint from here later -->

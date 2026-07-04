@@ -1,8 +1,9 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, of, tap } from 'rxjs';
+import { Observable, catchError, map, of, tap } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
+import { ApiResponse } from '../../../../common/responses/api.response';
 import { AuthService } from '../../auth/services/auth.service';
 import {
   CachedOrgIdentity,
@@ -84,6 +85,40 @@ export class OrganizationService {
         }
       }),
     );
+  }
+
+  /**
+   * Uploads (or replaces) the active organization's logo. Goes through this app's own
+   * `/organizations/logo` endpoint (Cloudinary-backed, wrapped in the standard `ApiResponse`
+   * envelope) — unlike `updateName`, which hits Better Auth's own route directly.
+   */
+  uploadLogo(file: File): Observable<Organization> {
+    const form = new FormData();
+    form.append('logo', file);
+    return this.http
+      .post<ApiResponse<Organization>>(`${environment.apiBaseUrl}/organizations/logo`, form)
+      .pipe(
+        map((response) => response.data),
+        tap((updated) => this.applyLogoPatch(updated)),
+      );
+  }
+
+  /** Removes the active organization's logo. */
+  removeLogo(): Observable<Organization> {
+    return this.http
+      .delete<ApiResponse<Organization>>(`${environment.apiBaseUrl}/organizations/logo`)
+      .pipe(
+        map((response) => response.data),
+        tap((updated) => this.applyLogoPatch(updated)),
+      );
+  }
+
+  private applyLogoPatch(updated: Organization): void {
+    this.activeOrg.update((current) => (current ? { ...current, logo: updated.logo } : current));
+    const snapshot = this.activeOrg();
+    if (snapshot) {
+      this.writeIdentity({ name: snapshot.name, logo: snapshot.logo, slug: snapshot.slug });
+    }
   }
 
   /**

@@ -37,6 +37,8 @@ export interface ReceiptScanItem {
   unitCost: number;
   lineTotal: number | null;
   productCode: string | null;
+  /** Human-readable SKU candidate for a line that will create a new product; null when matched. */
+  suggestedSku: string | null;
   confidence: ScanLineConfidence;
   match: {
     status: ScanMatchStatus;

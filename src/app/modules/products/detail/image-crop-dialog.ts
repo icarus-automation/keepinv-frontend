@@ -11,10 +11,9 @@ import { ButtonModule } from 'primeng/button';
 import { ImageCropperComponent, ImageCroppedEvent } from 'ngx-image-cropper';
 
 /**
- * Mandatory square crop before a product photo uploads. Every catalog image ships as 1:1 so
- * the detail pane, POS, and barcode sheet stay visually consistent regardless of what the
- * camera produced. Opens whenever `file` is set; resolves via `cropped` (a ready-to-upload
- * square file) or `cancelled`.
+ * Mandatory square crop before an image uploads (product photos, org logo). Header/description
+ * text is overridable per caller; the 1:1 aspect ratio itself is not. Opens whenever `file` is
+ * set; resolves via `cropped` (a ready-to-upload square file) or `cancelled`.
  */
 @Component({
   selector: 'app-image-crop-dialog',
@@ -28,15 +27,12 @@ import { ImageCropperComponent, ImageCroppedEvent } from 'ngx-image-cropper';
       [draggable]="false"
       [resizable]="false"
       [closable]="true"
-      header="Crop to square"
+      [header]="header()"
       [style]="{ width: 'min(30rem, calc(100vw - 2rem))' }"
     >
-      <p class="text-sm text-muted">
-        Product photos are square. Drag to reposition and resize the selection — everything
-        outside it is trimmed.
-      </p>
+      <p class="text-sm text-muted">{{ description() }}</p>
 
-      <div class="mt-3 max-h-[60vh] overflow-hidden rounded-md border border-line bg-panel">
+      <div class="mt-3 flex h-[60vh] items-center justify-center overflow-hidden rounded-md border border-line bg-panel">
         @if (file(); as pending) {
           <image-cropper
             [imageFile]="pending"
@@ -81,6 +77,10 @@ import { ImageCropperComponent, ImageCroppedEvent } from 'ngx-image-cropper';
 export class ImageCropDialog {
   /** The freshly picked file to crop; null keeps the dialog closed. */
   readonly file = input<File | null>(null);
+  readonly header = input('Crop to square');
+  readonly description = input(
+    'Product photos are square. Drag to reposition and resize the selection — everything outside it is trimmed.',
+  );
   /** The square result, named after the original and ready for upload. */
   readonly cropped = output<File>();
   readonly cancelled = output<void>();

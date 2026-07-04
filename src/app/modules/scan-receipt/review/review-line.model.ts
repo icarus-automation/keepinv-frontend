@@ -22,6 +22,8 @@ export interface ReviewLine {
   name: string;
   quantity: number;
   unitCost: number;
+  /** SKU for a line that will create a new product. Editable; ignored once matched/linked. */
+  sku: string;
   resolution: LineResolution;
   linkedProduct: MatchedProduct | null;
   /** Any user edit drops the OCR confidence on commit (= reviewed, skips the backend gate). */
@@ -43,6 +45,7 @@ export function toReviewLine(scan: ReceiptScanItem): ReviewLine {
     name: scan.normalizedName || scan.rawName,
     quantity: scan.quantity,
     unitCost: scan.unitCost,
+    sku: scan.productCode || scan.suggestedSku || '',
     resolution: rejected ? 'unresolved' : resolution,
     linkedProduct: scan.match.matchedProduct,
     edited: false,

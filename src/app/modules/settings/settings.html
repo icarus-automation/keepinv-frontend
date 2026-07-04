@@ -87,13 +87,19 @@
 
         <div class="mt-5 border-t border-line pt-5">
           <p class="text-sm font-medium text-ink">Logo</p>
-          <p class="mt-1 max-w-prose text-sm text-muted">
-            @if (orgLogo()) {
-              Set by keep inv. To change it, contact your provider.
-            } @else {
-              No logo yet — your provider can add one. Contact keep inv to set it up.
-            }
-          </p>
+          @if (canManage()) {
+            <div class="mt-2">
+              <app-organization-logo />
+            </div>
+          } @else {
+            <p class="mt-1 max-w-prose text-sm text-muted">
+              @if (orgLogo()) {
+                Set by an owner or admin.
+              } @else {
+                No logo yet. An owner or admin can add one.
+              }
+            </p>
+          }
         </div>
       </div>
     } @else {

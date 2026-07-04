@@ -29,6 +29,8 @@ import {
   RegisterProductUnitsResult,
 } from '../types/product-unit.types';
 import { ProductUnitsService } from '../services/product-units.service';
+import { StockMovementTypesService } from '../../stock-movement-types/services/stock-movement-types.service';
+import { StockMovementType } from '../../stock-movement-types/types/stock-movement-type.types';
 
 /**
  * One unit staged for registration. A unit is anchored by whichever identifier
@@ -102,6 +104,7 @@ export class CommissionSession {
   private readonly service = inject(ProductUnitsService);
   private readonly locationsService = inject(LocationsService);
   private readonly suppliersService = inject(SuppliersService);
+  private readonly stockMovementTypesService = inject(StockMovementTypesService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly product = input.required<Product>();
@@ -119,6 +122,8 @@ export class CommissionSession {
   protected readonly locationId = signal<string | null>(null);
   protected readonly supplierId = signal<string | null>(null);
   protected readonly reason = signal<RegisterMovementType>('INITIAL');
+  /** Live system stock-movement types, used to resolve `reason` to a `stockMovementTypeId`. */
+  private readonly stockMovementTypes = signal<StockMovementType[]>([]);
   protected readonly note = new FormControl('', { nonNullable: true });
   protected readonly locationOptions = signal<NamedRecord[]>([]);
   protected readonly supplierOptions = signal<NamedRecord[]>([]);
@@ -409,6 +414,16 @@ export class CommissionSession {
     if (!locationId || this.committing() || this.count() === 0 || this.overLimit()) {
       return;
     }
+    // Resolve the chosen reason (Initial stock / Purchase) to the org's matching system movement
+    // type. Fail loud rather than omit the field: omitting it would silently default to "Initial
+    // Stock" server-side even when the user picked "Purchase", corrupting the audit trail.
+    const stockMovementTypeId = this.stockMovementTypes().find(
+      (type) => type.systemKey === this.reason(),
+    )?.id;
+    if (!stockMovementTypeId) {
+      this.commitError.set('Could not resolve the selected reason to a movement type. Try again.');
+      return;
+    }
     this.committing.set(true);
     this.commitError.set(null);
 
@@ -416,7 +431,7 @@ export class CommissionSession {
       .register({
         productId: this.product().id,
         locationId,
-        movementType: this.reason(),
+        stockMovementTypeId,
         supplierId: this.supplierId() ?? undefined,
         note: this.note.value.trim() || undefined,
         units: this.staged().map((unit) => ({
@@ -510,5 +525,9 @@ export class CommissionSession {
       .subscribe((items) =>
         this.supplierOptions.set(items.map(({ id, name }) => ({ id, name }))),
       );
+    this.stockMovementTypesService
+      .list()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((items) => this.stockMovementTypes.set(items));
   }
 }

@@ -250,6 +250,20 @@ export class Products {
   }
 
   /**
+   * The photo changed. Unlike a form save, the image endpoints always return a fully hydrated
+   * product (category/supplier/location included) — apply it directly instead of re-fetching,
+   * which was both wasted work and a staleness race with the redundant GET.
+   */
+  protected onPhotoChanged(updated: Product): void {
+    this.products.update((list) =>
+      list.map((item) => (item.id === updated.id ? updated : item)),
+    );
+    if (this.selected()?.id === updated.id) {
+      this.selected.set(updated);
+    }
+  }
+
+  /**
    * Re-fetch the full product after a write. Create/update responses aren't
    * guaranteed to embed the related category/supplier/location the detail pane
    * shows, so GET /:id gives an authoritative, nested record. Pass `select` to

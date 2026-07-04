@@ -124,6 +124,7 @@
         <p-table
           [value]="products()"
           dataKey="id"
+          [tableStyle]="{ 'table-layout': 'fixed', width: '100%' }"
           [lazy]="true"
           (onLazyLoad)="onLazyLoad($event)"
           [paginator]="total() > rows"
@@ -224,6 +225,7 @@
           <app-product-detail
             [product]="product"
             (updated)="onUpdated($event)"
+            (photoChanged)="onPhotoChanged($event)"
             (archived)="onArchived($event)"
             (unitsChanged)="onUnitsChanged()"
           />

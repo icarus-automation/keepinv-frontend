@@ -135,6 +135,10 @@ export class ReviewLineRow {
     this.emit({ name, edited: true });
   }
 
+  protected onSku(sku: string): void {
+    this.emit({ sku, edited: true });
+  }
+
   protected onQuantity(quantity: number | null): void {
     this.emit({ quantity: quantity ?? 1, edited: true });
   }

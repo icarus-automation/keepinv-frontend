@@ -108,10 +108,17 @@ export function isSystemType(type: StockMovementType): boolean {
 }
 
 /**
- * Whether a type can be chosen when recording a movement. Transfer is reserved: the
- * record payload carries a single location and can't express a source-to-destination
- * move yet, so it's filtered out of the picker.
+ * Whether a type can be chosen when recording a generic movement. Transfer is reserved: the
+ * record payload carries a single location and can't express a source-to-destination move yet.
+ * Sale and Return are reserved too: they only carry accurate revenue/refund data when written
+ * through Point of Sale checkout/void, which link a sale — recording them here would create
+ * inventory movements invisible to the Sales Report.
  */
 export function isRecordableType(type: StockMovementType): boolean {
-  return !type.isArchived && type.systemKey !== 'TRANSFER';
+  return (
+    !type.isArchived &&
+    type.systemKey !== 'TRANSFER' &&
+    type.systemKey !== 'SALE' &&
+    type.systemKey !== 'RETURN'
+  );
 }

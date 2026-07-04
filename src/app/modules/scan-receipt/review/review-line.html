@@ -26,6 +26,19 @@
           class="w-full text-sm"
           pSize="small"
         />
+        @if (line().resolution === 'new') {
+          <input
+            pInputText
+            type="text"
+            [ngModel]="line().sku"
+            (ngModelChange)="onSku($event)"
+            [attr.aria-label]="'SKU for line ' + line().key"
+            maxlength="64"
+            placeholder="SKU"
+            class="mt-1 w-full text-xs tabular-nums"
+            pSize="small"
+          />
+        }
         <p class="mt-1 truncate text-xs text-muted">{{ resolutionSummary() }}</p>
       } @else {
         <p class="truncate text-sm text-muted" [class.line-through]="line().rejected">

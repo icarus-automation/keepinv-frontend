@@ -56,7 +56,7 @@ export interface RegisterProductUnitInput {
 export interface RegisterProductUnitsRequest {
   productId: string;
   locationId: string;
-  movementType?: RegisterMovementType;
+  stockMovementTypeId?: string;
   supplierId?: string;
   note?: string;
   units: RegisterProductUnitInput[];

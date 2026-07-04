@@ -15,16 +15,17 @@ import { PreferencesService, TextScaleId } from '../../../common/preferences/pre
 import { httpErrorMessage } from '../../../common/http/http-error-message';
 import { OrganizationService } from '../organization/services/organization.service';
 import { orgMonogram } from '../organization/organization.util';
+import { OrganizationLogo } from './organization-logo';
 
 /**
  * Two scopes on one page: the organization (shared across the team, editable by
  * owners and admins) and per-device display preferences (this browser only).
- * Org reads and writes go through {@link OrganizationService}; the logo is set by
- * the platform operator, so it is shown here read-only.
+ * Org reads and writes go through {@link OrganizationService}; owners/admins can
+ * upload/replace/remove the logo directly via {@link OrganizationLogo}.
  */
 @Component({
   selector: 'app-settings',
-  imports: [ReactiveFormsModule, ButtonModule, InputTextModule],
+  imports: [ReactiveFormsModule, ButtonModule, InputTextModule, OrganizationLogo],
   templateUrl: './settings.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
