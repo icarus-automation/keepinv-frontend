@@ -420,6 +420,12 @@
                 <dt class="mt-0.5 text-[0.6875rem] text-muted">new products</dt>
               </div>
             </dl>
+            @if (result.unitsCreated > 0) {
+              <p class="mx-auto mt-3 max-w-sm text-xs text-muted">
+                {{ result.unitsCreated }} untagged unit{{ result.unitsCreated === 1 ? '' : 's' }} created —
+                write RFID tags from each product's Units tab.
+              </p>
+            }
           }
           <div class="mt-8 flex flex-wrap items-center justify-center gap-2">
             <p-button

@@ -126,7 +126,8 @@ export class ProductForm implements OnInit {
     reorderPoint: this.formBuilder.control<number | null>(null, [Validators.min(0)]),
     reorderUrl: ['', [reorderUrlValidator, Validators.maxLength(2048)]],
     reorderPlatform: this.formBuilder.control<SupplierPlatform | null>(null),
-    isSerialized: [false],
+    // Serial (RFID) tracking is the system default for new products; edit mode re-seeds from the product.
+    isSerialized: [true],
     categoryId: ['', [Validators.required]],
     supplierId: this.formBuilder.control<string | null>(null),
     locationId: this.formBuilder.control<string | null>(null),

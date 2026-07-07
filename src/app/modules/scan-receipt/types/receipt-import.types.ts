@@ -14,6 +14,7 @@ export interface MatchedProduct {
   sku: string;
   barcode: string | null;
   quantityOnHand: number;
+  isSerialized: boolean;
 }
 
 /** A near-name (pg_trgm) match the user can accept by setting `productId` on the commit line. */
@@ -88,6 +89,8 @@ export interface ReceiptImportItemRequest {
   barcode?: string;
   brand?: string;
   categoryId?: string;
+  /** Only sent for lines creating a NEW product; matched products keep their own flag. */
+  isSerialized?: boolean;
   quantity: number;
   unitCost: number;
   lineTotal?: number;
@@ -143,6 +146,8 @@ export interface ReceiptImportCommit {
   createdProducts: number;
   matchedProducts: number;
   stockMovementsCreated: number;
+  /** Blank (untagged) units auto-created for serialized lines; tagged later via the RFID write flow. */
+  unitsCreated: number;
 }
 
 /** Receipt uploads Azure accepts. Notably NOT webp; the backend rejects it with a clear 400. */

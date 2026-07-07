@@ -18,8 +18,8 @@
           <h2 class="text-lg font-semibold tracking-tight text-ink">Register units</h2>
           <p class="mt-1 text-sm text-muted">
             Bring units of
-            <span class="font-medium text-ink">{{ product().name }}</span> into stock by scanning
-            serials, or sweeping RFID tags. First, where do they land?
+            <span class="font-medium text-ink">{{ product().name }}</span> into stock by sweeping
+            RFID tags. First, where do they land?
           </p>
 
           <div class="mt-6 flex flex-col gap-5">
@@ -226,29 +226,13 @@
       </div>
 
       <div class="px-5 py-4">
-        <!-- Capture method: serial number is the default; RFID is one tap away -->
-        <div class="mb-3 inline-flex items-center gap-1" role="group" aria-label="Capture method">
-          @for (m of captureModes; track m.value) {
-            <button
-              type="button"
-              (click)="setCaptureMode(m.value)"
-              [attr.aria-pressed]="captureMode() === m.value"
-              class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
-              [class]="captureMode() === m.value ? 'bg-ink text-counter' : 'text-muted hover:bg-line/60 hover:text-ink'"
-            >
-              <i [class]="m.icon" class="text-xs" aria-hidden="true"></i>
-              {{ m.label }}
-            </button>
-          }
-        </div>
-
-        <!-- Capture field: owns focus while listening -->
-        <label for="commission-capture" class="sr-only">Scan or enter a unit identifier</label>
+        <!-- Capture field: owns focus while listening; RFID sweep is the only capture method -->
+        <label for="commission-capture" class="sr-only">Sweep or scan an RFID tag</label>
         <div
           class="flex items-center gap-3 rounded-lg border bg-counter px-3"
           [class]="listening() ? 'border-signal ring-2 ring-signal/40' : 'border-field'"
         >
-          <i [class]="captureModeMeta().icon" class="shrink-0 text-lg text-muted" aria-hidden="true"></i>
+          <i class="pi pi-wifi shrink-0 text-lg text-muted" aria-hidden="true"></i>
           <input
             #captureInput
             id="commission-capture"
@@ -261,7 +245,7 @@
             [formControl]="capture"
             (keydown.enter)="onScan($event)"
             (blur)="onCaptureBlur()"
-            [placeholder]="captureModeMeta().placeholder"
+            placeholder="Sweep or scan RFID tags…"
             class="h-14 w-full min-w-0 bg-transparent text-lg tabular-nums text-ink outline-none placeholder:text-muted/70"
           />
           <button
@@ -281,7 +265,7 @@
               <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-signal/70 motion-reduce:hidden"></span>
               <span class="relative inline-flex h-2 w-2 rounded-full bg-signal"></span>
             </span>
-            {{ captureModeMeta().listening }}
+            Listening for tags
           </span>
           <span class="inline-flex items-center gap-1.5 text-xs text-muted" aria-live="polite">
             <span class="tabular-nums font-medium text-ink">{{ count() }}</span>
@@ -310,8 +294,8 @@
             <div class="rounded-lg border border-dashed border-line px-6 py-12 text-center">
               <p class="text-sm font-medium text-ink">Nothing staged yet</p>
               <p class="mx-auto mt-1 max-w-xs text-sm text-muted">
-                Scan or type a serial number, or switch to RFID and sweep. Each one stages a unit
-                here; register them all when you're done.
+                Sweep or scan an RFID tag. Each one stages a unit here; register them all when
+                you're done.
               </p>
             </div>
           } @else {
@@ -383,7 +367,7 @@
       <div class="w-72">
         <label for="commission-paste" class="text-sm font-medium text-ink">Paste a list</label>
         <p class="mt-0.5 text-xs text-muted">
-          Added as {{ captureModeMeta().label }}. Separate by comma, space, or new line; duplicates are skipped.
+          Added as RFID tags. Separate by comma, space, or new line; duplicates are skipped.
         </p>
         <textarea
           id="commission-paste"

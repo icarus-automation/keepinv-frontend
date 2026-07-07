@@ -33,9 +33,9 @@ import { StockMovementTypesService } from '../../stock-movement-types/services/s
 import { StockMovementType } from '../../stock-movement-types/types/stock-movement-type.types';
 
 /**
- * One unit staged for registration. A unit is anchored by whichever identifier
- * the operator captured first (a serial number by default, an EPC in RFID mode);
- * the rest are optional enrichments. At least one must remain to register.
+ * One unit staged for registration. A unit is anchored by the RFID tag (EPC) the
+ * sweep captured; serial number and asset tag are optional enrichments added via
+ * the per-row editor. At least one identifier must remain to register.
  */
 interface StagedUnit {
   /** Stable, generated list key, independent of which identifier anchors the unit. */
@@ -43,17 +43,6 @@ interface StagedUnit {
   readonly rfidTag: string;
   serialNumber: string;
   assetTag: string;
-}
-
-/** Capture method: where a scanned or typed token lands. Serial number is the default. */
-type CaptureMode = 'SERIAL' | 'RFID';
-
-interface CaptureModeChip {
-  readonly value: CaptureMode;
-  readonly label: string;
-  readonly icon: string;
-  readonly placeholder: string;
-  readonly listening: string;
 }
 
 /** A staged unit flattened for display: one anchor value plus any other identifiers. */
@@ -138,28 +127,7 @@ export class CommissionSession {
   protected readonly quickBusy = signal(false);
   protected readonly quickError = signal<string | null>(null);
 
-  // --- Capture ---
-  protected readonly captureModes: CaptureModeChip[] = [
-    {
-      value: 'SERIAL',
-      label: 'Serial number',
-      icon: 'pi pi-hashtag',
-      placeholder: 'Scan or type a serial number…',
-      listening: 'Listening for serials',
-    },
-    {
-      value: 'RFID',
-      label: 'RFID sweep',
-      icon: 'pi pi-wifi',
-      placeholder: 'Sweep or scan RFID tags…',
-      listening: 'Listening for tags',
-    },
-  ];
-  protected readonly captureMode = signal<CaptureMode>('SERIAL');
-  protected readonly captureModeMeta = computed(
-    () => this.captureModes.find((mode) => mode.value === this.captureMode()) ?? this.captureModes[0],
-  );
-
+  // --- Capture (RFID sweep only; serials are added per-row via the enrich editor) ---
   protected readonly staged = signal<StagedUnit[]>([]);
   protected readonly capture = new FormControl('', { nonNullable: true });
   protected readonly pasteControl = new FormControl('', { nonNullable: true });
@@ -196,7 +164,7 @@ export class CommissionSession {
       }
       return {
         key: unit.key,
-        icon: unit.rfidTag ? 'pi pi-wifi' : 'pi pi-hashtag',
+        icon: 'pi pi-wifi',
         value: unit.rfidTag || unit.serialNumber || unit.assetTag,
         meta: parts.length > 1 ? parts.slice(1).join(' · ') : null,
       };
@@ -339,12 +307,6 @@ export class CommissionSession {
     }
   }
 
-  /** Switch what the scan field captures. Keeps the staged roster, so a batch can mix both. */
-  protected setCaptureMode(mode: CaptureMode): void {
-    this.captureMode.set(mode);
-    this.refocus();
-  }
-
   protected submitPaste(popover: Popover): void {
     const raw = this.pasteControl.value.trim();
     if (!raw) {
@@ -477,13 +439,12 @@ export class CommissionSession {
       this.flagDuplicate(value);
       return;
     }
-    // The active mode decides what the token is: an EPC to encode, or a serial.
-    const isRfid = this.captureMode() === 'RFID';
+    // Every captured token is an EPC: the sweep anchors units by RFID tag.
     this.staged.update((list) => [
       {
         key: `u${this.keySeq++}`,
-        rfidTag: isRfid ? value : '',
-        serialNumber: isRfid ? '' : value,
+        rfidTag: value,
+        serialNumber: '',
         assetTag: '',
       },
       ...list,
@@ -510,15 +471,30 @@ export class CommissionSession {
     this.result.set(null);
     this.commitError.set(null);
     this.capture.setValue('', { emitEvent: false });
+    // Re-seed the landing location for the (possibly new) product.
+    this.locationId.set(null);
+    this.seedLocationFromProduct();
+  }
+
+  /** Pre-select the product's home location so most sessions skip the picker. */
+  private seedLocationFromProduct(): void {
+    if (this.locationId()) {
+      return;
+    }
+    const preferred = this.product().locationId;
+    if (preferred && this.locationOptions().some((option) => option.id === preferred)) {
+      this.locationId.set(preferred);
+    }
   }
 
   private loadOptions(): void {
     this.locationsService
       .list()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((items) =>
-        this.locationOptions.set(items.map(({ id, name }) => ({ id, name }))),
-      );
+      .subscribe((items) => {
+        this.locationOptions.set(items.map(({ id, name }) => ({ id, name })));
+        this.seedLocationFromProduct();
+      });
     this.suppliersService
       .list()
       .pipe(takeUntilDestroyed(this.destroyRef))

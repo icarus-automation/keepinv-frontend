@@ -426,6 +426,9 @@ export class ScanReceipt {
       if (line.resolution === 'matched' || line.resolution === 'linked') {
         item.productId = line.linkedProduct?.id;
       }
+      if (line.resolution === 'new') {
+        item.isSerialized = line.trackSerials;
+      }
       if (line.sku.trim()) {
         item.sku = line.sku.trim();
       }

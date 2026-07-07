@@ -26,6 +26,11 @@ export interface ReviewLine {
   sku: string;
   resolution: LineResolution;
   linkedProduct: MatchedProduct | null;
+  /**
+   * Serial (RFID) tracking for a line that will create a NEW product. Defaults on — RFID is the
+   * system default. Ignored for matched/linked lines, which keep the existing product's flag.
+   */
+  trackSerials: boolean;
   /** Any user edit drops the OCR confidence on commit (= reviewed, skips the backend gate). */
   edited: boolean;
   /** Resolution panel visibility. */
@@ -48,6 +53,7 @@ export function toReviewLine(scan: ReceiptScanItem): ReviewLine {
     sku: scan.productCode || scan.suggestedSku || '',
     resolution: rejected ? 'unresolved' : resolution,
     linkedProduct: scan.match.matchedProduct,
+    trackSerials: true,
     edited: false,
     expanded: !rejected && scan.match.status === 'NEEDS_REVIEW',
   };

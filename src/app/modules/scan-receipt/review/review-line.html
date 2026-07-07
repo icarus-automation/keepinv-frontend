@@ -38,6 +38,16 @@
             class="mt-1 w-full text-xs tabular-nums"
             pSize="small"
           />
+          <div class="mt-1.5 flex items-center gap-2">
+            <p-checkbox
+              [inputId]="'serialized-' + line().key"
+              [binary]="true"
+              size="small"
+              [ngModel]="line().trackSerials"
+              (ngModelChange)="onTrackSerials($event)"
+            />
+            <label [for]="'serialized-' + line().key" class="text-xs font-medium">Track serial numbers</label>
+          </div>
         }
         <p class="mt-1 truncate text-xs text-muted">{{ resolutionSummary() }}</p>
       } @else {

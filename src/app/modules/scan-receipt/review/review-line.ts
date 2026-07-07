@@ -12,6 +12,7 @@ import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, catchError, debounceTime, distinctUntilChanged, of, switchMap } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
+import { CheckboxModule } from 'primeng/checkbox';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
@@ -27,6 +28,7 @@ interface SearchHit {
   sku: string;
   barcode: string | null;
   quantityOnHand: number;
+  isSerialized: boolean;
 }
 
 /**
@@ -36,7 +38,7 @@ interface SearchHit {
  */
 @Component({
   selector: 'app-review-line',
-  imports: [CurrencyPipe, DecimalPipe, FormsModule, ButtonModule, InputNumberModule, InputTextModule],
+  imports: [CurrencyPipe, DecimalPipe, FormsModule, ButtonModule, CheckboxModule, InputNumberModule, InputTextModule],
   templateUrl: './review-line.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -83,11 +85,17 @@ export class ReviewLineRow {
     const product = line.linkedProduct;
     switch (line.resolution) {
       case 'matched':
-        return product ? `Adds stock to ${product.name} (${product.sku})` : '';
-      case 'linked':
-        return product ? `Adds stock to ${product.name} (${product.sku})` : '';
+      case 'linked': {
+        if (!product) return '';
+        const base = `Adds stock to ${product.name} (${product.sku})`;
+        return product.isSerialized
+          ? `${base} · serialized: ${line.quantity} untagged unit${line.quantity === 1 ? '' : 's'} will be created`
+          : base;
+      }
       case 'new':
-        return 'A new product will be created, then stocked';
+        return line.trackSerials
+          ? 'A new serialized product will be created — units get RFID tags later'
+          : 'A new product will be created, then stocked';
       default:
         return this.line().scan.match.reason;
     }
@@ -147,6 +155,10 @@ export class ReviewLineRow {
     this.emit({ unitCost: unitCost ?? 0, edited: true });
   }
 
+  protected onTrackSerials(trackSerials: boolean): void {
+    this.emit({ trackSerials, edited: true });
+  }
+
   protected acceptProduct(product: MatchedProduct | SearchHit): void {
     this.emit({
       resolution: 'linked',
@@ -156,6 +168,7 @@ export class ReviewLineRow {
         sku: product.sku,
         barcode: product.barcode,
         quantityOnHand: product.quantityOnHand,
+        isSerialized: product.isSerialized,
       },
       edited: true,
       expanded: false,
