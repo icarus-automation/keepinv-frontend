@@ -5,11 +5,12 @@ import {
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { provideRouter } from '@angular/router';
+import { TitleStrategy, provideRouter } from '@angular/router';
 import { providePrimeNG } from 'primeng/config';
 import { forkJoin, of, switchMap } from 'rxjs';
 
 import { routes } from './app.routes';
+import { AppTitleStrategy } from './app-title.strategy';
 import { KeepInvPreset } from './theme/keep-inv-preset';
 import { authInterceptor } from './modules/auth/interceptors/auth.interceptor';
 import { AuthService } from './modules/auth/services/auth.service';
@@ -40,6 +41,7 @@ export const appConfig: ApplicationConfig = {
     }),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideRouter(routes),
+    { provide: TitleStrategy, useClass: AppTitleStrategy },
     providePrimeNG({
       theme: {
         preset: KeepInvPreset,

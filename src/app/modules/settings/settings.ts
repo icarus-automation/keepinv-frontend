@@ -14,7 +14,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PreferencesService, TextScaleId } from '../../../common/preferences/preferences.service';
 import { httpErrorMessage } from '../../../common/http/http-error-message';
 import { OrganizationService } from '../organization/services/organization.service';
-import { orgMonogram } from '../organization/organization.util';
+import { orgMonogram, orgRoleLabel } from '../organization/organization.util';
 import { OrganizationLogo } from './organization-logo';
 
 /**
@@ -42,18 +42,7 @@ export class Settings {
   protected readonly orgLogo = computed(() => this.organization()?.logo?.trim() || null);
   protected readonly orgMonogram = computed(() => orgMonogram(this.organization()?.name));
 
-  protected readonly roleLabel = computed(() => {
-    switch (this.organizationService.myRole()) {
-      case 'owner':
-        return 'Owner';
-      case 'admin':
-        return 'Admin';
-      case 'member':
-        return 'Member';
-      default:
-        return null;
-    }
-  });
+  protected readonly roleLabel = computed(() => orgRoleLabel(this.organizationService.myRole()));
 
   protected readonly saving = signal(false);
   protected readonly saveError = signal<string | null>(null);

@@ -10,7 +10,7 @@
 
   <aside [class]="asideClasses()">
     <div
-      class="flex h-14 shrink-0 items-center gap-2.5 border-b border-line px-4"
+      class="flex h-16 shrink-0 items-center gap-2.5 border-b border-line px-4"
       [class.lg:justify-center]="collapsed()"
     >
       @if (orgLogo(); as logo) {
@@ -44,14 +44,14 @@
       }
     </div>
 
-    <nav class="flex flex-1 flex-col gap-6 overflow-y-auto px-3 py-4" aria-label="Primary">
+    <nav class="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-3 py-3" aria-label="Primary">
       @for (section of navSections(); track section.label) {
         @let captionId = 'nav-section-' + section.label;
         <div role="group" [attr.aria-labelledby]="captionId">
           <p
             [id]="captionId"
             [class]="sectionCaptionClasses()"
-            class="px-3 pb-2 text-[0.6875rem] font-semibold uppercase tracking-wider text-muted/70"
+            class="px-3 pb-2 text-[0.6875rem] font-semibold uppercase tracking-wider text-muted"
           >
             {{ section.label }}
           </p>
@@ -59,26 +59,7 @@
             @for (item of section.items; track item.label) {
               @let active = isActive(item);
               <li>
-                @if (isUpgradeTeaser(item)) {
-                  <button
-                    type="button"
-                    (click)="openUpgrade()"
-                    [class]="navLinkClasses(false)"
-                    class="w-full"
-                    [attr.aria-label]="item.label + ' — PRO plan feature'"
-                    [pTooltip]="collapsed() ? item.label + ' · PRO plan' : 'Included in the PRO plan'"
-                    tooltipPosition="right"
-                  >
-                    <i [class]="item.icon" class="shrink-0 text-xl" aria-hidden="true"></i>
-                    <span [class]="labelClasses()">{{ item.label }}</span>
-                    <span
-                      [class]="labelClasses()"
-                      class="ml-auto rounded border border-line px-1.5 py-0.5 text-[0.625rem] font-medium uppercase tracking-wide text-muted/70"
-                    >
-                      Pro
-                    </span>
-                  </button>
-                } @else if (item.path) {
+                @if (item.path) {
                   <a
                     [routerLink]="item.path"
                     (click)="closeMobile()"
@@ -102,7 +83,7 @@
                     <span [class]="labelClasses()">{{ item.label }}</span>
                     <span
                       [class]="labelClasses()"
-                      class="ml-auto rounded border border-line px-1.5 py-0.5 text-[0.625rem] font-medium uppercase tracking-wide text-muted/70"
+                      class="ml-auto rounded border border-line px-1.5 py-0.5 text-[0.625rem] font-medium uppercase tracking-wide text-muted"
                     >
                       Soon
                     </span>
@@ -130,37 +111,115 @@
 
   <div class="flex min-w-0 flex-1 flex-col">
     <header
-      class="sticky top-0 z-20 flex h-14 shrink-0 items-center gap-3 border-b border-line bg-counter px-4 lg:px-6"
+      class="sticky top-0 z-20 flex h-16 shrink-0 items-center gap-3 border-b border-line bg-counter px-4 lg:px-6"
     >
       <button
         type="button"
         (click)="toggleNav()"
         aria-label="Toggle navigation"
-        class="-ml-1 grid h-9 w-9 place-items-center rounded-md text-muted outline-none transition-colors hover:bg-line/60 hover:text-ink focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+        [class]="chromeButtonClasses()"
+        class="-ml-1"
       >
         <i class="pi pi-bars text-xl" aria-hidden="true"></i>
       </button>
 
-      <h1 class="truncate text-base font-semibold tracking-tight">{{ pageTitle() }}</h1>
+      <div class="flex min-w-0 flex-1 items-center gap-1.5">
+        @if (breadcrumb(); as crumb) {
+          <a
+            [routerLink]="crumb.path"
+            class="shrink-0 rounded-sm text-sm font-medium text-muted outline-none transition-colors hover:text-ink focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter motion-reduce:transition-none"
+          >
+            {{ crumb.label }}
+          </a>
+          <i class="pi pi-chevron-right shrink-0 text-xs text-muted" aria-hidden="true"></i>
+        }
+        <h1 class="truncate text-base font-semibold tracking-tight">{{ pageTitle() }}</h1>
+      </div>
 
-      <div class="ml-auto flex items-center">
+      <div class="flex shrink-0 items-center gap-1.5">
+        @if (showTools()) {
+          <a
+            routerLink="/tools"
+            [class]="chromeButtonClasses(toolsActive())"
+            [attr.aria-current]="toolsActive() ? 'page' : null"
+            aria-label="Tools"
+            pTooltip="Tools"
+            tooltipPosition="bottom"
+          >
+            <i class="pi pi-wrench text-xl" aria-hidden="true"></i>
+          </a>
+        }
+        <a
+          routerLink="/settings"
+          [class]="chromeButtonClasses(settingsActive())"
+          [attr.aria-current]="settingsActive() ? 'page' : null"
+          aria-label="Settings"
+          pTooltip="Settings"
+          tooltipPosition="bottom"
+        >
+          <i class="pi pi-cog text-xl" aria-hidden="true"></i>
+        </a>
+
+        <span class="mx-1 h-6 w-px shrink-0 bg-line" aria-hidden="true"></span>
+
         <button
           type="button"
           (click)="userMenu.toggle($event)"
-          aria-haspopup="true"
-          aria-label="Account menu"
-          class="flex items-center gap-2.5 rounded-md py-1 pl-1 pr-2 text-left outline-none transition-colors hover:bg-line/60 focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+          aria-haspopup="menu"
+          aria-controls="account-menu"
+          [attr.aria-expanded]="accountMenuOpen()"
+          [attr.aria-label]="'Account: ' + displayName()"
+          class="grid h-9 w-9 shrink-0 place-items-center rounded-full outline-none transition-colors hover:bg-line/60 focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter motion-reduce:transition-none"
         >
-          <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-line text-xs font-semibold text-ink">
+          <span
+            class="grid h-8 w-8 place-items-center rounded-full bg-line text-xs font-semibold text-ink"
+            aria-hidden="true"
+          >
             {{ initials() }}
           </span>
-          <span class="hidden leading-tight sm:flex sm:flex-col">
-            <span class="text-sm font-medium">{{ displayName() }}</span>
-            <span class="text-xs capitalize text-muted">{{ roleLabel() }}</span>
-          </span>
-          <i class="pi pi-chevron-down hidden text-base text-muted sm:inline-block" aria-hidden="true"></i>
         </button>
-        <p-menu #userMenu [model]="userMenuItems" [popup]="true" appendTo="body" styleClass="min-w-44" />
+        <p-menu
+          #userMenu
+          id="account-menu"
+          [model]="userMenuItems"
+          [popup]="true"
+          appendTo="body"
+          styleClass="w-60"
+          (onShow)="accountMenuOpen.set(true)"
+          (onHide)="accountMenuOpen.set(false)"
+        >
+          <ng-template #start>
+            <div class="border-b border-line px-3 py-2.5">
+              <div class="flex items-center gap-2">
+                <p class="min-w-0 flex-1 truncate text-sm font-medium text-ink">{{ displayName() }}</p>
+                @if (roleLabel(); as role) {
+                  <span
+                    class="shrink-0 rounded border border-line px-1.5 py-0.5 text-[0.625rem] font-medium uppercase tracking-wide text-muted"
+                  >
+                    {{ role }}
+                  </span>
+                }
+              </div>
+              @if (email(); as address) {
+                <p class="mt-0.5 truncate text-xs text-muted">{{ address }}</p>
+              }
+            </div>
+          </ng-template>
+
+          <!--
+            Attribution moved off the rail: it cost 41px of vertical space and served no task.
+            The `@if` sits inside the template, not around it — PrimeNG's ContentChild query
+            cannot see an `ng-template` parked in a conditional embedded view.
+          -->
+          <ng-template #end>
+            @if (orgName()) {
+              <p class="flex items-center gap-1.5 border-t border-line px-3 py-2 text-[0.6875rem] text-muted">
+                <i class="pi pi-box text-sm" aria-hidden="true"></i>
+                <span>Powered by <span class="font-medium text-ink">AssetWise</span></span>
+              </p>
+            }
+          </ng-template>
+        </p-menu>
       </div>
     </header>
 
@@ -168,8 +227,6 @@
       <router-outlet />
     </main>
   </div>
-
-  <app-pro-upgrade-dialog [(visible)]="upgradeOpen" />
 
   @if (leader()) {
     <div
@@ -179,7 +236,7 @@
       <span class="font-medium text-ink">New…</span>
       <kbd class="rounded border border-line bg-counter px-1 font-sans text-[0.7rem] font-medium text-ink">P</kbd>
       product
-      <span class="text-muted/50">·</span>
+      <span class="text-muted" aria-hidden="true">·</span>
       <kbd class="rounded border border-line bg-counter px-1 font-sans text-[0.7rem] font-medium text-ink">A</kbd>
       audit
     </div>

@@ -17,7 +17,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
 
-import { ProductsService } from '../../products/services/products.service';
+import { ProductsService } from '../../../products/services/products.service';
 import { MatchedProduct } from '../types/receipt-import.types';
 import { ReviewLine } from './review-line.model';
 

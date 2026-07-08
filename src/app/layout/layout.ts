@@ -8,7 +8,13 @@ import {
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  NavigationEnd,
+  Router,
+  RouterLink,
+  RouterOutlet,
+} from '@angular/router';
 import { filter, map } from 'rxjs';
 import { MenuModule } from 'primeng/menu';
 import { MenuItem } from 'primeng/api';
@@ -17,9 +23,9 @@ import { NgOptimizedImage } from '@angular/common';
 
 import { AuthService } from '../modules/auth/services/auth.service';
 import { OrganizationService } from '../modules/organization/services/organization.service';
-import { orgMonogram } from '../modules/organization/organization.util';
+import { orgMonogram, orgRoleLabel } from '../modules/organization/organization.util';
 import { EntitlementsService } from '../../common/entitlements/entitlements.service';
-import { ProUpgradeDialog } from './pro-upgrade-dialog';
+import { ToolsService } from '../modules/tools/services/tools.service';
 
 interface NavItem {
   readonly label: string;
@@ -40,6 +46,18 @@ interface NavSection {
   readonly items: readonly NavItem[];
 }
 
+/** A single ancestor link shown before the page title, e.g. `Tools › Scan Receipt`. */
+interface Breadcrumb {
+  readonly label: string;
+  readonly path: string;
+}
+
+interface RouteMeta {
+  readonly url: string;
+  readonly title: string;
+  readonly breadcrumb: Breadcrumb | null;
+}
+
 /** How long after pressing `N` the second key is still accepted as a chord. */
 const LEADER_TIMEOUT_MS = 1500;
 
@@ -54,7 +72,7 @@ const NEW_SHORTCUTS: Record<string, { readonly path: string }> = {
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterOutlet, RouterLink, MenuModule, Tooltip, NgOptimizedImage, ProUpgradeDialog],
+  imports: [RouterOutlet, RouterLink, MenuModule, Tooltip],
   templateUrl: './layout.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -67,20 +85,17 @@ export class Layout {
   private readonly authService = inject(AuthService);
   private readonly organizationService = inject(OrganizationService);
   private readonly entitlements = inject(EntitlementsService);
+  private readonly tools = inject(ToolsService);
   private readonly destroyRef = inject(DestroyRef);
 
   /** Paths that belong to the POS module — hidden for BASIC (Inventory-only) tenants. */
   private static readonly POS_PATHS = new Set(['pos', 'sales', 'reports']);
 
-  /** PRO-only paths (the barcode catalog sheet) — hidden for BASIC tenants. */
-  private static readonly PRO_PATHS = new Set(['barcode-sheet']);
-
   /**
-   * Paths the backend restricts to org owners/admins — hidden for members entirely.
-   * Unlike PRO_PATHS, these stay visible on BASIC as an upgrade teaser (see upgradeTeaserPaths).
+   * The rail holds only the work an operator repeats through the day. Occasional jobs (Tools) and
+   * chrome (Settings) live in the header instead — that is what keeps this list short enough to
+   * fit a laptop screen without scrolling. Resist adding to it.
    */
-  private static readonly MANAGER_PATHS = new Set(['scan-receipt']);
-
   private static readonly ALL_SECTIONS: readonly NavSection[] = [
     {
       label: 'Overview',
@@ -91,6 +106,7 @@ export class Layout {
       items: [
         { label: 'Point of Sale', icon: 'pi pi-shopping-cart', path: 'pos' },
         { label: 'Sales', icon: 'pi pi-chart-line', path: 'sales' },
+        { label: 'Sales Report', icon: 'pi pi-chart-bar', path: 'reports' },
         {
           label: 'Inventory Audit',
           icon: 'pi pi-check-square',
@@ -101,71 +117,33 @@ export class Layout {
       ],
     },
     {
-      label: 'Reports',
-      items: [{ label: 'Sales Report', icon: 'pi pi-chart-bar', path: 'reports' }],
-    },
-    {
       label: 'Catalog',
       items: [
-        { label: 'Products', icon: 'pi pi-box', path: 'products', newShortcut: { key: 'p', verb: 'New product' } },
+        {
+          label: 'Products',
+          icon: 'pi pi-box',
+          path: 'products',
+          newShortcut: { key: 'p', verb: 'New product' },
+        },
         { label: 'Categories', icon: 'pi pi-th-large', path: 'categories' },
         { label: 'Locations', icon: 'pi pi-map-marker', path: 'locations' },
         { label: 'Suppliers', icon: 'pi pi-truck', path: 'suppliers' },
         { label: 'Movement Types', icon: 'pi pi-tags', path: 'stock-movement-types' },
       ],
     },
-    {
-      label: 'Tools',
-      items: [
-        { label: 'Barcode Sheet', icon: 'pi pi-qrcode', path: 'barcode-sheet' },
-        { label: 'Scan Receipt', icon: 'pi pi-receipt', path: 'scan-receipt' },
-      ],
-    },
-    {
-      label: 'System',
-      items: [{ label: 'Settings', icon: 'pi pi-cog', path: 'settings' }],
-    },
   ];
 
-  // POS items (Point of Sale, Sales, Sales Report) and PRO-only items (Barcode Sheet) only show on
-  // the plans that include them; owner/admin-only items (Scan Receipt) are hidden from members.
+  // POS items (Point of Sale, Sales, Sales Report) only show on plans that include the module.
   // Sections left empty by the filter are dropped so no orphan caption renders.
   protected readonly navSections = computed<readonly NavSection[]>(() => {
     const canUsePos = this.entitlements.canUsePos();
-    const isPro = this.entitlements.isPro();
-    const canManage = this.organizationService.canManage();
     return Layout.ALL_SECTIONS.map((section) => ({
       ...section,
-      items: section.items.filter((item) => {
-        if (!item.path) {
-          return true;
-        }
-        if (!canUsePos && Layout.POS_PATHS.has(item.path)) {
-          return false;
-        }
-        if (!canManage && Layout.MANAGER_PATHS.has(item.path)) {
-          return false;
-        }
-        return isPro || !Layout.PRO_PATHS.has(item.path);
-      }),
+      items: section.items.filter(
+        (item) => !item.path || canUsePos || !Layout.POS_PATHS.has(item.path),
+      ),
     })).filter((section) => section.items.length > 0);
   });
-
-  /**
-   * Scan Receipt stays visible on BASIC as a discoverable teaser: clicking it opens the
-   * upgrade dialog instead of navigating.
-   */
-  protected isUpgradeTeaser(item: NavItem): boolean {
-    return item.path === 'scan-receipt' && !this.entitlements.canScanReceipts();
-  }
-
-  /** The PRO upgrade dialog, opened from teaser items. */
-  protected readonly upgradeOpen = signal(false);
-
-  protected openUpgrade(): void {
-    this.closeMobile();
-    this.upgradeOpen.set(true);
-  }
 
   /** Leader-chord state: true while waiting for the second key after `N`. */
   protected readonly leader = signal(false);
@@ -176,25 +154,42 @@ export class Layout {
   /** Off-canvas drawer on narrow screens. */
   protected readonly mobileOpen = signal(false);
   private readonly isDesktop = signal(true);
+  /** Mirrors the account menu's open state onto the trigger's `aria-expanded`. */
+  protected readonly accountMenuOpen = signal(false);
 
-  private readonly currentUrl = toSignal(
+  /**
+   * Page identity, read off the resolved route rather than the nav model: Tools and Settings no
+   * longer appear in the rail, so the rail can no longer name every page.
+   */
+  private readonly routeMeta = toSignal(
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
-      map((event) => event.urlAfterRedirects),
+      map(() => this.readRouteMeta()),
     ),
-    { initialValue: this.router.url },
+    { initialValue: this.readRouteMeta() },
   );
 
-  protected readonly pageTitle = computed(() => {
-    const url = this.currentUrl();
-    for (const section of this.navSections()) {
-      const match = section.items.find((item) => this.matches(item, url));
-      if (match) {
-        return match.label;
-      }
+  private readonly currentUrl = computed(() => this.routeMeta().url);
+  protected readonly pageTitle = computed(() => this.routeMeta().title);
+  protected readonly breadcrumb = computed(() => this.routeMeta().breadcrumb);
+
+  /** Walks the activated tree; the deepest route that declares a value wins. */
+  private readRouteMeta(): RouteMeta {
+    let snapshot: ActivatedRouteSnapshot | null = this.router.routerState.snapshot.root;
+    let title: string | undefined;
+    let breadcrumb: Breadcrumb | undefined;
+    while (snapshot) {
+      title = snapshot.title ?? title;
+      breadcrumb = (snapshot.data['breadcrumb'] as Breadcrumb | undefined) ?? breadcrumb;
+      snapshot = snapshot.firstChild;
     }
-    return 'keep inv';
-  });
+    return { url: this.router.url, title: title ?? 'AssetWise', breadcrumb: breadcrumb ?? null };
+  }
+
+  /** Header chrome. Tools hides entirely when the user's plan and role unlock none of them. */
+  protected readonly showTools = this.tools.hasAny;
+  protected readonly toolsActive = computed(() => this.startsWith('/tools'));
+  protected readonly settingsActive = computed(() => this.startsWith('/settings'));
 
   private readonly organization = this.organizationService.organization;
 
@@ -213,7 +208,14 @@ export class Layout {
     return user.name?.trim() || user.email;
   });
 
-  protected readonly roleLabel = computed(() => this.user()?.role ?? 'Signed in');
+  /** Second line of the account menu — omitted when the name already *is* the email. */
+  protected readonly email = computed(() => {
+    const user = this.user();
+    return user?.name?.trim() ? user.email : null;
+  });
+
+  /** The user's role *in this shop* (Owner / Admin / Member), not the platform-level auth role. */
+  protected readonly roleLabel = computed(() => orgRoleLabel(this.organizationService.myRole()));
 
   protected readonly initials = computed(() => {
     const user = this.user();
@@ -227,7 +229,7 @@ export class Layout {
   });
 
   protected readonly userMenuItems: MenuItem[] = [
-    { label: 'Sign out', command: () => this.logout() },
+    { label: 'Sign out', icon: 'pi pi-sign-out', command: () => this.logout() },
   ];
 
   protected readonly asideClasses = computed(() => {
@@ -334,26 +336,34 @@ export class Layout {
   }
 
   protected isActive(item: NavItem): boolean {
-    return this.matches(item, this.currentUrl());
+    return item.path !== undefined && this.startsWith(`/${item.path}`);
   }
 
   protected navLinkClasses(active: boolean): string {
     const base =
-      'group flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium outline-none ' +
-      'transition-colors focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 ' +
-      'focus-visible:ring-offset-panel';
-    const state = active
-      ? 'bg-signal/10 text-ink'
-      : 'text-muted hover:bg-line/60 hover:text-ink';
+      'group flex items-center gap-3 rounded-md px-3 py-1.5 text-sm font-medium outline-none ' +
+      'transition-colors motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-signal ' +
+      'focus-visible:ring-offset-2 focus-visible:ring-offset-panel';
+    const state = active ? 'bg-signal/10 text-ink' : 'text-muted hover:bg-line/60 hover:text-ink';
     const rail = this.collapsed() ? 'lg:justify-center lg:px-0' : '';
     return `${base} ${state} ${rail}`;
   }
 
   protected disabledItemClasses(): string {
     const base =
-      'flex cursor-not-allowed items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted/60';
+      'flex cursor-not-allowed items-center gap-3 rounded-md px-3 py-1.5 text-sm font-medium text-muted/60';
     const rail = this.collapsed() ? 'lg:justify-center lg:px-0' : '';
     return `${base} ${rail}`;
+  }
+
+  /** Square icon control in the header: nav toggle, Tools, Settings. One shape, one state set. */
+  protected chromeButtonClasses(active = false): string {
+    const base =
+      'grid h-9 w-9 shrink-0 place-items-center rounded-md outline-none transition-colors ' +
+      'motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-signal ' +
+      'focus-visible:ring-offset-2 focus-visible:ring-offset-counter';
+    const state = active ? 'bg-signal/10 text-signal' : 'text-muted hover:bg-line/60 hover:text-ink';
+    return `${base} ${state}`;
   }
 
   protected labelClasses(): string {
@@ -386,7 +396,9 @@ export class Layout {
     this.authService.logout().subscribe(() => void this.router.navigateByUrl('/auth/login'));
   }
 
-  private matches(item: NavItem, url: string): boolean {
-    return item.path !== undefined && url.split('?')[0].split('#')[0].startsWith(`/${item.path}`);
+  /** Path-prefix match that ignores the query string and fragment. */
+  private startsWith(path: string): boolean {
+    const url = this.currentUrl().split('?')[0].split('#')[0];
+    return url === path || url.startsWith(`${path}/`);
   }
 }

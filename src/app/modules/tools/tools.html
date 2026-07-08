@@ -1,0 +1,81 @@
+<div class="mx-auto max-w-2xl">
+  <p class="max-w-prose text-sm text-muted">
+    Occasional jobs that sit outside the counter flow — a supplier delivery to file, a sheet to
+    reprint. The sidebar stays for the work you do every hour.
+  </p>
+
+  @if (listings().length) {
+    <ul class="mt-6 overflow-hidden rounded-lg border border-line bg-counter">
+      @for (listing of listings(); track listing.tool.id) {
+        <li class="border-b border-line last:border-b-0">
+          @if (listing.state === 'available') {
+            <a
+              [routerLink]="listing.tool.path"
+              class="group flex items-center gap-4 px-4 py-4 outline-none transition-colors hover:bg-panel focus-visible:bg-panel focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-signal motion-reduce:transition-none"
+            >
+              <span
+                class="grid h-10 w-10 shrink-0 place-items-center rounded-md border border-line bg-panel text-muted transition-colors group-hover:border-signal/30 group-hover:bg-signal/10 group-hover:text-signal motion-reduce:transition-none"
+              >
+                <i [class]="listing.tool.icon" class="text-xl" aria-hidden="true"></i>
+              </span>
+              <span class="min-w-0 flex-1">
+                <span class="block text-sm font-medium text-ink">{{ listing.tool.label }}</span>
+                <span class="mt-0.5 block text-sm text-muted">{{ listing.tool.blurb }}</span>
+              </span>
+              <i
+                class="pi pi-chevron-right shrink-0 text-sm text-muted transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none"
+                aria-hidden="true"
+              ></i>
+            </a>
+          } @else {
+            <button
+              type="button"
+              (click)="openUpgrade(listing.tool)"
+              [attr.aria-label]="listing.tool.label + ' — included in the PRO plan'"
+              class="group flex w-full items-center gap-4 px-4 py-4 text-left outline-none transition-colors hover:bg-panel focus-visible:bg-panel focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-signal motion-reduce:transition-none"
+            >
+              <span
+                class="grid h-10 w-10 shrink-0 place-items-center rounded-md border border-line bg-panel text-muted transition-colors group-hover:border-signal/30 group-hover:bg-signal/10 group-hover:text-signal motion-reduce:transition-none"
+              >
+                <i [class]="listing.tool.icon" class="text-xl" aria-hidden="true"></i>
+              </span>
+              <span class="min-w-0 flex-1">
+                <span class="flex items-center gap-2">
+                  <span class="truncate text-sm font-medium text-ink">{{ listing.tool.label }}</span>
+                  <!-- Neutral, not blue: the header's Tools icon already carries the one signal. -->
+                  <span
+                    class="shrink-0 rounded border border-line px-1.5 py-0.5 text-[0.625rem] font-semibold uppercase tracking-wide text-muted"
+                    aria-hidden="true"
+                  >
+                    Pro
+                  </span>
+                </span>
+                <span class="mt-0.5 block text-sm text-muted">{{ listing.tool.blurb }}</span>
+              </span>
+              <i
+                class="pi pi-lock shrink-0 text-sm text-muted"
+                aria-hidden="true"
+              ></i>
+            </button>
+          }
+        </li>
+      }
+    </ul>
+  } @else {
+    <div class="mt-6 rounded-lg border border-dashed border-line px-6 py-12 text-center">
+      <i class="pi pi-wrench text-2xl text-muted" aria-hidden="true"></i>
+      <p class="mt-3 text-sm font-medium text-ink">No tools for this account</p>
+      <p class="mx-auto mt-1 max-w-sm text-sm text-muted">
+        Tools unlock with your plan and your role in the shop. Ask an owner or admin to give you
+        access.
+      </p>
+    </div>
+  }
+
+  <app-pro-upgrade-dialog
+    [(visible)]="upgradeOpen"
+    [featureName]="pitchedName()"
+    [headline]="pitchedHeadline()"
+    [pitch]="pitchedPitch()"
+  />
+</div>

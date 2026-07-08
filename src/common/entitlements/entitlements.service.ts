@@ -57,11 +57,11 @@ export class EntitlementsService {
   readonly entitlements = this.state.asReadonly();
 
   readonly plan = computed(() => this.state().plan);
-  /** PRO-tier tenant: gates PRO-only surfaces such as the barcode catalog sheet. */
+  /** PRO-tier tenant: gates PRO-only surfaces such as the barcode sheet. */
   readonly isPro = computed(() => this.state().plan === 'PRO');
   readonly printerType = computed(() => this.state().printerType);
   readonly canUsePos = computed(() => this.state().features.pos);
-  /** PRO-only receipt scanning; BASIC sees the sidebar item but gets the upgrade dialog. */
+  /** PRO-only receipt scanning; BASIC sees a locked row on /tools that opens the upgrade dialog. */
   readonly canScanReceipts = computed(() => this.state().features.receiptScanning);
   readonly canPrintLabels = computed(() => this.state().features.labelPrinting);
   readonly locked = computed(() => this.state().locked);

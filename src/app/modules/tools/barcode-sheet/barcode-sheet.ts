@@ -14,11 +14,11 @@ import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 
-import { ProductsService } from '../products/services/products.service';
-import { Product } from '../products/types/product.types';
-import { MoneyPipe } from '../products/utils/money.pipe';
-import { httpErrorMessage } from '../../../common/http/http-error-message';
-import { buildCatalogSheet, GeneratedSheet } from './catalog-sheet-pdf';
+import { ProductsService } from '../../products/services/products.service';
+import { Product } from '../../products/types/product.types';
+import { MoneyPipe } from '../../products/utils/money.pipe';
+import { httpErrorMessage } from '../../../../common/http/http-error-message';
+import { buildBarcodeSheet, GeneratedSheet } from './barcode-sheet-pdf';
 
 /** Tiles per A4 page; mirrors the PDF generator's 2x3 grid so the page count matches. */
 const TILES_PER_PAGE = 6;
@@ -30,12 +30,12 @@ const TILES_PER_PAGE = 6;
  * shown but disabled, since there would be nothing to scan.
  */
 @Component({
-  selector: 'app-catalog-sheet',
+  selector: 'app-barcode-sheet',
   imports: [ReactiveFormsModule, TableModule, ButtonModule, InputTextModule, MoneyPipe],
-  templateUrl: './catalog-sheet.html',
+  templateUrl: './barcode-sheet.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CatalogSheet {
+export class BarcodeSheet {
   private readonly service = inject(ProductsService);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly destroyRef = inject(DestroyRef);
@@ -155,7 +155,7 @@ export class CatalogSheet {
     this.generating.set(true);
     this.genError.set(null);
 
-    buildCatalogSheet(items, {
+    buildBarcodeSheet(items, {
       title: this.titleControl.value.trim() || 'Product Barcode Sheet',
       subtitle: this.subtitleControl.value.trim() || undefined,
     })

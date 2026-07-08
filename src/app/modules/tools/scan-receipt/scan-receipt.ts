@@ -19,9 +19,9 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 
-import { CategoriesService } from '../categories/services/categories.service';
-import { LocationsService } from '../locations/services/locations.service';
-import { httpErrorMessage } from '../../../common/http/http-error-message';
+import { CategoriesService } from '../../categories/services/categories.service';
+import { LocationsService } from '../../locations/services/locations.service';
+import { httpErrorMessage } from '../../../../common/http/http-error-message';
 import { ReceiptImportsService } from './services/receipt-imports.service';
 import {
   RECEIPT_ACCEPT,

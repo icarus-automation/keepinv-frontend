@@ -1,8 +1,8 @@
 import { jsPDF } from 'jspdf';
 import JsBarcode from 'jsbarcode';
 
-import { Product, PRODUCT_IMAGE_PLACEHOLDER } from '../products/types/product.types';
-import { formatPeso } from '../products/utils/money.pipe';
+import { Product, PRODUCT_IMAGE_PLACEHOLDER } from '../../products/types/product.types';
+import { formatPeso } from '../../products/utils/money.pipe';
 
 /** Result of building a sheet: the PDF blob, an object URL for preview/print, and its page count. */
 export interface GeneratedSheet {
@@ -11,7 +11,7 @@ export interface GeneratedSheet {
   pages: number;
 }
 
-export interface CatalogSheetOptions {
+export interface BarcodeSheetOptions {
   /** Banner title printed at the top of every page. */
   title: string;
   /** Optional line under the title (e.g. an instruction to the cashier). */
@@ -57,9 +57,9 @@ const IMAGE_RASTER_PX = 440;
  * barcode is drawn with JsBarcode. Returns a PDF blob plus an object URL the caller owns and must
  * revoke when done.
  */
-export async function buildCatalogSheet(
+export async function buildBarcodeSheet(
   products: Product[],
-  options: CatalogSheetOptions,
+  options: BarcodeSheetOptions,
 ): Promise<GeneratedSheet> {
   const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
 
@@ -89,7 +89,7 @@ export async function buildCatalogSheet(
 
 function drawHeader(
   doc: jsPDF,
-  options: CatalogSheetOptions,
+  options: BarcodeSheetOptions,
   page: number,
   pages: number,
 ): void {

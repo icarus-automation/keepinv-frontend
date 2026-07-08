@@ -11,7 +11,7 @@ export const posGuard: CanActivateFn = () => {
   return entitlements.canUsePos() ? true : router.parseUrl('/');
 };
 
-/** Blocks PRO-only routes (the barcode catalog sheet) for BASIC tenants. Redirects home. */
+/** Blocks PRO-only routes (/tools/barcode-sheet) for BASIC tenants. Redirects home. */
 export const proGuard: CanActivateFn = () => {
   const entitlements = inject(EntitlementsService);
   const router = inject(Router);
@@ -19,9 +19,9 @@ export const proGuard: CanActivateFn = () => {
 };
 
 /**
- * Blocks /scan-receipt unless the plan includes receipt scanning AND the user is an org
- * owner/admin (the backend enforces both). BASIC managers reach the feature through the
- * sidebar upgrade dialog instead, so a direct URL just goes home.
+ * Blocks /tools/scan-receipt unless the plan includes receipt scanning AND the user is an org
+ * owner/admin (the backend enforces both). BASIC managers reach the feature through the upgrade
+ * dialog on /tools instead, so a direct URL just goes home.
  */
 export const receiptScanGuard: CanActivateFn = () => {
   const entitlements = inject(EntitlementsService);

@@ -1,18 +1,24 @@
 import { ChangeDetectionStrategy, Component, input, model } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
-import { ButtonModule } from 'primeng/button';
 
 /** Where BASIC tenants ask about upgrading; plans are provisioned manually by the operator. */
 const FACEBOOK_PAGE_URL = 'https://www.facebook.com/profile.php?id=61582103931111';
 
+/** Everything a BASIC tenant gains, in the order a shop owner cares about it. */
+const PRO_INCLUDES: readonly string[] = [
+  'Point of Sale, with sales history and reports',
+  'Scan Receipt for supplier deliveries',
+  'Barcode Sheet you can print and tape by the till',
+];
+
 /**
- * The friendly paywall. Shown when a BASIC tenant taps a PRO-only surface in the sidebar:
- * a small celebration ("you found something!"), what the feature does, and a single CTA to
- * message the shop's Facebook page — there is no self-service checkout.
+ * The friendly paywall. Shown when a BASIC tenant opens a locked tool on `/tools`: the concrete
+ * outcome first, what else the plan carries second, then a single CTA to message the shop's
+ * Facebook page — there is no self-service checkout.
  */
 @Component({
   selector: 'app-pro-upgrade-dialog',
-  imports: [DialogModule, ButtonModule],
+  imports: [DialogModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <p-dialog
@@ -21,7 +27,7 @@ const FACEBOOK_PAGE_URL = 'https://www.facebook.com/profile.php?id=6158210393111
       [draggable]="false"
       [resizable]="false"
       [dismissableMask]="true"
-      [style]="{ width: 'min(26rem, calc(100vw - 2rem))' }"
+      [style]="{ width: 'min(27rem, calc(100vw - 2rem))' }"
       styleClass="overflow-hidden"
     >
       <ng-template #header>
@@ -63,27 +69,35 @@ const FACEBOOK_PAGE_URL = 'https://www.facebook.com/profile.php?id=6158210393111
           </span>
         </div>
 
-        <h2 class="mt-5 text-lg font-semibold tracking-tight text-ink">
-          You found a PRO feature!
-        </h2>
-        <p class="mt-2 max-w-xs text-sm leading-relaxed text-muted">
-          <span class="font-medium text-ink">{{ featureName() }}</span> {{ description() }}
-          It's included in the PRO plan.
-        </p>
+        <h2 class="mt-5 text-lg font-semibold tracking-tight text-ink">{{ headline() }}</h2>
+        <p class="mt-2 max-w-sm text-sm leading-relaxed text-muted">{{ pitch() }}</p>
+
+        <div class="mt-5 w-full rounded-md border border-line bg-panel px-4 py-3 text-left">
+          <p class="text-xs font-medium text-ink">The PRO plan also carries</p>
+          <ul class="mt-2 flex flex-col gap-1.5">
+            @for (item of proIncludes; track item) {
+              <li class="flex items-start gap-2 text-sm text-muted">
+                <i class="pi pi-check mt-1 shrink-0 text-xs text-signal" aria-hidden="true"></i>
+                <span>{{ item }}</span>
+              </li>
+            }
+          </ul>
+        </div>
 
         <a
           [href]="facebookUrl"
           target="_blank"
           rel="noopener noreferrer"
-          class="mt-6 inline-flex h-10 items-center gap-2 rounded-md bg-signal px-5 text-sm font-semibold text-ink outline-none transition-colors hover:bg-signal-hover focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+          class="mt-5 inline-flex h-10 items-center gap-2 rounded-md bg-signal px-5 text-sm font-semibold text-signal-ink outline-none transition-colors hover:bg-signal-hover focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter motion-reduce:transition-none"
         >
           <i class="pi pi-facebook text-base" aria-hidden="true"></i>
-          Message us on Facebook
+          Message us to upgrade
         </a>
+        <p class="mt-2 text-xs text-muted">We answer within the day. Nothing to pay to ask.</p>
         <button
           type="button"
           (click)="visible.set(false)"
-          class="mt-2 rounded-md px-3 py-1.5 text-sm font-medium text-muted outline-none transition-colors hover:text-ink focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+          class="mt-3 rounded-md px-3 py-1.5 text-sm font-medium text-muted outline-none transition-colors hover:text-ink focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter motion-reduce:transition-none"
         >
           Maybe later
         </button>
@@ -105,9 +119,12 @@ const FACEBOOK_PAGE_URL = 'https://www.facebook.com/profile.php?id=6158210393111
 })
 export class ProUpgradeDialog {
   readonly visible = model(false);
+  /** Names the dialog for screen readers; the visible copy is {@link headline} and {@link pitch}. */
   readonly featureName = input('Scan Receipt');
-  readonly description = input(
-    'reads a photo of your supplier receipt and records the stock for you — no retyping.',
+  readonly headline = input('Stop retyping supplier receipts');
+  readonly pitch = input(
+    'Photograph the delivery receipt and Scan Receipt reads every line — item, quantity, cost — then files it into stock for you.',
   );
   protected readonly facebookUrl = FACEBOOK_PAGE_URL;
+  protected readonly proIncludes = PRO_INCLUDES;
 }
