@@ -26,6 +26,7 @@
         styleClass="w-full"
         inputStyleClass="w-full text-sm"
         [invalid]="form.controls.product.touched && form.controls.product.invalid"
+        (keydown.enter)="onProductEnter($event)"
       >
         <ng-template let-product pTemplate="item">
           <div class="flex min-w-0 flex-col py-0.5">
@@ -55,19 +56,29 @@
           [invalid]="form.controls.stockMovementTypeId.touched && form.controls.stockMovementTypeId.invalid"
         >
           <ng-template let-type pTemplate="item">
-            <span class="flex items-center gap-2">
-              <i [class]="iconFor(type)" class="text-sm text-muted" aria-hidden="true"></i>
-              {{ type.name }}
-            </span>
+            <div class="flex min-w-0 flex-col py-0.5">
+              <span class="flex items-center gap-2 text-sm text-ink">
+                <i [class]="iconFor(type)" class="text-sm text-muted" aria-hidden="true"></i>
+                {{ type.name }}
+              </span>
+              @if (type.description) {
+                <span class="truncate text-xs text-muted">{{ type.description }}</span>
+              }
+            </div>
           </ng-template>
         </p-select>
+        @if (selectedTypeDescription()) {
+          <p class="text-xs text-muted">{{ selectedTypeDescription() }}</p>
+        }
       </div>
       <div class="flex flex-col gap-1.5">
-        <label for="sm-quantity" class="text-sm font-medium">Quantity</label>
+        <label for="sm-quantity" class="text-sm font-medium">
+          {{ isAdjustment() ? 'Counted quantity' : 'Quantity' }}
+        </label>
         <p-inputnumber
           inputId="sm-quantity"
           formControlName="quantity"
-          [min]="1"
+          [min]="isAdjustment() ? 0 : 1"
           [maxFractionDigits]="0"
           [useGrouping]="false"
           placeholder="0"
@@ -75,6 +86,15 @@
           inputStyleClass="w-full text-sm tabular-nums"
           [invalid]="form.controls.quantity.touched && form.controls.quantity.invalid"
         />
+        @if (isAdjustment()) {
+          <p class="text-xs text-muted">
+            @if (currentOnHand() !== null) {
+              Sets on-hand to the number you counted (currently {{ currentOnHand() }}).
+            } @else {
+              Enter the actual quantity you counted; on-hand is set to match.
+            }
+          </p>
+        }
       </div>
     </div>
 

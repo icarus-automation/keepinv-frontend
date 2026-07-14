@@ -86,9 +86,11 @@ export class StockMovementRecord implements OnInit {
   protected readonly form = this.formBuilder.nonNullable.group({
     product: this.formBuilder.control<Product | null>(null, [Validators.required]),
     stockMovementTypeId: this.formBuilder.control<string | null>(null, [Validators.required]),
+    // min 0: an Adjustment sets the counted on-hand (0 is valid). The record() guard enforces
+    // "at least 1" for Increase/Decrease, where a zero movement is meaningless.
     quantity: this.formBuilder.control<number | null>(null, [
       Validators.required,
-      Validators.min(1),
+      Validators.min(0),
     ]),
     note: ['', [Validators.maxLength(500)]],
     supplierId: this.formBuilder.control<string | null>(null),
@@ -104,6 +106,15 @@ export class StockMovementRecord implements OnInit {
   );
   /** Supplier is only meaningful for incoming stock (types whose effect adds on-hand). */
   protected readonly needsSupplier = computed(() => this.selectedType()?.effect === 'INCREASE');
+  /** Adjustment reads the quantity as a counted total to set, not an amount to add/remove. */
+  protected readonly isAdjustment = computed(() => this.selectedType()?.effect === 'ADJUSTMENT');
+  /** The chosen type's description, shown under the picker so operators pick the right one. */
+  protected readonly selectedTypeDescription = computed(() => this.selectedType()?.description ?? null);
+  private readonly selectedProduct = toSignal(this.form.controls.product.valueChanges, {
+    initialValue: this.form.controls.product.value,
+  });
+  /** Current on-hand of the chosen product, for the Adjustment helper text. */
+  protected readonly currentOnHand = computed(() => this.selectedProduct()?.quantityOnHand ?? null);
 
   protected readonly quickSupplierName = new FormControl('', { nonNullable: true });
   protected readonly quickLocationName = new FormControl('', { nonNullable: true });
@@ -142,6 +153,53 @@ export class StockMovementRecord implements OnInit {
     this.productQuery.next(event.query);
   }
 
+  /**
+   * Scanner fast path. A barcode scanner types the whole code then sends Enter, but the
+   * autocomplete otherwise makes the operator wait for the suggestion list and pick a row.
+   * Here, if nothing is chosen yet, we resolve the raw token in one lookup and drop the
+   * product straight in on an exact barcode/SKU match — matching the POS scan flow. Anything
+   * ambiguous falls back to the suggestion list.
+   */
+  protected onProductEnter(event: Event): void {
+    // Already resolved (picked from the list): let the normal Enter/submit path proceed.
+    if (this.form.controls.product.value) {
+      return;
+    }
+    const term = (event.target as HTMLInputElement).value.trim();
+    if (!term) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    this.resolveProductScan(term);
+  }
+
+  private resolveProductScan(term: string): void {
+    this.products
+      .list({ page: 1, limit: 10, search: term })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: ({ items }) => {
+          const needle = term.toLowerCase();
+          const exact = items.find(
+            (product) =>
+              product.barcode?.toLowerCase() === needle || product.sku.toLowerCase() === needle,
+          );
+          const pick = exact ?? (items.length === 1 ? items[0] : null);
+          if (pick) {
+            this.form.controls.product.setValue(pick);
+            this.productSuggestions.set([]);
+            this.formError.set(null);
+            return;
+          }
+          // Ambiguous or unknown: show the matches (or a clear miss) for a manual choice.
+          this.productSuggestions.set(items);
+          this.formError.set(items.length ? null : `No product found for "${term}".`);
+        },
+        error: (error: unknown) => this.formError.set(httpErrorMessage(error)),
+      });
+  }
+
   protected record(): void {
     if (this.saving()) {
       return;
@@ -157,6 +215,12 @@ export class StockMovementRecord implements OnInit {
     const stockMovementTypeId = raw.stockMovementTypeId;
     const quantity = raw.quantity;
     if (!product || !stockMovementTypeId || quantity == null) {
+      return;
+    }
+    // Adjustment sets the counted on-hand (0 allowed); every other type moves a positive amount.
+    if (!this.isAdjustment() && quantity < 1) {
+      this.form.controls.quantity.setErrors({ min: true });
+      this.formError.set('Enter a quantity of at least 1.');
       return;
     }
 
@@ -288,7 +352,9 @@ export class StockMovementRecord implements OnInit {
       return 'Choose a movement type.';
     }
     if (controls.quantity.invalid) {
-      return 'Enter a quantity of at least 1.';
+      return this.isAdjustment()
+        ? 'Enter the counted quantity (0 or more).'
+        : 'Enter a quantity of at least 1.';
     }
     return 'Check the highlighted fields and try again.';
   }

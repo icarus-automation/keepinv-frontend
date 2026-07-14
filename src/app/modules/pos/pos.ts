@@ -524,6 +524,31 @@ export class Pos {
     this.refocus();
   }
 
+  /**
+   * Set a stock line's quantity from a typed value, so 100 units is one entry, not a
+   * hundred taps. Anything that isn't a whole number ≥ 1 snaps back to 1, and the input
+   * is re-synced to the accepted value. Serialized (per-unit) lines stay fixed at 1.
+   */
+  protected setQuantity(key: string, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const parsed = Math.floor(Number(input.value));
+    const quantity = Number.isFinite(parsed) && parsed >= 1 ? parsed : 1;
+    this.cart.update((lines) =>
+      lines.map((line) =>
+        line.key === key && !line.isSerialized ? { ...line, quantity } : line,
+      ),
+    );
+    // Reflect the normalized value even when the model didn't change (e.g. "abc" on a line
+    // already at 1), so the field never shows an invalid entry.
+    input.value = String(quantity);
+    this.refocus();
+  }
+
+  /** Select the whole quantity on focus so a typed count overwrites rather than appends. */
+  protected selectQuantity(event: Event): void {
+    (event.target as HTMLInputElement).select();
+  }
+
   protected removeLine(key: string): void {
     this.cart.update((lines) => lines.filter((line) => line.key !== key));
     this.refocus();

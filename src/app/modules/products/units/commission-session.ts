@@ -9,6 +9,7 @@ import {
   input,
   output,
   signal,
+  untracked,
   viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -186,10 +187,13 @@ export class CommissionSession {
   constructor() {
     this.loadOptions();
 
-    // A new product resets the whole session to setup.
+    // A new product resets the whole session to setup. Only `product().id` may be a
+    // dependency: `resetSession` both writes and reads `locationId`/`locationOptions`
+    // (via `seedLocationFromProduct`), so tracking those would make this effect retrigger
+    // itself endlessly once options load and a home location seeds — freezing the page.
     effect(() => {
       this.product().id;
-      this.resetSession();
+      untracked(() => this.resetSession());
     });
 
     // Keep the scan field focused whenever the session is listening for tags.

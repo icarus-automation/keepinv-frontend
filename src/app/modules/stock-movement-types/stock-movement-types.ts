@@ -22,6 +22,7 @@ import {
   EffectMeta,
   StockMovementEffect,
   StockMovementType,
+  compareMovementTypes,
   effectMeta,
   isSystemType,
   typeIcon,
@@ -146,7 +147,7 @@ export class StockMovementTypes {
       )
       .subscribe({
         next: (created) => {
-          this.types.update((list) => this.sortByName([...list, created]));
+          this.types.update((list) => this.sortTypes([...list, created]));
           this.addForm.reset({ name: '', effect: effectValue });
           this.addInput()?.nativeElement.focus();
         },
@@ -205,7 +206,7 @@ export class StockMovementTypes {
       .subscribe({
         next: (updated) => {
           this.types.update((list) =>
-            this.sortByName(list.map((type) => (type.id === id ? updated : type))),
+            this.sortTypes(list.map((type) => (type.id === id ? updated : type))),
           );
           this.editingId.set(null);
         },
@@ -295,8 +296,8 @@ export class StockMovementTypes {
     );
   }
 
-  private sortByName(list: StockMovementType[]): StockMovementType[] {
-    return [...list].sort((a, b) => a.name.localeCompare(b.name));
+  private sortTypes(list: StockMovementType[]): StockMovementType[] {
+    return [...list].sort(compareMovementTypes);
   }
 
   private messageFor(error: unknown, name: string): string {
