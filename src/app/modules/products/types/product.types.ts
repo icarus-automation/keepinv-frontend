@@ -1,5 +1,9 @@
 import { Category } from '../../categories/types/category.types';
-import { Supplier, SupplierPlatform } from '../../suppliers/types/supplier.types';
+import {
+  Supplier,
+  SupplierPlatform,
+  detectSupplierPlatform,
+} from '../../suppliers/types/supplier.types';
 import { Location } from '../../locations/types/location.types';
 
 /** Shown wherever a product has no uploaded photo. Lives in the app's `public/` folder. */
@@ -122,30 +126,11 @@ export interface ProductListQuery {
 }
 
 /**
- * Best-guess the reorder platform from the pasted link's host so the operator
- * rarely has to pick it by hand (the fast path stays the correct path). Returns
- * `null` for anything that isn't a parseable http(s) URL, so the picker simply
- * stays empty until the link is valid. A recognised store wins; any other valid
- * URL resolves to `WEBSITE`.
+ * Best-guess the reorder platform from the pasted link's host. Alias of the
+ * canonical `detectSupplierPlatform` (suppliers own the platform vocabulary) so
+ * the reorder-link field and the supplier channel picker never drift apart.
  */
-export function detectReorderPlatform(rawUrl: string): SupplierPlatform | null {
-  const value = rawUrl.trim();
-  if (!value) {
-    return null;
-  }
-  let host: string;
-  try {
-    host = new URL(value).hostname.toLowerCase();
-  } catch {
-    return null;
-  }
-  if (host.includes('shopee')) return 'SHOPEE';
-  if (host.includes('lazada')) return 'LAZADA';
-  if (host.includes('alibaba') || host.includes('aliexpress') || host.endsWith('1688.com')) return 'ALIBABA';
-  if (host === 'm.me' || host.includes('messenger.')) return 'MESSENGER';
-  if (host.includes('facebook.') || host === 'fb.com' || host === 'fb.me') return 'FACEBOOK';
-  return 'WEBSITE';
-}
+export const detectReorderPlatform = detectSupplierPlatform;
 
 /**
  * A recipe/menu item (e.g. a lugaw bowl): sold in POS, but its stock is derived from the

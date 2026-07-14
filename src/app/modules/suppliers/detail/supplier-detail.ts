@@ -27,6 +27,7 @@ import {
   Supplier,
   SupplierLink,
   SupplierPlatform,
+  detectSupplierPlatform,
   platformMeta,
 } from '../types/supplier.types';
 
@@ -84,6 +85,8 @@ export class SupplierDetail {
 
   protected readonly addingLink = signal(false);
   protected readonly addLinkError = signal<string | null>(null);
+  /** Once the operator picks a platform by hand, stop auto-detecting it from the URL. */
+  protected readonly platformPinned = signal(false);
   protected readonly addLinkForm = this.formBuilder.nonNullable.group({
     platform: this.formBuilder.control<SupplierPlatform | ''>('', {
       nonNullable: true,
@@ -138,6 +141,23 @@ export class SupplierDetail {
         this.editNameInput()?.nativeElement.focus();
       }
     });
+
+    // Auto-pick the channel platform from the pasted link so the operator rarely sets it
+    // by hand. Writes silently (emitEvent:false) so this never counts as a manual choice;
+    // the moment they pick a platform themselves it pins and auto-detection stops.
+    this.addLinkForm.controls.url.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((url) => {
+        if (this.platformPinned()) {
+          return;
+        }
+        this.addLinkForm.controls.platform.setValue(detectSupplierPlatform(url ?? '') ?? '', {
+          emitEvent: false,
+        });
+      });
+    this.addLinkForm.controls.platform.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.platformPinned.set(true));
   }
 
   protected loadLinks(supplierId: string): void {
@@ -282,7 +302,8 @@ export class SupplierDetail {
       .subscribe({
         next: (link) => {
           this.links.update((list) => [...list, link]);
-          this.addLinkForm.reset({ platform: '', url: '', label: '' });
+          this.addLinkForm.reset({ platform: '', url: '', label: '' }, { emitEvent: false });
+          this.platformPinned.set(false);
         },
         error: (error: unknown) => this.addLinkError.set(httpErrorMessage(error)),
       });
@@ -397,7 +418,8 @@ export class SupplierDetail {
     this.archivingLinkId.set(null);
     this.linkArchiveError.set(null);
     this.addLinkError.set(null);
-    this.addLinkForm.reset({ platform: '', url: '', label: '' });
+    this.addLinkForm.reset({ platform: '', url: '', label: '' }, { emitEvent: false });
+    this.platformPinned.set(false);
   }
 
   private optional(value: string): string | undefined {

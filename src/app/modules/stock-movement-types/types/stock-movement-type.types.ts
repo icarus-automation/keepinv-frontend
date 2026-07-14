@@ -89,6 +89,7 @@ const SYSTEM_KEY_ICONS: Record<string, string> = {
   RETURN: 'pi pi-replay',
   INITIAL: 'pi pi-flag',
   TRANSFER: 'pi pi-arrow-right-arrow-left',
+  DISPOSE: 'pi pi-trash',
 };
 
 /** The icon to show for a type: a distinct glyph for built-in types, else the effect arrow. */
@@ -101,6 +102,31 @@ export function typeIcon(type: Pick<StockMovementType, 'systemKey' | 'effect'>):
 
 /** The three effects in the order the record form and pickers present them. */
 export const EFFECT_OPTIONS: readonly StockMovementEffect[] = ['INCREASE', 'DECREASE', 'ADJUSTMENT'];
+
+/**
+ * Canonical display order for built-in types by `systemKey`, mirroring the backend so the
+ * list keeps its intended order after a local add/edit. Custom types (no systemKey) sort
+ * after every built-in, alphabetically.
+ */
+const SYSTEM_KEY_DISPLAY_ORDER: Record<string, number> = {
+  INITIAL: 0,
+  PURCHASE: 1,
+  SALE: 2,
+  ADJUSTMENT: 3,
+  TRANSFER: 4,
+  RETURN: 5,
+  DISPOSE: 6,
+};
+
+/** Order comparator: built-ins first in workflow order, then custom types alphabetically. */
+export function compareMovementTypes(a: StockMovementType, b: StockMovementType): number {
+  const rank = (type: StockMovementType): number => {
+    if (type.systemKey === null) return 100;
+    return SYSTEM_KEY_DISPLAY_ORDER[type.systemKey] ?? 50;
+  };
+  const delta = rank(a) - rank(b);
+  return delta !== 0 ? delta : a.name.localeCompare(b.name);
+}
 
 /** A built-in type (one the backend protects); identified by carrying a `systemKey`. */
 export function isSystemType(type: StockMovementType): boolean {

@@ -236,7 +236,16 @@
                         >
                           <i class="pi pi-minus text-[0.7rem]" aria-hidden="true"></i>
                         </button>
-                        <span class="w-7 text-center text-sm font-medium tabular-nums text-ink">{{ line.quantity }}</span>
+                        <input
+                          type="text"
+                          inputmode="numeric"
+                          [value]="line.quantity"
+                          (focus)="selectQuantity($event)"
+                          (change)="setQuantity(line.key, $event)"
+                          (keydown.enter)="$event.preventDefault(); setQuantity(line.key, $event)"
+                          [attr.aria-label]="'Quantity for ' + line.name"
+                          class="h-7 w-10 rounded-md border border-line bg-counter text-center text-sm font-medium tabular-nums text-ink outline-none transition-colors focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+                        />
                         <button
                           type="button"
                           (click)="increment(line.key)"
