@@ -28,6 +28,7 @@ import {
   priceToCents,
 } from './types/pos.types';
 import { Receipt } from './components/receipt';
+import { ProductGrid } from './components/product-grid/product-grid';
 
 /**
  * One line in the working cart. A serialized unit carries a `productUnitId` and a
@@ -59,6 +60,14 @@ interface TenderChip {
 const REFOCUS_DELAY_MS = 0;
 
 /**
+ * lugawjuan runs on a touch-only tablet with no barcode scanner, so the product grid
+ * is the primary way to ring items up. With this false we suppress the scanner's
+ * aggressive auto-focus — otherwise every tap on a card would summon the on-screen
+ * keyboard. Flip to true to restore scanner-first focus for a scanner-equipped lane.
+ */
+const SCANNER_FIRST = false;
+
+/**
  * The Point of Sale sell screen. Scanner-first and keyboard-first: the scan field
  * owns focus throughout (mirroring the commissioning sweep), so a scanned barcode,
  * serial, or asset tag always lands here. Enter resolves the scan against the
@@ -68,7 +77,15 @@ const REFOCUS_DELAY_MS = 0;
  */
 @Component({
   selector: 'app-pos',
-  imports: [ReactiveFormsModule, ButtonModule, InputTextModule, TextareaModule, MoneyPipe, Receipt],
+  imports: [
+    ReactiveFormsModule,
+    ButtonModule,
+    InputTextModule,
+    TextareaModule,
+    MoneyPipe,
+    Receipt,
+    ProductGrid,
+  ],
   templateUrl: './pos.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'block' },
@@ -82,6 +99,11 @@ export class Pos {
   private readonly unitPickerList = viewChild<ElementRef<HTMLElement>>('unitPickerList');
 
   protected readonly phase = signal<'selling' | 'receipt'>('selling');
+
+  // --- Product grid (touch-first quick-add) ---
+  protected readonly gridProducts = signal<PosSearchItem[]>([]);
+  protected readonly gridLoading = signal(true);
+  protected readonly gridError = signal<string | null>(null);
 
   // --- Cart ---
   protected readonly cart = signal<CartLine[]>([]);
@@ -156,7 +178,7 @@ export class Pos {
   /** Why Complete is disabled, in counter-terse words. Null once the sale can go through. */
   protected readonly completeHint = computed(() => {
     if (this.cart().length === 0) {
-      return 'Scan an item to begin.';
+      return 'Tap an item to begin.';
     }
     if (this.effectiveTenderedCents() < this.totalCents()) {
       return 'Enter the amount tendered.';
@@ -177,10 +199,11 @@ export class Pos {
       .subscribe((value) => this.runLiveSearch(value.trim()));
 
     // Keep the scan field focused whenever we're selling, so an RFID/barcode sweep
-    // always lands in it. The receipt phase releases focus to its own actions.
+    // always lands in it. The receipt phase releases focus to its own actions. On a
+    // touch-only lane this is off, so tapping cards never pops the on-screen keyboard.
     effect(() => {
       const el = this.scanInput();
-      if (el && this.phase() === 'selling' && !this.unitPickerProduct()) {
+      if (SCANNER_FIRST && el && this.phase() === 'selling' && !this.unitPickerProduct()) {
         el.nativeElement.focus();
       }
     });
@@ -200,6 +223,26 @@ export class Pos {
         clearTimeout(this.noticeTimer);
       }
     });
+
+    this.loadGrid();
+  }
+
+  // --- Product grid ---
+
+  /** Load (or reload) the whole sellable catalog for the touch grid. */
+  protected loadGrid(): void {
+    this.gridLoading.set(true);
+    this.gridError.set(null);
+    this.service
+      .listSellableProducts()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.gridLoading.set(false)),
+      )
+      .subscribe({
+        next: (items) => this.gridProducts.set(items),
+        error: (error: unknown) => this.gridError.set(httpErrorMessage(error)),
+      });
   }
 
   // --- Scan / search ---
@@ -331,6 +374,9 @@ export class Pos {
   }
 
   protected onScanBlur(): void {
+    if (!SCANNER_FIRST) {
+      return;
+    }
     // Reclaim focus only if it fell to nothing; never steal it from a real control
     // (a result button, a tender field). Mirrors the commissioning sweep.
     setTimeout(() => {
@@ -618,10 +664,12 @@ export class Pos {
     this.searchNotice.set(null);
     this.result.set(null);
     this.phase.set('selling');
+    // Stock moved on the last sale; pull a fresh catalog so the grid reflects it.
+    this.loadGrid();
   }
 
   private refocus(): void {
-    if (this.phase() === 'selling') {
+    if (SCANNER_FIRST && this.phase() === 'selling') {
       this.scanInput()?.nativeElement.focus();
     }
   }

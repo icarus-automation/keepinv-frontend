@@ -115,28 +115,44 @@
             <!-- At-a-glance: the numbers the counter reaches for first -->
             <dl class="grid grid-cols-1 divide-y divide-line overflow-hidden rounded-lg border border-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
               <div class="px-4 py-3">
-                <dt class="text-xs font-medium uppercase tracking-wide text-muted">On hand</dt>
-                <dd
-                  class="mt-1 text-xl font-semibold tabular-nums"
-                  [class.text-danger]="stock() === 'out'"
-                  [class.text-ink]="stock() !== 'out'"
-                >
-                  {{ product().quantityOnHand | number }}
-                </dd>
-                @switch (stock()) {
-                  @case ('out') {
-                    <span class="mt-1 inline-flex items-center gap-1 text-xs font-medium text-danger">
-                      <i class="pi pi-times-circle text-[0.7rem]" aria-hidden="true"></i>
-                      Out of stock
-                    </span>
-                  }
-                  @case ('low') {
-                    <span
-                      class="mt-1 inline-flex items-center gap-1 rounded border border-line bg-counter px-1.5 py-0.5 text-xs font-medium text-ink"
-                    >
-                      <i class="pi pi-exclamation-triangle text-[0.7rem]" aria-hidden="true"></i>
-                      Low: reorder at {{ product().reorderPoint | number }}
-                    </span>
+                @if (isRecipe()) {
+                  <dt class="text-xs font-medium uppercase tracking-wide text-muted">Type</dt>
+                  <dd class="mt-1 text-xl font-semibold text-ink">Recipe</dd>
+                  <span class="mt-1 inline-flex items-center gap-1 text-xs font-medium text-muted">
+                    <i class="pi pi-book text-[0.7rem]" aria-hidden="true"></i>
+                    Made to order
+                  </span>
+                } @else if (isUntracked()) {
+                  <dt class="text-xs font-medium uppercase tracking-wide text-muted">Stock</dt>
+                  <dd class="mt-1 text-xl font-semibold text-ink">Always available</dd>
+                  <span class="mt-1 inline-flex items-center gap-1 text-xs font-medium text-muted">
+                    <i class="pi pi-infinity text-[0.7rem]" aria-hidden="true"></i>
+                    Not tracked
+                  </span>
+                } @else {
+                  <dt class="text-xs font-medium uppercase tracking-wide text-muted">On hand</dt>
+                  <dd
+                    class="mt-1 text-xl font-semibold tabular-nums"
+                    [class.text-danger]="stock() === 'out'"
+                    [class.text-ink]="stock() !== 'out'"
+                  >
+                    {{ product().quantityOnHand | number }}
+                  </dd>
+                  @switch (stock()) {
+                    @case ('out') {
+                      <span class="mt-1 inline-flex items-center gap-1 text-xs font-medium text-danger">
+                        <i class="pi pi-times-circle text-[0.7rem]" aria-hidden="true"></i>
+                        Out of stock
+                      </span>
+                    }
+                    @case ('low') {
+                      <span
+                        class="mt-1 inline-flex items-center gap-1 rounded border border-line bg-counter px-1.5 py-0.5 text-xs font-medium text-ink"
+                      >
+                        <i class="pi pi-exclamation-triangle text-[0.7rem]" aria-hidden="true"></i>
+                        Low: reorder at {{ product().reorderPoint | number }}
+                      </span>
+                    }
                   }
                 }
               </div>
@@ -159,8 +175,45 @@
               </div>
             </dl>
 
-            <!-- Reorder: amber primary only when stock is low/out (the action that matters now) -->
-            @if (reorder(); as r) {
+            <!-- Ingredients (recipe) or reorder (stock). A recipe is made to order from these
+                 ingredients — selling it deducts them, so it is never stocked on its own. -->
+            @if (isRecipe()) {
+              <section class="mt-5" aria-label="Recipe ingredients">
+                <h3 class="text-xs font-medium uppercase tracking-wide text-muted">Ingredients</h3>
+                <ul class="mt-2 divide-y divide-line overflow-hidden rounded-lg border border-line">
+                  @for (line of product().components; track line.component.id) {
+                    <li class="flex items-center justify-between gap-3 px-4 py-2.5">
+                      <span class="text-sm text-ink">
+                        <span class="font-medium tabular-nums">{{ line.quantity }}×</span>
+                        {{ line.component.name }}
+                      </span>
+                      @if (line.component.isStockTracked) {
+                        <span
+                          class="text-xs tabular-nums"
+                          [class.text-danger]="line.component.quantityOnHand <= 0"
+                          [class.text-muted]="line.component.quantityOnHand > 0"
+                        >
+                          {{ line.component.quantityOnHand | number }} on hand
+                        </span>
+                      } @else {
+                        <span class="text-xs text-muted">not tracked</span>
+                      }
+                    </li>
+                  }
+                </ul>
+                <p class="mt-2 text-xs text-muted">
+                  Selling this deducts these ingredients. Stock the ingredients, not the item.
+                </p>
+              </section>
+            } @else if (isUntracked()) {
+              <div class="mt-5 rounded-lg border border-dashed border-line px-4 py-3">
+                <p class="text-sm font-medium text-ink">Always available</p>
+                <p class="mt-1 text-sm text-muted">
+                  Sold without drawing down stock — the cup is reused, so each sale is recorded but
+                  nothing is deducted. This item isn't inventoried.
+                </p>
+              </div>
+            } @else if (reorder(); as r) {
               @if (stock() === 'ok') {
                 <a
                   [href]="r.url"
@@ -245,16 +298,18 @@
                     {{ product().barcode || 'None' }}
                   </dd>
                 </div>
-                <div class="min-w-0">
-                  <dt class="text-xs font-medium uppercase tracking-wide text-muted">Reorder point</dt>
-                  <dd class="mt-0.5 text-sm tabular-nums" [class.text-ink]="product().reorderPoint != null" [class.text-muted]="product().reorderPoint == null">
-                    @if (product().reorderPoint != null) {
-                      {{ product().reorderPoint | number }}
-                    } @else {
-                      Not set
-                    }
-                  </dd>
-                </div>
+                @if (!isRecipe() && !isUntracked()) {
+                  <div class="min-w-0">
+                    <dt class="text-xs font-medium uppercase tracking-wide text-muted">Reorder point</dt>
+                    <dd class="mt-0.5 text-sm tabular-nums" [class.text-ink]="product().reorderPoint != null" [class.text-muted]="product().reorderPoint == null">
+                      @if (product().reorderPoint != null) {
+                        {{ product().reorderPoint | number }}
+                      } @else {
+                        Not set
+                      }
+                    </dd>
+                  </div>
+                }
                 <div class="min-w-0">
                   <dt class="text-xs font-medium uppercase tracking-wide text-muted">Serial tracking</dt>
                   <dd class="mt-0.5 text-sm text-ink">{{ product().isSerialized ? 'On' : 'Off' }}</dd>

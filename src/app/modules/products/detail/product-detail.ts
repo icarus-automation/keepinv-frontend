@@ -17,7 +17,7 @@ import { finalize } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 
 import { ProductsService } from '../services/products.service';
-import { Product, stockState } from '../types/product.types';
+import { Product, isRecipeProduct, isUntrackedProduct, stockState } from '../types/product.types';
 import { platformMeta } from '../../suppliers/types/supplier.types';
 import { httpErrorMessage } from '../../../../common/http/http-error-message';
 import { MoneyPipe } from '../utils/money.pipe';
@@ -78,6 +78,10 @@ export class ProductDetail {
 
   protected readonly stock = computed(() => stockState(this.product()));
   protected readonly isSerialized = computed(() => this.product().isSerialized);
+  /** A recipe/menu item (bowl): show its ingredients, not stock — it's never inventoried directly. */
+  protected readonly isRecipe = computed(() => isRecipeProduct(this.product()));
+  /** An untracked, always-sellable item (a refill): no stock count, records the sale only. */
+  protected readonly isUntracked = computed(() => isUntrackedProduct(this.product()));
 
   /**
    * The reorder shortcut for this product, or null when no link is set. Resolves

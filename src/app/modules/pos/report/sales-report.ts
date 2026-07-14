@@ -195,6 +195,22 @@ export class SalesReport {
     return formatPeso(cents / 100);
   }
 
+  /** Capital's share of revenue as a bar width %. Capped at 100 so a loss can't overflow the track. */
+  protected costWidth(summary: ReportSummary): number {
+    if (summary.revenueCents <= 0) {
+      return 0;
+    }
+    return Math.min(100, (summary.costCents / summary.revenueCents) * 100);
+  }
+
+  /** Net's share of revenue as a bar width %. Floored at 0 so a loss reads as an all-capital bar. */
+  protected profitWidth(summary: ReportSummary): number {
+    if (summary.revenueCents <= 0) {
+      return 0;
+    }
+    return Math.max(0, Math.min(100, (summary.profitCents / summary.revenueCents) * 100));
+  }
+
   protected methodLabel(method: PaymentMethod): string {
     return paymentMethodMeta(method).label;
   }

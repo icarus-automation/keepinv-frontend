@@ -32,6 +32,17 @@ export interface PosSearchItem {
   unitIdentifier?: string;
   unitStatus?: string;
   isSellable: boolean;
+  /**
+   * Enrichments present only when the item originates from the products-list grid
+   * source (the lugawjuan touch POS), not from `search-items`. The grid needs a
+   * photo to render each card and a category to group them; both are absent on
+   * scanner/search hits, so treat them as optional everywhere they're read.
+   * `isStockTracked` false marks an always-sellable tile (a refill) whose count badge
+   * is meaningless and hidden.
+   */
+  imageUrl?: string | null;
+  categoryName?: string;
+  isStockTracked?: boolean;
 }
 
 /** One line in a checkout payload. Serialized units carry a `productUnitId` and quantity 1. */
@@ -94,6 +105,8 @@ export interface SaleListItem {
   status: SaleStatus;
   subtotal: string;
   total: string;
+  /** Cost of goods sold, captured at sale time. Drives the profit report; never shown on receipts. */
+  totalCost: string;
   amountTendered: string;
   changeDue: string;
   paymentMethod: PaymentMethod;

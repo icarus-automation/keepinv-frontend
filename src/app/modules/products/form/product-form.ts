@@ -27,7 +27,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { TextareaModule } from 'primeng/textarea';
 import { SelectModule } from 'primeng/select';
-import { CheckboxModule } from 'primeng/checkbox';
 import { Popover, PopoverModule } from 'primeng/popover';
 
 import { CategoriesService } from '../../categories/services/categories.service';
@@ -37,7 +36,7 @@ import { Category } from '../../categories/types/category.types';
 import { Supplier } from '../../suppliers/types/supplier.types';
 import { Location } from '../../locations/types/location.types';
 import { ProductsService } from '../services/products.service';
-import { Product, ProductRequest, detectReorderPlatform } from '../types/product.types';
+import { Product, ProductRequest, detectReorderPlatform, isNonStockProduct } from '../types/product.types';
 import {
   SUPPLIER_PLATFORMS,
   SupplierPlatform,
@@ -83,7 +82,6 @@ function reorderUrlValidator(control: AbstractControl): ValidationErrors | null 
     InputNumberModule,
     TextareaModule,
     SelectModule,
-    CheckboxModule,
     PopoverModule,
   ],
   templateUrl: './product-form.html',
@@ -106,6 +104,12 @@ export class ProductForm implements OnInit {
   private readonly nameInput = viewChild<ElementRef<HTMLInputElement>>('nameInput');
 
   protected readonly isEdit = computed(() => this.product() != null);
+  /** A non-stock item (recipe bowl or untracked refill) is never inventoried, so its stock/reorder
+   *  fields are hidden — only its price and identity are editable. */
+  protected readonly isNonStock = computed(() => {
+    const product = this.product();
+    return product != null && isNonStockProduct(product);
+  });
 
   protected readonly categoryOptions = signal<NamedRecord[]>([]);
   protected readonly supplierOptions = signal<NamedRecord[]>([]);
@@ -126,8 +130,6 @@ export class ProductForm implements OnInit {
     reorderPoint: this.formBuilder.control<number | null>(null, [Validators.min(0)]),
     reorderUrl: ['', [reorderUrlValidator, Validators.maxLength(2048)]],
     reorderPlatform: this.formBuilder.control<SupplierPlatform | null>(null),
-    // Serial (RFID) tracking is the system default for new products; edit mode re-seeds from the product.
-    isSerialized: [true],
     categoryId: ['', [Validators.required]],
     supplierId: this.formBuilder.control<string | null>(null),
     locationId: this.formBuilder.control<string | null>(null),
@@ -193,7 +195,6 @@ export class ProductForm implements OnInit {
       reorderPoint: product.reorderPoint,
       reorderUrl: product.reorderUrl ?? '',
       reorderPlatform: product.reorderPlatform,
-      isSerialized: product.isSerialized,
       categoryId: product.categoryId,
       supplierId: product.supplierId,
       locationId: product.locationId,
@@ -268,7 +269,6 @@ export class ProductForm implements OnInit {
       reorderPoint: raw.reorderPoint ?? null,
       reorderUrl,
       reorderPlatform: reorderUrl ? raw.reorderPlatform ?? null : null,
-      isSerialized: raw.isSerialized,
       categoryId: raw.categoryId,
       supplierId: raw.supplierId || null,
       locationId: raw.locationId || null,

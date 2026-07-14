@@ -31,6 +31,12 @@ export interface PaymentSlice {
 /** The fully aggregated report for one period. Voids are tracked apart from revenue. */
 export interface ReportSummary {
   readonly revenueCents: number;
+  /** Capital: cost of goods sold, captured at sale time. Old sales (pre-cost-capture) count as 0. */
+  readonly costCents: number;
+  /** Net: revenue minus cost. Negative on a loss period. */
+  readonly profitCents: number;
+  /** Net as a share of revenue, rounded. 0 when there's no revenue; negative on a loss. */
+  readonly marginPct: number;
   readonly salesCount: number;
   readonly itemsSold: number;
   readonly avgTicketCents: number;
@@ -71,6 +77,9 @@ export function summarizeSales(
   const voided = sales.filter((sale) => sale.status === 'VOIDED');
 
   const revenueCents = completed.reduce((sum, sale) => sum + priceToCents(sale.total), 0);
+  const costCents = completed.reduce((sum, sale) => sum + priceToCents(sale.totalCost), 0);
+  const profitCents = revenueCents - costCents;
+  const marginPct = revenueCents ? Math.round((profitCents / revenueCents) * 100) : 0;
   const salesCount = completed.length;
   const itemsSold = completed.reduce((sum, sale) => sum + (sale._count?.items ?? 0), 0);
   const avgTicketCents = salesCount ? Math.round(revenueCents / salesCount) : 0;
@@ -81,6 +90,9 @@ export function summarizeSales(
 
   return {
     revenueCents,
+    costCents,
+    profitCents,
+    marginPct,
     salesCount,
     itemsSold,
     avgTicketCents,

@@ -10,6 +10,21 @@ export const PRODUCT_IMAGE_ACCEPT = 'image/jpeg,image/png,image/webp';
 export const PRODUCT_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 
 /**
+ * One ingredient a recipe product consumes per unit sold. `quantity` units of `component` are
+ * deducted on each sale; `component` carries the ingredient's live count so a bowl's POS
+ * availability is the tightest of its ingredients.
+ */
+export interface ProductComponent {
+  quantity: number;
+  component: {
+    id: string;
+    name: string;
+    quantityOnHand: number;
+    isStockTracked: boolean;
+  };
+}
+
+/**
  * A sellable item in the catalog. The core inventory record: identity (name,
  * SKU, barcode, brand), pricing, stock level, and classification.
  *
@@ -49,6 +64,18 @@ export interface Product {
   isSerialized: boolean;
   isArchived: boolean;
 
+  /**
+   * Multi-ingredient recipe. When `components` is non-empty, selling one unit draws down each
+   * listed ingredient by its `quantity` (e.g. a bowl deducts 1 cup + 1 egg) rather than this
+   * product's own count. `isStockOnly` marks a kitchen ingredient: inventoried, never a POS tile.
+   * `isStockTracked` false means the product is always sellable and never decremented (a refill
+   * that reuses the cup — it only records the sale). Each component carries its live count so POS
+   * availability can be derived.
+   */
+  isStockOnly: boolean;
+  isStockTracked: boolean;
+  components: ProductComponent[];
+
   categoryId: string;
   category: Category;
 
@@ -78,7 +105,6 @@ export interface ProductRequest {
   reorderPoint?: number | null;
   reorderUrl?: string | null;
   reorderPlatform?: SupplierPlatform | null;
-  isSerialized: boolean;
   categoryId: string;
   supplierId?: string | null;
   locationId?: string | null;
@@ -119,6 +145,34 @@ export function detectReorderPlatform(rawUrl: string): SupplierPlatform | null {
   if (host === 'm.me' || host.includes('messenger.')) return 'MESSENGER';
   if (host.includes('facebook.') || host === 'fb.com' || host === 'fb.me') return 'FACEBOOK';
   return 'WEBSITE';
+}
+
+/**
+ * A recipe/menu item (e.g. a lugaw bowl): sold in POS, but its stock is derived from the
+ * ingredients it consumes, so it is never inventoried or stocked directly. Detected by carrying
+ * recipe components. Used to strip stock affordances (on-hand, stock-in, reorder) from these rows.
+ */
+export function isRecipeProduct(product: Pick<Product, 'components'>): boolean {
+  return product.components.length > 0;
+}
+
+/**
+ * An always-sellable item that is never decremented (e.g. a lugaw refill — the customer reuses the
+ * same cup, so the sale is recorded but no stock moves). Has no meaningful on-hand count.
+ */
+export function isUntrackedProduct(product: Pick<Product, 'isStockTracked'>): boolean {
+  return !product.isStockTracked;
+}
+
+/**
+ * Not inventoried: the product carries no own stock count and can't be stocked. True for recipes
+ * (stock comes from ingredients) and untracked items (refills). These are stripped of every stock
+ * affordance — no on-hand, no stock-in, no reorder — across the catalog, forms, and picker.
+ */
+export function isNonStockProduct(
+  product: Pick<Product, 'components' | 'isStockTracked'>,
+): boolean {
+  return isRecipeProduct(product) || isUntrackedProduct(product);
 }
 
 /** Stock standing derived from on-hand vs reorder point. Drives the non-amber warning treatment. */

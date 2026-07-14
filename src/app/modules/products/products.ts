@@ -20,7 +20,14 @@ import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { CategoriesService } from '../categories/services/categories.service';
 import { LocationsService } from '../locations/services/locations.service';
 import { ProductsService } from './services/products.service';
-import { Product, ProductListQuery, StockState, stockState } from './types/product.types';
+import {
+  Product,
+  ProductListQuery,
+  StockState,
+  isNonStockProduct,
+  isRecipeProduct,
+  stockState,
+} from './types/product.types';
 import { platformMeta } from '../suppliers/types/supplier.types';
 import { httpErrorMessage } from '../../../common/http/http-error-message';
 import { MoneyPipe } from './utils/money.pipe';
@@ -310,6 +317,16 @@ export class Products {
 
   protected stockOf(product: Product): StockState {
     return stockState(product);
+  }
+
+  /** Not inventoried (recipe bowl or untracked refill): shown as a badge, never a stock count. */
+  protected isNonStock(product: Product): boolean {
+    return isNonStockProduct(product);
+  }
+
+  /** A recipe/menu item (bowl) specifically — picks the "Recipe" badge over "Always available". */
+  protected isRecipe(product: Product): boolean {
+    return isRecipeProduct(product);
   }
 
   /** Platform label for a row's reorder shortcut (drives the link's accessible name). */

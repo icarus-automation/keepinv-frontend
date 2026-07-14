@@ -129,6 +129,76 @@
       }
     </section>
 
+    <!-- Capital vs net -->
+    <section aria-label="Capital vs net" class="mt-6 rounded-lg border border-line bg-counter p-5">
+      <div class="flex items-baseline justify-between gap-3">
+        <h2 class="text-sm font-medium text-ink">Capital vs net</h2>
+        <span
+          class="text-xs font-medium tabular-nums"
+          [class]="s.profitCents < 0 ? 'text-danger' : 'text-muted'"
+        >
+          {{ s.marginPct }}% margin
+        </span>
+      </div>
+
+      <!-- One bar of revenue, split into capital (cost) and net (profit). -->
+      <div
+        class="mt-4 flex h-3 w-full overflow-hidden rounded-full bg-line"
+        role="img"
+        [attr.aria-label]="
+          'Revenue ' + peso(s.revenueCents) + ': capital ' + peso(s.costCents) +
+          ', net ' + peso(s.profitCents) + ', ' + s.marginPct + ' percent margin'
+        "
+      >
+        <div
+          class="h-full bg-ink/30 transition-[width] duration-500 ease-out motion-reduce:transition-none"
+          [style.width.%]="costWidth(s)"
+        ></div>
+        <div
+          class="h-full transition-[width] duration-500 ease-out motion-reduce:transition-none"
+          [class]="s.profitCents < 0 ? 'bg-danger' : 'bg-ink'"
+          [style.width.%]="profitWidth(s)"
+        ></div>
+      </div>
+
+      <dl class="mt-4 grid grid-cols-3 gap-3">
+        <div>
+          <dt class="text-xs font-medium text-muted">Revenue</dt>
+          <dd class="mt-0.5 text-lg font-semibold tabular-nums text-ink">{{ peso(s.revenueCents) }}</dd>
+        </div>
+        <div>
+          <dt class="inline-flex items-center gap-1.5 text-xs font-medium text-muted">
+            <span class="h-2 w-2 rounded-full bg-ink/30" aria-hidden="true"></span>
+            Capital
+          </dt>
+          <dd class="mt-0.5 text-lg font-semibold tabular-nums text-ink">{{ peso(s.costCents) }}</dd>
+        </div>
+        <div>
+          <dt class="inline-flex items-center gap-1.5 text-xs font-medium text-muted">
+            <span
+              class="h-2 w-2 rounded-full"
+              [class]="s.profitCents < 0 ? 'bg-danger' : 'bg-ink'"
+              aria-hidden="true"
+            ></span>
+            Net profit
+          </dt>
+          <dd
+            class="mt-0.5 text-lg font-semibold tabular-nums"
+            [class]="s.profitCents < 0 ? 'text-danger' : 'text-ink'"
+          >
+            {{ peso(s.profitCents) }}
+          </dd>
+        </div>
+      </dl>
+
+      @if (s.costCents === 0 && s.revenueCents > 0) {
+        <p class="mt-3 flex items-start gap-1.5 text-xs text-muted">
+          <i class="pi pi-info-circle mt-px text-[0.7rem]" aria-hidden="true"></i>
+          <span>Capital shows for sales made after cost tracking was turned on. Earlier sales count as zero cost.</span>
+        </p>
+      }
+    </section>
+
     <!-- Revenue trend -->
     <section aria-label="Revenue trend" class="mt-6 rounded-lg border border-line bg-counter p-5">
       <div class="flex items-baseline justify-between gap-3">

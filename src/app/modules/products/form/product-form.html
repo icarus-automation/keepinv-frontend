@@ -132,7 +132,10 @@
       </div>
     </fieldset>
 
-    <!-- Stock -->
+    <!-- Stock & reorder: only for real stock items. A recipe (bowl) draws its stock from
+         ingredients and a refill isn't tracked, so neither is inventoried or reordered on its
+         own — hide both fieldsets for any non-stock item. -->
+    @if (!isNonStock()) {
     <fieldset class="space-y-4">
       <legend class="text-sm font-semibold tracking-tight text-ink">Stock</legend>
       <div class="grid gap-4 sm:grid-cols-2">
@@ -150,15 +153,6 @@
             styleClass="w-full"
             inputStyleClass="w-full text-sm tabular-nums"
           />
-        </div>
-        <div class="flex flex-col gap-1.5 sm:pt-7">
-          <div class="flex items-center gap-2">
-            <p-checkbox inputId="pf-serialized" formControlName="isSerialized" [binary]="true" />
-            <label for="pf-serialized" class="text-sm font-medium">Track serial numbers</label>
-          </div>
-          <p class="text-xs text-muted">
-            For items tracked one by one. Each unit's serial is recorded when stock arrives.
-          </p>
         </div>
       </div>
     </fieldset>
@@ -221,6 +215,7 @@
         </p>
       </div>
     </fieldset>
+    }
 
     <!-- Classification -->
     <fieldset class="space-y-4">

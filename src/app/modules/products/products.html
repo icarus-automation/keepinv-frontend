@@ -153,27 +153,39 @@
                     <p class="text-sm font-medium tabular-nums text-ink">
                       {{ product.sellingPrice | money }}
                     </p>
-                    @switch (stockOf(product)) {
-                      @case ('out') {
-                        <p class="mt-0.5 inline-flex items-center gap-1 text-xs font-medium text-danger">
-                          <i class="pi pi-times-circle text-[0.65rem]" aria-hidden="true"></i>
-                          Out of stock
-                        </p>
-                      }
-                      @case ('low') {
-                        <p class="mt-0.5 inline-flex items-center gap-1 text-xs font-medium text-ink">
-                          <i class="pi pi-exclamation-triangle text-[0.65rem]" aria-hidden="true"></i>
-                          <span class="tabular-nums">{{ product.quantityOnHand | number }}</span> · Low
-                        </p>
-                      }
-                      @default {
-                        <p class="mt-0.5 text-xs tabular-nums text-muted">
-                          {{ product.quantityOnHand | number }} on hand
-                        </p>
+                    @if (isNonStock(product)) {
+                      <p class="mt-0.5 inline-flex items-center gap-1 text-xs font-medium text-muted">
+                        @if (isRecipe(product)) {
+                          <i class="pi pi-book text-[0.65rem]" aria-hidden="true"></i>
+                          Recipe
+                        } @else {
+                          <i class="pi pi-infinity text-[0.65rem]" aria-hidden="true"></i>
+                          Always available
+                        }
+                      </p>
+                    } @else {
+                      @switch (stockOf(product)) {
+                        @case ('out') {
+                          <p class="mt-0.5 inline-flex items-center gap-1 text-xs font-medium text-danger">
+                            <i class="pi pi-times-circle text-[0.65rem]" aria-hidden="true"></i>
+                            Out of stock
+                          </p>
+                        }
+                        @case ('low') {
+                          <p class="mt-0.5 inline-flex items-center gap-1 text-xs font-medium text-ink">
+                            <i class="pi pi-exclamation-triangle text-[0.65rem]" aria-hidden="true"></i>
+                            <span class="tabular-nums">{{ product.quantityOnHand | number }}</span> · Low
+                          </p>
+                        }
+                        @default {
+                          <p class="mt-0.5 text-xs tabular-nums text-muted">
+                            {{ product.quantityOnHand | number }} on hand
+                          </p>
+                        }
                       }
                     }
                   </div>
-                  @if (product.reorderUrl && stockOf(product) !== 'ok') {
+                  @if (!isNonStock(product) && product.reorderUrl && stockOf(product) !== 'ok') {
                     <a
                       [href]="product.reorderUrl"
                       target="_blank"

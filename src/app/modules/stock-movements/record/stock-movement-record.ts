@@ -23,7 +23,7 @@ import { httpErrorMessage } from '../../../../common/http/http-error-message';
 import { SuppliersService } from '../../suppliers/services/suppliers.service';
 import { LocationsService } from '../../locations/services/locations.service';
 import { ProductsService } from '../../products/services/products.service';
-import { Product } from '../../products/types/product.types';
+import { Product, isNonStockProduct } from '../../products/types/product.types';
 import { StockMovementsService } from '../services/stock-movements.service';
 import { StockMovement } from '../types/stock-movement.types';
 import { StockMovementTypesService } from '../../stock-movement-types/services/stock-movement-types.service';
@@ -119,7 +119,9 @@ export class StockMovementRecord implements OnInit {
       .pipe(
         switchMap((query) =>
           this.products.list({ page: 1, limit: 10, search: query }).pipe(
-            map(({ items }) => items),
+            // Non-stock items (recipe bowls, untracked refills) aren't stocked directly, so keep
+            // them out of the picker entirely rather than letting a save fail the backend guard.
+            map(({ items }) => items.filter((product) => !isNonStockProduct(product))),
             catchError(() => of<Product[]>([])),
           ),
         ),
