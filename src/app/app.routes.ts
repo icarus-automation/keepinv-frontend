@@ -57,6 +57,11 @@ export const routes: Routes = [
         loadComponent: () => import('./modules/pos/report/sales-report').then((m) => m.SalesReport),
       },
       {
+        path: 'expenses',
+        title: 'Expenses',
+        loadComponent: () => import('./modules/expenses/expenses').then((m) => m.Expenses),
+      },
+      {
         path: 'categories',
         title: 'Categories',
         loadComponent: () => import('./modules/categories/categories').then((m) => m.Categories),

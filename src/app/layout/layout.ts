@@ -131,6 +131,10 @@ export class Layout {
         { label: 'Movement Types', icon: 'pi pi-tags', path: 'stock-movement-types' },
       ],
     },
+    {
+      label: 'Finance',
+      items: [{ label: 'Expenses', icon: 'pi pi-wallet', path: 'expenses' }],
+    },
   ];
 
   // POS items (Point of Sale, Sales, Sales Report) only show on plans that include the module.

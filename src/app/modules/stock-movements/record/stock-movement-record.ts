@@ -39,6 +39,15 @@ interface NamedRecord {
   name: string;
 }
 
+/** A live preview of how a recorded quantity changes a product's on-hand count. */
+interface MovementPreview {
+  readonly current: number;
+  readonly newOnHand: number;
+  readonly delta: number;
+  readonly direction: 'in' | 'out' | 'none';
+  readonly verb: string;
+}
+
 /**
  * Records a new stock movement. Product is found by typing or scanning (querying
  * the catalog), the movement type sets the direction, and the quantity is always
@@ -113,8 +122,48 @@ export class StockMovementRecord implements OnInit {
   private readonly selectedProduct = toSignal(this.form.controls.product.valueChanges, {
     initialValue: this.form.controls.product.value,
   });
-  /** Current on-hand of the chosen product, for the Adjustment helper text. */
+  /** Current on-hand of the chosen product, for the on-hand preview. */
   protected readonly currentOnHand = computed(() => this.selectedProduct()?.quantityOnHand ?? null);
+
+  /** The entered quantity, tracked live so the on-hand preview updates as the operator types. */
+  private readonly enteredQuantity = toSignal(this.form.controls.quantity.valueChanges, {
+    initialValue: this.form.controls.quantity.value,
+  });
+
+  /**
+   * Live on-hand preview for the chosen product + type + quantity, or null until all three are
+   * present. Adjustment reads the quantity as the counted total (delta = counted − current); every
+   * other type adds or removes the quantity. Decrease never shows on-hand below zero — it mirrors
+   * what the backend will store.
+   */
+  protected readonly movementPreview = computed<MovementPreview | null>(() => {
+    const type = this.selectedType();
+    const current = this.currentOnHand();
+    const qty = this.enteredQuantity();
+    if (!type || current === null || qty === null || qty < 0) {
+      return null;
+    }
+    if (type.effect === 'ADJUSTMENT') {
+      const delta = qty - current;
+      return {
+        current,
+        newOnHand: qty,
+        delta: Math.abs(delta),
+        direction: delta > 0 ? 'in' : delta < 0 ? 'out' : 'none',
+        verb: delta > 0 ? 'Adds' : delta < 0 ? 'Removes' : 'No change',
+      };
+    }
+    if (type.effect === 'INCREASE') {
+      return { current, newOnHand: current + qty, delta: qty, direction: 'in', verb: 'Adds' };
+    }
+    return {
+      current,
+      newOnHand: Math.max(0, current - qty),
+      delta: qty,
+      direction: 'out',
+      verb: 'Removes',
+    };
+  });
 
   protected readonly quickSupplierName = new FormControl('', { nonNullable: true });
   protected readonly quickLocationName = new FormControl('', { nonNullable: true });

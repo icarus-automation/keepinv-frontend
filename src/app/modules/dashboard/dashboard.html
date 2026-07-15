@@ -1,4 +1,4 @@
-<div class="mx-auto max-w-5xl">
+<div class="page">
   <!-- Header -->
   <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
     <p class="max-w-prose text-sm text-muted">
@@ -85,6 +85,136 @@
         </div>
       </dl>
     </section>
+
+    <!-- Business pulse (POS tenants): month-to-date P&L + 7-day revenue trend -->
+    @if (canUsePos()) {
+      @if (pnl(); as pl) {
+        <section aria-label="Profit and loss this month" class="mt-6">
+          <div class="flex items-baseline justify-between">
+            <h2 class="text-sm font-medium text-ink">This month</h2>
+            <a routerLink="/expenses" class="text-xs font-medium text-muted hover:text-ink">P&amp;L detail →</a>
+          </div>
+          <dl class="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-4">
+            <div class="bg-counter p-4">
+              <dt class="text-xs font-medium text-muted">Revenue</dt>
+              <dd class="mt-1 text-xl font-semibold tabular-nums text-ink">{{ pl.revenue | money }}</dd>
+            </div>
+            <div class="bg-counter p-4">
+              <dt class="text-xs font-medium text-muted">Gross profit</dt>
+              <dd class="mt-1 text-xl font-semibold tabular-nums text-ink">{{ pl.grossProfit | money }}</dd>
+            </div>
+            <div class="bg-counter p-4">
+              <dt class="text-xs font-medium text-muted">Expenses</dt>
+              <dd class="mt-1 text-xl font-semibold tabular-nums text-ink">{{ pl.totalExpenses | money }}</dd>
+            </div>
+            <div class="bg-counter p-4">
+              <dt class="text-xs font-medium text-muted">Net profit</dt>
+              <dd
+                class="mt-1 text-xl font-semibold tabular-nums"
+                [class]="pl.netProfit >= 0 ? 'text-success' : 'text-danger'"
+              >
+                {{ pl.netProfit | money }}
+              </dd>
+            </div>
+          </dl>
+        </section>
+      }
+
+      <section aria-label="Revenue over the last 7 days" class="mt-6 rounded-lg border border-line bg-counter p-5">
+        <div class="flex items-baseline justify-between">
+          <h2 class="text-sm font-medium text-ink">Revenue</h2>
+          <span class="text-xs text-muted">Last 7 days</span>
+        </div>
+        @if (revenueTrendData(); as data) {
+          <div class="mt-4 h-56" aria-hidden="true">
+            <p-chart type="line" [data]="data" [options]="lineChartOptions" styleClass="h-full" />
+          </div>
+          <ul class="sr-only">
+            @for (bucket of salesSummary()?.trend ?? []; track bucket.key) {
+              <li>{{ bucket.fullLabel }}: {{ peso(bucket.revenueCents) }}</li>
+            }
+          </ul>
+        } @else {
+          <p class="mt-4 text-sm text-muted">No sales in the last 7 days.</p>
+        }
+      </section>
+    }
+
+    <!-- Composition doughnuts: payment mix (POS) + assets by status (always) -->
+    <div [class]="canUsePos() && paymentMixData() ? 'mt-6 grid gap-6 lg:grid-cols-2' : 'mt-6 grid gap-6'">
+      @if (canUsePos() && paymentMixData(); as data) {
+        <section aria-label="Payment mix, last 7 days" class="rounded-lg border border-line bg-counter p-5">
+          <h2 class="text-sm font-medium text-ink">
+            Payment mix <span class="text-xs font-normal text-muted">· 7 days</span>
+          </h2>
+          <div class="mt-4 h-64" aria-hidden="true">
+            <p-chart type="doughnut" [data]="data" [options]="doughnutChartOptions" styleClass="h-full" />
+          </div>
+          <ul class="sr-only">
+            @for (slice of salesSummary()?.payments ?? []; track slice.method) {
+              <li>{{ slice.label }}: {{ peso(slice.amountCents) }} ({{ slice.pct }}%)</li>
+            }
+          </ul>
+        </section>
+      }
+      @if (unitStatusData(); as data) {
+        <section aria-label="Assets by status" class="rounded-lg border border-line bg-counter p-5">
+          <h2 class="text-sm font-medium text-ink">Assets by status</h2>
+          <div class="mt-4 h-64" aria-hidden="true">
+            <p-chart type="doughnut" [data]="data" [options]="doughnutChartOptions" styleClass="h-full" />
+          </div>
+          <ul class="sr-only">
+            @for (row of unitStatusRows(); track row.label) {
+              <li>{{ row.label }}: {{ row.count }}</li>
+            }
+          </ul>
+        </section>
+      }
+    </div>
+
+    <!-- Low stock — one-tap reorder (uses each product's saved reorder link) -->
+    @if (lowStockProducts().length > 0) {
+      <section aria-label="Low stock to reorder" class="mt-6 overflow-hidden rounded-lg border border-line bg-counter">
+        <div class="flex items-center justify-between border-b border-line px-5 py-3">
+          <h2 class="text-sm font-medium text-ink">Low stock — reorder</h2>
+          <a routerLink="/products" class="text-xs font-medium text-muted hover:text-ink">All products →</a>
+        </div>
+        <ul>
+          @for (product of lowStockProducts(); track product.id) {
+            <li class="flex items-center gap-3 border-b border-line px-5 py-3 last:border-0">
+              <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-medium text-ink">{{ product.name }}</p>
+                <p class="truncate text-xs tabular-nums text-muted">
+                  {{ product.sku }} ·
+                  <span class="text-danger">{{ product.quantityOnHand }} on hand</span>
+                  @if (product.reorderPoint != null) {
+                    · reorder at {{ product.reorderPoint }}
+                  }
+                </p>
+              </div>
+              @if (product.reorderUrl) {
+                <a
+                  [href]="product.reorderUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-line px-3 py-1.5 text-xs font-medium text-ink outline-none transition-colors hover:border-signal focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+                >
+                  <i class="pi pi-external-link text-[0.7rem]" aria-hidden="true"></i>
+                  Reorder
+                </a>
+              } @else {
+                <a
+                  routerLink="/products"
+                  class="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-line px-3 py-1.5 text-xs font-medium text-muted outline-none transition-colors hover:border-signal hover:text-ink focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+                >
+                  View
+                </a>
+              }
+            </li>
+          }
+        </ul>
+      </section>
+    }
 
     <!-- Needs attention -->
     <section aria-label="Needs attention" class="mt-6">

@@ -40,3 +40,16 @@
    */
   --color-brand: oklch(52% 0.15 148); /* "keep" wordmark accent */
 }
+
+@layer components {
+  /*
+   * Uniform page container. Every routed page wraps its content in `.page` so the
+   * whole app shares one content width and centering — navigating between pages no
+   * longer shifts the layout. Gutter padding stays on the shell <main> (layout.html);
+   * this only owns max-width + centering. 80rem == Tailwind `max-w-7xl`.
+   */
+  .page {
+    margin-inline: auto;
+    max-width: 80rem;
+  }
+}
