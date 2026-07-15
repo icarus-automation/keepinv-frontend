@@ -10,7 +10,7 @@ export type TrendGranularity = 'hour' | 'day';
 export interface TrendBucket {
   /** Stable key for `@for` tracking. */
   readonly key: string;
-  /** Compact axis label, e.g. "2p" or "3". */
+  /** Compact axis label, e.g. "2pm" or "3". */
   readonly label: string;
   /** Full label for tooltip/aria, e.g. "Tue Jun 3" or "2:00 PM". */
   readonly fullLabel: string;
@@ -188,7 +188,7 @@ function dayKey(date: Date): string {
 }
 
 function shortHour(hour: number): string {
-  const period = hour < 12 ? 'a' : 'p';
+  const period = hour < 12 ? 'am' : 'pm';
   const h12 = hour % 12 === 0 ? 12 : hour % 12;
   return `${h12}${period}`;
 }

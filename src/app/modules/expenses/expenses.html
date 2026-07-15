@@ -1,0 +1,343 @@
+<div class="page">
+  <!-- Header + period -->
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <p class="max-w-prose text-sm text-muted">
+      Track operating costs and see your profit and loss. Pick a period to net sales revenue and
+      cost-of-goods against what you spent.
+    </p>
+    <div class="flex shrink-0 flex-wrap items-center gap-2">
+      @for (chip of periods; track chip.value) {
+        <button
+          type="button"
+          (click)="setPeriod(chip.value)"
+          [class]="periodChipClasses(period() === chip.value)"
+        >
+          {{ chip.label }}
+        </button>
+      }
+      @if (period() === 'custom') {
+        <p-datepicker
+          [formControl]="customRange"
+          selectionMode="range"
+          [readonlyInput]="true"
+          dateFormat="M d, yy"
+          placeholder="Pick a range"
+          appendTo="body"
+          styleClass="text-sm"
+        />
+      }
+      <p-button
+        type="button"
+        label="Refresh"
+        icon="pi pi-refresh"
+        [text]="true"
+        [loading]="loading()"
+        (onClick)="refresh()"
+        styleClass="font-medium"
+      />
+    </div>
+  </div>
+
+  <!-- Profit & loss summary -->
+  @if (pnl(); as report) {
+    <section aria-label="Profit and loss" class="mt-6">
+      <dl
+        class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-5"
+      >
+        <div class="bg-counter p-4">
+          <dt class="text-xs font-medium text-muted">Revenue</dt>
+          <dd class="mt-1 text-xl font-semibold tabular-nums text-ink">{{ report.revenue | money }}</dd>
+        </div>
+        <div class="bg-counter p-4">
+          <dt class="text-xs font-medium text-muted">Cost of goods</dt>
+          <dd class="mt-1 text-xl font-semibold tabular-nums text-ink">{{ report.cogs | money }}</dd>
+        </div>
+        <div class="bg-counter p-4">
+          <dt class="text-xs font-medium text-muted">Gross profit</dt>
+          <dd class="mt-1 text-xl font-semibold tabular-nums text-ink">{{ report.grossProfit | money }}</dd>
+        </div>
+        <div class="bg-counter p-4">
+          <dt class="text-xs font-medium text-muted">Expenses</dt>
+          <dd class="mt-1 text-xl font-semibold tabular-nums text-ink">{{ report.totalExpenses | money }}</dd>
+        </div>
+        <div class="bg-counter p-4">
+          <dt class="text-xs font-medium text-muted">Net profit</dt>
+          <dd
+            class="mt-1 text-xl font-semibold tabular-nums"
+            [class]="report.netProfit >= 0 ? 'text-success' : 'text-danger'"
+          >
+            {{ report.netProfit | money }}
+          </dd>
+        </div>
+      </dl>
+      <p class="mt-2 text-xs text-muted">
+        Cost of goods is estimated from each product's current cost price.
+      </p>
+    </section>
+  }
+
+  <!-- Add / edit expense -->
+  <section aria-label="Record an expense" class="mt-6 rounded-lg border border-line bg-counter p-5">
+    <h2 class="text-sm font-medium text-ink">{{ editingId() ? 'Edit expense' : 'Add an expense' }}</h2>
+    <form
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+      novalidate
+      class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+    >
+      <div class="flex flex-col gap-1.5">
+        <label for="ex-category" class="text-sm font-medium">Category</label>
+        <div class="flex items-start gap-2">
+          <div class="min-w-0 flex-1">
+            <p-select
+              inputId="ex-category"
+              formControlName="expenseCategoryId"
+              [options]="categoryOptions()"
+              optionLabel="name"
+              optionValue="id"
+              [filter]="true"
+              filterBy="name"
+              placeholder="Choose a category"
+              emptyMessage="No categories yet"
+              appendTo="body"
+              styleClass="w-full text-sm"
+              [invalid]="form.controls.expenseCategoryId.touched && form.controls.expenseCategoryId.invalid"
+            />
+          </div>
+          <p-button
+            type="button"
+            icon="pi pi-plus"
+            [outlined]="true"
+            (onClick)="openQuick(); categoryPopover.toggle($event)"
+            ariaLabel="Add a new category"
+            styleClass="shrink-0"
+          />
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="ex-amount" class="text-sm font-medium">Amount</label>
+        <p-inputnumber
+          inputId="ex-amount"
+          formControlName="amount"
+          mode="currency"
+          currency="PHP"
+          locale="en-PH"
+          [min]="0"
+          placeholder="0.00"
+          styleClass="w-full"
+          inputStyleClass="w-full text-sm tabular-nums"
+          [invalid]="form.controls.amount.touched && form.controls.amount.invalid"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="ex-date" class="text-sm font-medium">Date</label>
+        <p-datepicker
+          inputId="ex-date"
+          formControlName="incurredAt"
+          dateFormat="M d, yy"
+          [maxDate]="today"
+          appendTo="body"
+          styleClass="w-full"
+          inputStyleClass="w-full text-sm"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="ex-note" class="text-sm font-medium">
+          Note <span class="font-normal text-muted">(optional)</span>
+        </label>
+        <input
+          pInputText
+          id="ex-note"
+          formControlName="note"
+          maxlength="500"
+          placeholder="Reference, payee, anything worth recording."
+          class="w-full text-sm"
+        />
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3 sm:col-span-2 lg:col-span-4">
+        <p-button
+          type="submit"
+          [label]="saving() ? 'Saving...' : editingId() ? 'Save changes' : 'Add expense'"
+          icon="pi pi-check"
+          [loading]="saving()"
+          [disabled]="saving()"
+          styleClass="font-medium"
+        />
+        @if (editingId()) {
+          <p-button type="button" label="Cancel" [text]="true" (onClick)="resetForm()" />
+        }
+        @if (formError()) {
+          <span role="alert" class="text-sm text-danger">{{ formError() }}</span>
+        }
+      </div>
+    </form>
+  </section>
+
+  <!-- Expenses list -->
+  @if (loading() && expenses().length === 0) {
+    <div class="mt-6 h-40 animate-pulse rounded-lg border border-line bg-counter motion-reduce:animate-none"></div>
+  } @else if (loadError(); as error) {
+    <div class="mt-6 rounded-lg border border-line bg-counter px-6 py-12 text-center">
+      <p class="text-sm font-medium text-ink">Couldn't load expenses</p>
+      <p class="mx-auto mt-1 max-w-sm text-sm text-muted">{{ error }}</p>
+      <p-button type="button" label="Retry" [text]="true" (onClick)="refresh()" styleClass="mt-3 font-medium" />
+    </div>
+  } @else if (isEmpty()) {
+    <div class="mt-6 rounded-lg border border-dashed border-line px-6 py-16 text-center">
+      <span class="mx-auto grid h-11 w-11 place-items-center rounded-full bg-panel text-muted">
+        <i class="pi pi-wallet text-xl" aria-hidden="true"></i>
+      </span>
+      <p class="mt-3 text-sm font-medium text-ink">No expenses in this period</p>
+      <p class="mx-auto mt-1 max-w-xs text-sm text-muted">
+        Add an expense above, or pick a wider period to see more.
+      </p>
+    </div>
+  } @else {
+    <section
+      aria-label="Expenses"
+      class="mt-6 overflow-hidden rounded-lg border border-line bg-counter"
+    >
+      <div class="flex items-center justify-between border-b border-line px-5 py-3">
+        <h2 class="text-sm font-medium text-ink">Expenses</h2>
+        <span class="text-xs tabular-nums text-muted">{{ expenses().length }} in period</span>
+      </div>
+      <ul>
+        @for (expense of expenses(); track expense.id) {
+          <li class="flex items-center gap-3 border-b border-line px-5 py-3 last:border-0">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2">
+                <span class="truncate text-sm font-medium text-ink">
+                  {{ expense.expenseCategory?.name ?? 'Uncategorized' }}
+                </span>
+                <span class="shrink-0 text-xs tabular-nums text-muted">
+                  {{ expense.incurredAt | date: 'MMM d, y' }}
+                </span>
+              </div>
+              @if (expense.note) {
+                <p class="truncate text-xs text-muted">{{ expense.note }}</p>
+              }
+            </div>
+            <span class="shrink-0 text-sm font-medium tabular-nums text-ink">{{ expense.amount | money }}</span>
+            @if (isArchiving(expense)) {
+              <span class="flex shrink-0 items-center gap-1">
+                <p-button
+                  type="button"
+                  label="Remove"
+                  severity="danger"
+                  [text]="true"
+                  [loading]="busyId() === expense.id"
+                  (onClick)="archive(expense)"
+                  styleClass="text-xs"
+                />
+                <p-button type="button" label="Cancel" [text]="true" (onClick)="cancelArchive()" styleClass="text-xs" />
+              </span>
+            } @else {
+              <span class="flex shrink-0 items-center gap-1">
+                <p-button
+                  type="button"
+                  icon="pi pi-pencil"
+                  [text]="true"
+                  (onClick)="editExpense(expense)"
+                  ariaLabel="Edit expense"
+                />
+                <p-button
+                  type="button"
+                  icon="pi pi-trash"
+                  severity="danger"
+                  [text]="true"
+                  (onClick)="confirmArchive(expense)"
+                  ariaLabel="Remove expense"
+                />
+              </span>
+            }
+          </li>
+        }
+      </ul>
+    </section>
+
+    <!-- Margins (revenue vs cost) -->
+    @if (pnl(); as report) {
+      <div class="mt-6 grid gap-6 lg:grid-cols-2">
+        <section aria-label="Profit by category" class="rounded-lg border border-line bg-counter p-5">
+          <h2 class="text-sm font-medium text-ink">Profit by category</h2>
+          @if (report.marginByCategory.length === 0) {
+            <p class="mt-4 text-sm text-muted">No sales in this period.</p>
+          } @else {
+            <ul class="mt-4 space-y-2">
+              @for (row of report.marginByCategory; track row.id) {
+                <li class="flex items-center justify-between gap-3 text-sm">
+                  <span class="min-w-0 truncate text-ink">{{ row.name }}</span>
+                  <span class="flex shrink-0 items-center gap-3 tabular-nums">
+                    <span class="text-muted">{{ row.revenue | money }}</span>
+                    <span [class]="row.margin >= 0 ? 'text-success' : 'text-danger'">
+                      {{ row.margin | money }} ({{ row.marginPct }}%)
+                    </span>
+                  </span>
+                </li>
+              }
+            </ul>
+          }
+        </section>
+
+        <section aria-label="Top products by margin" class="rounded-lg border border-line bg-counter p-5">
+          <h2 class="text-sm font-medium text-ink">Top products by margin</h2>
+          @if (report.marginByProduct.length === 0) {
+            <p class="mt-4 text-sm text-muted">No sales in this period.</p>
+          } @else {
+            <ul class="mt-4 space-y-2">
+              @for (row of report.marginByProduct; track row.id) {
+                <li class="flex items-center justify-between gap-3 text-sm">
+                  <span class="min-w-0 truncate text-ink">
+                    {{ row.name }}
+                    <span class="text-xs tabular-nums text-muted">· {{ row.unitsSold }} sold</span>
+                  </span>
+                  <span
+                    class="shrink-0 tabular-nums"
+                    [class]="row.margin >= 0 ? 'text-success' : 'text-danger'"
+                  >
+                    {{ row.margin | money }} ({{ row.marginPct }}%)
+                  </span>
+                </li>
+              }
+            </ul>
+          }
+        </section>
+      </div>
+    }
+  }
+</div>
+
+<!-- Quick-create category -->
+<p-popover #categoryPopover>
+  <div class="w-72">
+    <label for="ex-qc-category" class="text-sm font-medium text-ink">New expense category</label>
+    <div class="mt-1.5 flex items-start gap-2">
+      <input
+        pInputText
+        id="ex-qc-category"
+        type="text"
+        [formControl]="quickCategoryName"
+        autocomplete="off"
+        maxlength="100"
+        placeholder="e.g. Delivery, Repairs"
+        (keydown.enter)="$event.preventDefault(); createCategory(categoryPopover)"
+        class="w-full text-sm"
+      />
+      <p-button
+        type="button"
+        [label]="quickBusy() ? '...' : 'Add'"
+        [loading]="quickBusy()"
+        [disabled]="quickBusy()"
+        (onClick)="createCategory(categoryPopover)"
+        styleClass="shrink-0 font-medium"
+      />
+    </div>
+    @if (quickError()) {
+      <p role="alert" class="mt-1.5 text-xs text-danger">{{ quickError() }}</p>
+    }
+  </div>
+</p-popover>
