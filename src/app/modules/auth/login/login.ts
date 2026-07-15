@@ -9,12 +9,14 @@ import {
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { forkJoin, switchMap } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { NgOptimizedImage } from '@angular/common';
 
+import { httpErrorMessage } from '../../../../common/http/http-error-message';
 import { AuthService } from '../services/auth.service';
 import { OrganizationService } from '../../organization/services/organization.service';
 import { EntitlementsService } from '../../../../common/entitlements/entitlements.service';
@@ -75,10 +77,23 @@ export class Login {
       )
       .subscribe({
         next: () => this.router.navigateByUrl('/'),
-        error: () => {
-          this.error.set('Invalid email or password.');
+        error: (error: unknown) => {
+          this.error.set(this.loginErrorMessage(error));
           this.loading.set(false);
         },
       });
+  }
+
+  /**
+   * Only a 401 from the credential check means the email/password is wrong. Everything else — a
+   * network outage, a 429 rate-limit, a 500, or a failure hydrating the org/entitlements after a
+   * valid sign-in — must surface its real cause, otherwise a broken backend looks like bad
+   * credentials and the operator retries forever.
+   */
+  private loginErrorMessage(error: unknown): string {
+    if (error instanceof HttpErrorResponse && error.status === 401) {
+      return 'Invalid email or password.';
+    }
+    return httpErrorMessage(error);
   }
 }
