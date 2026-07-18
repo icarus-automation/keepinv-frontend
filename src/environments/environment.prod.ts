@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://api.keepinv.com/api/v1',
+  apiBaseUrl: 'https://lugawjuan-api.keepinv.com/api/v1',
 };
