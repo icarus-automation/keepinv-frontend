@@ -23,6 +23,9 @@ export interface ProductComponent {
   component: {
     id: string;
     name: string;
+    sku: string;
+    /** Decimal string; one unit's cost. The recipe editor sums these into a per-serving cost. */
+    costPrice: string;
     quantityOnHand: number;
     isStockTracked: boolean;
   };
@@ -80,6 +83,13 @@ export interface Product {
   isStockTracked: boolean;
   components: ProductComponent[];
 
+  /**
+   * Relation counts embedded by the list/detail endpoints. `componentOf` counts the active menu
+   * items that consume this product as an ingredient — the Ingredients page's "used in N items".
+   * Absent on bare create/update responses (the catalog re-hydrates after a write).
+   */
+  _count?: { componentOf: number };
+
   categoryId: string;
   category: Category;
 
@@ -91,6 +101,12 @@ export interface Product {
 
   createdAt: string;
   updatedAt: string;
+}
+
+/** One recipe line in a write payload: selling one unit consumes `quantity` of `componentId`. */
+export interface ProductComponentRequest {
+  componentId: string;
+  quantity: number;
 }
 
 /**
@@ -112,7 +128,16 @@ export interface ProductRequest {
   categoryId: string;
   supplierId?: string | null;
   locationId?: string | null;
+  /** Kitchen ingredient: inventoried, never a POS tile. */
+  isStockOnly?: boolean;
+  /** false = always sellable and never decremented (a refill). */
+  isStockTracked?: boolean;
+  /** Replace-all recipe: sending the key rewrites the whole recipe; omitting it keeps the current one. */
+  components?: ProductComponentRequest[];
 }
+
+/** Which half of the catalog to list: kitchen stock or the sellable menu. */
+export type ProductKind = 'INGREDIENT' | 'SELLABLE';
 
 /** Query for the server-paginated product list. Mirrors the backend `FilterProductsDTO`. */
 export interface ProductListQuery {
@@ -123,6 +148,7 @@ export interface ProductListQuery {
   categoryId?: string;
   locationId?: string;
   lowStock?: boolean;
+  kind?: ProductKind;
 }
 
 /**
@@ -158,6 +184,28 @@ export function isNonStockProduct(
   product: Pick<Product, 'components' | 'isStockTracked'>,
 ): boolean {
   return isRecipeProduct(product) || isUntrackedProduct(product);
+}
+
+/**
+ * Internal SKU for a quick-created ingredient, so the client never has to invent one: an ING-
+ * prefix, a slug of the name, and a short random suffix. The server's unique constraint is the
+ * final guard against the rare clash.
+ */
+export function generateIngredientSku(name: string): string {
+  const slug = name.toUpperCase().replace(/[^A-Z0-9]+/g, '').slice(0, 8) || 'ITEM';
+  const suffix = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `ING-${slug}-${suffix}`;
+}
+
+/**
+ * Usable as a recipe ingredient: active, counts stock, and is not a recipe itself — the checkout
+ * deduction walks exactly one level. Mirrors the backend's `validateComponents` rules so the
+ * picker never offers something the save would reject.
+ */
+export function isComponentEligible(
+  product: Pick<Product, 'isArchived' | 'isStockTracked' | 'components'>,
+): boolean {
+  return !product.isArchived && product.isStockTracked && product.components.length === 0;
 }
 
 /** Stock standing derived from on-hand vs reorder point. Drives the non-amber warning treatment. */

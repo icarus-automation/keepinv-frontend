@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, forkJoin, map, of, switchMap } from 'rxjs';
+import { Observable, map } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
 import {
@@ -23,9 +23,6 @@ export interface SalesPage {
   items: SaleListItem[];
   meta: PageMeta;
 }
-
-/** How many catalog products to pull per page when hydrating the touch grid. */
-const GRID_PAGE_SIZE = 50;
 
 /**
  * A recipe bowl can make as many servings as its scarcest tracked ingredient allows (an untracked
@@ -92,33 +89,14 @@ export class PosService {
   private readonly baseUrl = `${environment.apiBaseUrl}/pos`;
 
   /**
-   * The whole sellable catalog for the touch grid (lugawjuan): every non-archived
-   * stock product, mapped to {@link PosSearchItem}. Pages through the catalog so a
-   * menu larger than one page still loads fully, then flattens and maps in one go.
-   * Unlike search, this is a bulk fetch — fine for the small menus this grid targets.
+   * The whole sellable catalog for the touch grid (lugawjuan), mapped to
+   * {@link PosSearchItem}. kind=SELLABLE keeps the shared base pools (stock-only
+   * ingredients) out server-side; the list endpoint already excludes archived rows.
    */
   listSellableProducts(): Observable<PosSearchItem[]> {
-    return this.products.list({ page: 1, limit: GRID_PAGE_SIZE }).pipe(
-      switchMap((first) => {
-        if (first.meta.lastPage <= 1) {
-          return of(first.items);
-        }
-        const rest = Array.from({ length: first.meta.lastPage - 1 }, (_, i) =>
-          this.products
-            .list({ page: i + 2, limit: GRID_PAGE_SIZE })
-            .pipe(map((page) => page.items)),
-        );
-        return forkJoin(rest).pipe(
-          map((chunks) => chunks.reduce((all, chunk) => all.concat(chunk), first.items)),
-        );
-      }),
-      map((products) =>
-        products
-          // Drop archived rows and the shared base pools (stock-only), which aren't sold directly.
-          .filter((product) => !product.isArchived && !product.isStockOnly)
-          .map(toGridSearchItem),
-      ),
-    );
+    return this.products
+      .listAll({ kind: 'SELLABLE' })
+      .pipe(map((products) => products.map(toGridSearchItem)));
   }
 
   /** Search products and serialized units by name, SKU, barcode, serial, or asset tag. */

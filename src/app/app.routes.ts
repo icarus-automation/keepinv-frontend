@@ -86,8 +86,14 @@ export const routes: Routes = [
       },
       {
         path: 'products',
-        title: 'Products',
+        title: 'Menu Items',
         loadComponent: () => import('./modules/products/products').then((m) => m.Products),
+      },
+      {
+        path: 'ingredients',
+        title: 'Ingredients',
+        loadComponent: () =>
+          import('./modules/ingredients/ingredients').then((m) => m.Ingredients),
       },
       {
         path: 'stock-movements',

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, forkJoin, map, of, switchMap } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
 import {
@@ -45,10 +45,35 @@ export class ProductsService {
     if (query.lowStock) {
       params = params.set('lowStock', true);
     }
+    if (query.kind) {
+      params = params.set('kind', query.kind);
+    }
 
     return this.http
       .get<PaginatedApiResponse<Product>>(this.baseUrl, { params })
       .pipe(map((response) => ({ items: response.data, meta: response.meta })));
+  }
+
+  /**
+   * The whole catalog (optionally one `kind`), paged through and flattened. A bulk fetch sized
+   * for the small menus this deployment runs — the POS grid and the recipe ingredient picker
+   * both need every row, not a page.
+   */
+  listAll(query: Omit<ProductListQuery, 'page' | 'limit'> = {}): Observable<Product[]> {
+    const limit = 50;
+    return this.list({ ...query, page: 1, limit }).pipe(
+      switchMap((first) => {
+        if (first.meta.lastPage <= 1) {
+          return of(first.items);
+        }
+        const rest = Array.from({ length: first.meta.lastPage - 1 }, (_, i) =>
+          this.list({ ...query, page: i + 2, limit }).pipe(map((page) => page.items)),
+        );
+        return forkJoin(rest).pipe(
+          map((chunks) => chunks.reduce((all, chunk) => all.concat(chunk), first.items)),
+        );
+      }),
+    );
   }
 
   get(id: string): Observable<Product> {

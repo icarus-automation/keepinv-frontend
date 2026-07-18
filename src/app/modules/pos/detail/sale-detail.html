@@ -45,7 +45,27 @@
       </div>
     }
 
-    <app-receipt [data]="sale.receiptData" />
+    <div class="print-area">
+      <app-receipt [data]="sale.receiptData" />
+    </div>
+
+    @if (printService.supported) {
+      <div class="mt-5 flex flex-wrap items-center gap-2">
+        <p-button
+          type="button"
+          label="Print slip"
+          icon="pi pi-print"
+          [outlined]="true"
+          [disabled]="printBusy()"
+          [loading]="printBusy()"
+          (onClick)="print()"
+          styleClass="font-medium"
+        />
+        @if (printError(); as error) {
+          <p role="alert" class="text-xs font-medium text-danger">{{ error }}</p>
+        }
+      </div>
+    }
 
     <!-- Void action -->
     @if (canVoid()) {

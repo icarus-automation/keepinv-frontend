@@ -17,8 +17,10 @@ import { ButtonModule } from 'primeng/button';
 import { TextareaModule } from 'primeng/textarea';
 
 import { httpErrorMessage } from '../../../../common/http/http-error-message';
+import { PrinterError } from '../../../../common/printing/label-printer';
 import { MoneyPipe } from '../../products/utils/money.pipe';
 import { PosService } from '../services/pos.service';
+import { ReceiptPrintService } from '../services/receipt-print.service';
 import { PosUser, SaleListItem, SaleResult, SaleStatus } from '../types/pos.types';
 import { Receipt } from '../components/receipt';
 import { SaleStatusBadge } from '../components/sale-status-badge';
@@ -46,6 +48,7 @@ import { SaleStatusBadge } from '../components/sale-status-badge';
 })
 export class SaleDetail {
   private readonly service = inject(PosService);
+  protected readonly printService = inject(ReceiptPrintService);
   private readonly destroyRef = inject(DestroyRef);
 
   /** The selected ledger row. Drives the header immediately; the body loads from it. */
@@ -61,6 +64,12 @@ export class SaleDetail {
   protected readonly voidReason = new FormControl('', { nonNullable: true });
   protected readonly voiding = signal(false);
   protected readonly voidError = signal<string | null>(null);
+
+  protected readonly printError = signal<string | null>(null);
+  protected readonly printBusy = computed(() => {
+    const status = this.printService.status();
+    return status === 'connecting' || status === 'printing';
+  });
 
   /** Prefer the freshly loaded sale's status; fall back to the row while it loads. */
   protected readonly status = computed<SaleStatus>(
@@ -115,6 +124,21 @@ export class SaleDetail {
 
   protected retry(): void {
     this.load(this.sale().id);
+  }
+
+  /** Reprint this sale's kitchen slip + queue stub (pairs the printer first if needed). */
+  protected print(): void {
+    const receipt = this.result()?.receiptData;
+    if (!receipt || this.printBusy()) {
+      return;
+    }
+    this.printError.set(null);
+    void this.printService.printSaleInteractive(receipt).catch((error: unknown) => {
+      if (error instanceof PrinterError && error.cancelled) {
+        return;
+      }
+      this.printError.set(error instanceof Error ? error.message : 'Printing failed.');
+    });
   }
 
   protected startVoid(): void {

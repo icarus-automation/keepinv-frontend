@@ -34,6 +34,15 @@ describe('ProductForm', () => {
       message: 'ok',
       data: [],
     });
+    // The ingredient picker pulls the whole catalog (paged); one empty page satisfies it.
+    httpMock
+      .expectOne((request) => request.url === `${environment.apiBaseUrl}/products`)
+      .flush({
+        statusCode: 200,
+        message: 'ok',
+        data: [],
+        meta: { total: 0, page: 1, limit: 50, lastPage: 1 },
+      });
     await fixture.whenStable();
   });
 

@@ -2,12 +2,13 @@
   <!-- Header -->
   <div class="flex flex-col items-start gap-4 sm:flex-row sm:justify-between">
     <p class="max-w-prose text-sm text-muted">
-      The catalog: every item you stock, with its price and on-hand count. Search or scan to find one
-      fast, then select a row to see and edit the full record.
+      Everything the register can sell, with its price and availability. A menu item can use
+      ingredients (a recipe), keep its own count, or stay always available. Kitchen stock lives in
+      Ingredients.
     </p>
     <p-button
       type="button"
-      label="New product"
+      label="New menu item"
       icon="pi pi-plus"
       (onClick)="startCreate()"
       styleClass="shrink-0 whitespace-nowrap font-medium"
@@ -35,14 +36,14 @@
       <span class="mx-auto grid h-11 w-11 place-items-center rounded-full bg-panel text-muted">
         <i class="pi pi-box text-xl" aria-hidden="true"></i>
       </span>
-      <p class="mt-3 text-sm font-medium text-ink">No products yet</p>
+      <p class="mt-3 text-sm font-medium text-ink">No menu items yet</p>
       <p class="mx-auto mt-1 max-w-xs text-sm text-muted">
-        Add your first product to start the catalog. You can create its category, supplier, and
-        location along the way.
+        Add your first menu item to build the menu. You can create its category, ingredients, and
+        supplier along the way.
       </p>
       <p-button
         type="button"
-        label="New product"
+        label="New menu item"
         icon="pi pi-plus"
         (onClick)="startCreate()"
         styleClass="mt-4 font-medium"
@@ -205,7 +206,7 @@
           <ng-template pTemplate="emptymessage">
             <tr>
               <td class="px-4 py-10 text-center text-sm text-muted">
-                No products match these filters.
+                No menu items match these filters.
               </td>
             </tr>
           </ng-template>
@@ -226,7 +227,7 @@
               class="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-sm font-medium text-muted outline-none transition-colors hover:text-ink focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
             >
               <i class="pi pi-angle-left text-base" aria-hidden="true"></i>
-              All products
+              All menu items
             </button>
           </div>
         }

@@ -180,6 +180,8 @@ export class Products {
       categoryId: this.categoryControl.value ?? undefined,
       locationId: this.locationControl.value ?? undefined,
       lowStock: this.lowStockControl.value || undefined,
+      // This page is the sellable half of the catalog; kitchen stock lives on /ingredients.
+      kind: 'SELLABLE',
     };
 
     this.service

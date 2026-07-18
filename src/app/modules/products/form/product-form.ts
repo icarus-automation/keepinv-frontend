@@ -15,13 +15,15 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
+  FormArray,
   FormBuilder,
   FormControl,
+  FormGroup,
   ReactiveFormsModule,
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { Observable, finalize, forkJoin } from 'rxjs';
+import { Observable, finalize, forkJoin, map, of, switchMap } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -36,18 +38,74 @@ import { Category } from '../../categories/types/category.types';
 import { Supplier } from '../../suppliers/types/supplier.types';
 import { Location } from '../../locations/types/location.types';
 import { ProductsService } from '../services/products.service';
-import { Product, ProductRequest, detectReorderPlatform, isNonStockProduct } from '../types/product.types';
+import {
+  Product,
+  ProductRequest,
+  detectReorderPlatform,
+  generateIngredientSku,
+  isComponentEligible,
+} from '../types/product.types';
 import {
   SUPPLIER_PLATFORMS,
   SupplierPlatform,
 } from '../../suppliers/types/supplier.types';
 import { httpErrorMessage } from '../../../../common/http/http-error-message';
+import { formatPeso } from '../utils/money.pipe';
 
 /** A record with the minimum a `p-select` option needs: an id and a name to show. */
 interface NamedRecord {
   id: string;
   name: string;
 }
+
+/**
+ * How a menu item's stock works, in the client's words:
+ * - `recipe`: selling one deducts its ingredients (a bowl draws a cup + toppings).
+ * - `own-stock`: counted directly — selling one deducts this item (drinks, eggs).
+ * - `always`: never runs out and deducts nothing (a refill reusing the same cup).
+ */
+type StockBehaviour = 'recipe' | 'own-stock' | 'always';
+
+interface StockBehaviourOption {
+  readonly value: StockBehaviour;
+  readonly label: string;
+  readonly hint: string;
+  readonly icon: string;
+}
+
+const STOCK_BEHAVIOURS: readonly StockBehaviourOption[] = [
+  {
+    value: 'recipe',
+    label: 'Uses ingredients',
+    hint: 'Selling one deducts its ingredients — a bowl uses a cup and toppings.',
+    icon: 'pi pi-book',
+  },
+  {
+    value: 'own-stock',
+    label: 'Has its own stock',
+    hint: 'Counted directly — selling one deducts this item (drinks, eggs).',
+    icon: 'pi pi-box',
+  },
+  {
+    value: 'always',
+    label: 'Always available',
+    hint: 'Never runs out and deducts nothing — a refill reusing the same cup.',
+    icon: 'pi pi-infinity',
+  },
+];
+
+/** An ingredient the recipe picker can offer, with the cost the per-serving estimate sums. */
+interface IngredientOption {
+  id: string;
+  name: string;
+  costPriceCents: number;
+  quantityOnHand: number;
+}
+
+type RecipeRowGroup = FormGroup<{
+  componentId: FormControl<string>;
+  quantity: FormControl<number>;
+}>;
 
 /**
  * Reorder link must be an http(s) URL with a protocol, mirroring the backend's
@@ -67,11 +125,11 @@ function reorderUrlValidator(control: AbstractControl): ValidationErrors | null 
 }
 
 /**
- * The single product form, used for both create (no `product`) and edit (a
- * `product` to seed from). Category, supplier, and location are picked from
- * master-data selects, each with an inline "+ New" popover so the operator can
- * add one without leaving a half-filled form. `quantityOnHand` is deliberately
- * absent: stock only moves through stock movements.
+ * The single menu-item form, used for both create (no `product`) and edit (a `product` to seed
+ * from). The stock-behaviour picker decides what the item deducts when sold; choosing "uses
+ * ingredients" opens the recipe rows, whose ingredients can be quick-created without leaving the
+ * form (as can a category, supplier, or location). `quantityOnHand` is deliberately absent:
+ * stock only moves through stock movements, on the Ingredients page or the movements ledger.
  */
 @Component({
   selector: 'app-product-form',
@@ -104,12 +162,6 @@ export class ProductForm implements OnInit {
   private readonly nameInput = viewChild<ElementRef<HTMLInputElement>>('nameInput');
 
   protected readonly isEdit = computed(() => this.product() != null);
-  /** A non-stock item (recipe bowl or untracked refill) is never inventoried, so its stock/reorder
-   *  fields are hidden — only its price and identity are editable. */
-  protected readonly isNonStock = computed(() => {
-    const product = this.product();
-    return product != null && isNonStockProduct(product);
-  });
 
   protected readonly categoryOptions = signal<NamedRecord[]>([]);
   protected readonly supplierOptions = signal<NamedRecord[]>([]);
@@ -135,6 +187,56 @@ export class ProductForm implements OnInit {
     locationId: this.formBuilder.control<string | null>(null),
   });
 
+  // --- Stock behaviour + recipe ---
+
+  protected readonly behaviourOptions = STOCK_BEHAVIOURS;
+  /** Recipe is the default for a new item: this menu's staples are bowls made from ingredients. */
+  protected readonly behaviour = signal<StockBehaviour>('recipe');
+
+  protected readonly ingredientOptions = signal<IngredientOption[]>([]);
+
+  /**
+   * The recipe rows live outside the main form group so their validity only matters when the
+   * behaviour is `recipe` — a drink's save must never be blocked by a leftover empty row.
+   */
+  protected readonly recipeRows = new FormArray<RecipeRowGroup>([]);
+
+  private readonly recipeValue = toSignal(this.recipeRows.valueChanges, {
+    initialValue: this.recipeRows.value,
+  });
+  private readonly sellingValue = toSignal(this.form.controls.sellingPrice.valueChanges, {
+    initialValue: this.form.controls.sellingPrice.value,
+  });
+
+  /** Estimated ingredient cost per serving, from the picked ingredients' cost prices. */
+  private readonly recipeCostCents = computed(() => {
+    const costById = new Map(
+      this.ingredientOptions().map((option) => [option.id, option.costPriceCents]),
+    );
+    return this.recipeValue().reduce((sum, row) => {
+      const cost = row.componentId ? costById.get(row.componentId) : undefined;
+      if (cost === undefined) {
+        return sum;
+      }
+      return sum + cost * Math.max(1, Math.floor(row.quantity ?? 1));
+    }, 0);
+  });
+
+  protected readonly recipeCostDisplay = computed(() => {
+    const cents = this.recipeCostCents();
+    return cents > 0 ? formatPeso(cents / 100) : null;
+  });
+
+  /** What one serving earns after ingredients, shown only once both sides are known. */
+  protected readonly recipeMarginDisplay = computed(() => {
+    const cents = this.recipeCostCents();
+    const sellingCents = Math.round((this.sellingValue() ?? 0) * 100);
+    if (cents <= 0 || sellingCents <= 0) {
+      return null;
+    }
+    return formatPeso((sellingCents - cents) / 100);
+  });
+
   /** Live mirror of the barcode control so the Generate action can react without zone churn. */
   private readonly barcodeValue = toSignal(this.form.controls.barcode.valueChanges, {
     initialValue: this.form.controls.barcode.value,
@@ -151,6 +253,7 @@ export class ProductForm implements OnInit {
   protected readonly quickCategoryName = new FormControl('', { nonNullable: true });
   protected readonly quickSupplierName = new FormControl('', { nonNullable: true });
   protected readonly quickLocationName = new FormControl('', { nonNullable: true });
+  protected readonly quickIngredientName = new FormControl('', { nonNullable: true });
   protected readonly quickBusy = signal(false);
   protected readonly quickError = signal<string | null>(null);
 
@@ -176,6 +279,10 @@ export class ProductForm implements OnInit {
     // Inputs are populated by now (they are not in the constructor), so the edit
     // form seeds with the product's current values before the first render.
     this.seedFromProduct();
+    if (!this.product() && this.recipeRows.length === 0) {
+      // A fresh recipe starts with one empty line, so the first ingredient is one tap away.
+      this.addRecipeRow();
+    }
     this.loadOptions();
   }
 
@@ -203,34 +310,74 @@ export class ProductForm implements OnInit {
     if (product.reorderPlatform) {
       this.platformPinned.set(true);
     }
+
+    if (product.components.length > 0) {
+      this.behaviour.set('recipe');
+      this.recipeRows.clear();
+      for (const line of product.components) {
+        this.recipeRows.push(this.buildRecipeRow(line.component.id, line.quantity));
+      }
+    } else if (!product.isStockTracked) {
+      this.behaviour.set('always');
+    } else {
+      this.behaviour.set('own-stock');
+    }
   }
 
   private loadOptions(): void {
     this.optionsLoading.set(true);
     const product = this.product();
 
-    // Load the three master-data lists together so optionsLoading reflects all
-    // of them and a single error path covers every failure (a bare subscribe on
-    // suppliers/locations would otherwise throw unhandled and leave the selects
-    // empty with no feedback).
+    // Load the master-data lists and the ingredient catalog together so optionsLoading
+    // reflects all of them and a single error path covers every failure.
     forkJoin({
       categories: this.categories.list(),
       suppliers: this.suppliers.list(),
       locations: this.locations.list(),
+      catalog: this.products.listAll(),
     })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.optionsLoading.set(false)),
       )
       .subscribe({
-        next: ({ categories, suppliers, locations }) => {
+        next: ({ categories, suppliers, locations, catalog }) => {
           this.categoryOptions.set(this.mergeCurrent(categories, product?.category ?? null));
           this.supplierOptions.set(this.mergeCurrent(suppliers, product?.supplier ?? null));
           this.locationOptions.set(this.mergeCurrent(locations, product?.location ?? null));
+          this.ingredientOptions.set(this.toIngredientOptions(catalog, product));
         },
         error: (error: unknown) =>
           this.formError.set(httpErrorMessage(error)),
       });
+  }
+
+  /**
+   * Everything the recipe may draw on: active, stock-tracked, non-recipe products (the backend
+   * enforces the same rules), minus the product itself. Ingredients the current recipe already
+   * uses stay pickable even if the catalog fetch no longer returns them.
+   */
+  private toIngredientOptions(catalog: Product[], product: Product | null): IngredientOption[] {
+    const options = catalog
+      .filter((item) => item.id !== product?.id && isComponentEligible(item))
+      .map((item) => ({
+        id: item.id,
+        name: item.name,
+        costPriceCents: Math.round(Number(item.costPrice) * 100),
+        quantityOnHand: item.quantityOnHand,
+      }));
+
+    for (const line of product?.components ?? []) {
+      if (!options.some((option) => option.id === line.component.id)) {
+        options.unshift({
+          id: line.component.id,
+          name: line.component.name,
+          costPriceCents: Math.round(Number(line.component.costPrice) * 100),
+          quantityOnHand: line.component.quantityOnHand,
+        });
+      }
+    }
+    return options;
   }
 
   /**
@@ -245,6 +392,49 @@ export class ProductForm implements OnInit {
     return list;
   }
 
+  // --- Recipe rows ---
+
+  private buildRecipeRow(componentId = '', quantity = 1): RecipeRowGroup {
+    return this.formBuilder.nonNullable.group({
+      componentId: [componentId, [Validators.required]],
+      quantity: [quantity, [Validators.required, Validators.min(1), Validators.max(999)]],
+    });
+  }
+
+  protected addRecipeRow(componentId = ''): void {
+    this.recipeRows.push(this.buildRecipeRow(componentId));
+  }
+
+  protected removeRecipeRow(index: number): void {
+    this.recipeRows.removeAt(index);
+  }
+
+  protected setBehaviour(value: StockBehaviour): void {
+    this.behaviour.set(value);
+    if (value === 'recipe' && this.recipeRows.length === 0) {
+      this.addRecipeRow();
+    }
+  }
+
+  /** Why the recipe can't save yet, or null when it's coherent. */
+  private recipeIssue(): string | null {
+    const rows = this.recipeRows.getRawValue();
+    if (rows.length === 0) {
+      return 'Add at least one ingredient to the recipe.';
+    }
+    if (rows.some((row) => !row.componentId)) {
+      return 'Choose an ingredient for every recipe line.';
+    }
+    if (this.recipeRows.invalid) {
+      return 'Every ingredient needs a quantity between 1 and 999.';
+    }
+    const ids = rows.map((row) => row.componentId);
+    if (new Set(ids).size !== ids.length) {
+      return 'The recipe lists the same ingredient twice.';
+    }
+    return null;
+  }
+
   protected save(): void {
     if (this.saving()) {
       return;
@@ -254,10 +444,21 @@ export class ProductForm implements OnInit {
       this.formError.set(this.validationMessage());
       return;
     }
+    const behaviour = this.behaviour();
+    if (behaviour === 'recipe') {
+      const issue = this.recipeIssue();
+      if (issue) {
+        this.recipeRows.markAllAsTouched();
+        this.formError.set(issue);
+        return;
+      }
+    }
 
     const raw = this.form.getRawValue();
-    // Platform is meaningless without a link, so only send it alongside one.
-    const reorderUrl = this.optional(raw.reorderUrl) ?? null;
+    const ownStock = behaviour === 'own-stock';
+    // Platform is meaningless without a link, so only send it alongside one; stock and reorder
+    // fields only mean something for an own-stock item.
+    const reorderUrl = ownStock ? this.optional(raw.reorderUrl) ?? null : null;
     const body: ProductRequest = {
       name: raw.name.trim(),
       sku: raw.sku.trim(),
@@ -266,12 +467,22 @@ export class ProductForm implements OnInit {
       brand: this.optional(raw.brand),
       costPrice: raw.costPrice ?? 0,
       sellingPrice: raw.sellingPrice ?? 0,
-      reorderPoint: raw.reorderPoint ?? null,
+      reorderPoint: ownStock ? raw.reorderPoint ?? null : null,
       reorderUrl,
       reorderPlatform: reorderUrl ? raw.reorderPlatform ?? null : null,
       categoryId: raw.categoryId,
       supplierId: raw.supplierId || null,
       locationId: raw.locationId || null,
+      // This form authors the sellable menu; kitchen-only stock is created on /ingredients.
+      isStockOnly: false,
+      isStockTracked: behaviour !== 'always',
+      components:
+        behaviour === 'recipe'
+          ? this.recipeRows.getRawValue().map((row) => ({
+              componentId: row.componentId,
+              quantity: Math.max(1, Math.floor(row.quantity)),
+            }))
+          : [],
     };
 
     const existing = this.product();
@@ -347,6 +558,76 @@ export class ProductForm implements OnInit {
       this.form.controls.locationId.setValue(created.id);
       popover.hide();
     });
+  }
+
+  /**
+   * Quick-create a kitchen ingredient without leaving the recipe: an isStockOnly product with a
+   * generated SKU under the "Ingredients" category (created on first use). It starts at 0 on hand
+   * and 0 cost — the owner stocks and prices it on the Ingredients page. The new ingredient drops
+   * straight into the first empty recipe line, or a fresh one.
+   */
+  protected createIngredient(popover: Popover): void {
+    const name = this.quickIngredientName.value.trim();
+    this.quickError.set(null);
+    if (!name) {
+      this.quickError.set('Enter a name.');
+      return;
+    }
+    if (this.quickBusy()) {
+      return;
+    }
+
+    this.quickBusy.set(true);
+    this.ensureIngredientsCategory()
+      .pipe(
+        switchMap((categoryId) =>
+          this.products.create({
+            name,
+            sku: generateIngredientSku(name),
+            costPrice: 0,
+            sellingPrice: 0,
+            categoryId,
+            isStockOnly: true,
+          }),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.quickBusy.set(false)),
+      )
+      .subscribe({
+        next: (created) => {
+          this.ingredientOptions.update((list) => [
+            { id: created.id, name: created.name, costPriceCents: 0, quantityOnHand: 0 },
+            ...list,
+          ]);
+          const emptyRow = this.recipeRows.controls.find(
+            (row) => !row.controls.componentId.value,
+          );
+          if (emptyRow) {
+            emptyRow.controls.componentId.setValue(created.id);
+          } else {
+            this.addRecipeRow(created.id);
+          }
+          this.quickIngredientName.reset('');
+          popover.hide();
+        },
+        error: (error: unknown) => this.quickError.set(httpErrorMessage(error, `"${name}"`)),
+      });
+  }
+
+  /** The per-tenant "Ingredients" category quick-created ingredients file under; created once. */
+  private ensureIngredientsCategory(): Observable<string> {
+    const existing = this.categoryOptions().find(
+      (option) => option.name.trim().toLowerCase() === 'ingredients',
+    );
+    if (existing) {
+      return of(existing.id);
+    }
+    return this.categories.create({ name: 'Ingredients' }).pipe(
+      map((created) => {
+        this.categoryOptions.update((list) => [...list, { id: created.id, name: created.name }]);
+        return created.id;
+      }),
+    );
   }
 
   /** Reset a quick-create popover's transient state as it opens. */

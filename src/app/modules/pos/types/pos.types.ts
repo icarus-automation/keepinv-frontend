@@ -33,16 +33,18 @@ export interface PosSearchItem {
   unitStatus?: string;
   isSellable: boolean;
   /**
+   * false = always sellable and never decremented (a refill) — its count badge is meaningless
+   * and hidden. Sent by `search-items` and set by the grid mapper alike.
+   */
+  isStockTracked: boolean;
+  /**
    * Enrichments present only when the item originates from the products-list grid
    * source (the lugawjuan touch POS), not from `search-items`. The grid needs a
    * photo to render each card and a category to group them; both are absent on
    * scanner/search hits, so treat them as optional everywhere they're read.
-   * `isStockTracked` false marks an always-sellable tile (a refill) whose count badge
-   * is meaningless and hidden.
    */
   imageUrl?: string | null;
   categoryName?: string;
-  isStockTracked?: boolean;
 }
 
 /** One line in a checkout payload. Serialized units carry a `productUnitId` and quantity 1. */
@@ -81,6 +83,11 @@ export interface ReceiptItemData {
 export interface ReceiptData {
   saleId: string;
   receiptNo: string;
+  /**
+   * Daily order number (resets each Manila day): what the kitchen slip and the customer's queue
+   * stub call out. Absent on snapshots captured before the feature shipped.
+   */
+  orderNo?: number;
   status: SaleStatus;
   completedAt: string;
   cashier: { id: string; name: string; email: string };

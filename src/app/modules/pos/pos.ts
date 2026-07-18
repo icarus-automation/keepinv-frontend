@@ -17,13 +17,16 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TextareaModule } from 'primeng/textarea';
 
 import { httpErrorMessage } from '../../../common/http/http-error-message';
+import { PrinterError } from '../../../common/printing/label-printer';
 import { MoneyPipe, formatPeso } from '../products/utils/money.pipe';
 import { PosService } from './services/pos.service';
+import { ReceiptPrintService } from './services/receipt-print.service';
 import {
   PAYMENT_METHODS,
   PaymentMethod,
   PaymentMethodMeta,
   PosSearchItem,
+  ReceiptData,
   SaleResult,
   priceToCents,
 } from './types/pos.types';
@@ -47,6 +50,8 @@ interface CartLine {
   quantity: number;
   readonly quantityOnHand: number;
   readonly isSerialized: boolean;
+  /** false = always sellable (a refill): no meaningful count, so never warn about over-stock. */
+  readonly isStockTracked: boolean;
 }
 
 /** A quick-tender chip: either a cash denomination to add, or "Exact" to match the total. */
@@ -92,6 +97,7 @@ const SCANNER_FIRST = false;
 })
 export class Pos {
   private readonly service = inject(PosService);
+  protected readonly printService = inject(ReceiptPrintService);
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly scanInput = viewChild<ElementRef<HTMLInputElement>>('scanInput');
@@ -147,6 +153,27 @@ export class Pos {
   protected readonly committing = signal(false);
   protected readonly checkoutError = signal<string | null>(null);
   protected readonly result = signal<SaleResult | null>(null);
+
+  // --- Receipt printer (XP-58H over Web Bluetooth) ---
+  /** A print/connect failure to surface inline; auto-print never blocks the sale itself. */
+  protected readonly printNotice = signal<string | null>(null);
+  protected readonly printBusy = computed(() => {
+    const status = this.printService.status();
+    return status === 'connecting' || status === 'printing';
+  });
+  /** The header chip: what tapping the printer button currently means. */
+  protected readonly printerChip = computed(() => {
+    switch (this.printService.status()) {
+      case 'ready':
+        return { icon: 'pi pi-print', label: this.printService.deviceName() ?? 'Printer ready' };
+      case 'connecting':
+        return { icon: 'pi pi-spin pi-spinner', label: 'Connecting…' };
+      case 'printing':
+        return { icon: 'pi pi-spin pi-spinner', label: 'Printing…' };
+      default:
+        return { icon: 'pi pi-print', label: 'Connect printer' };
+    }
+  });
 
   // --- Derived totals (centavos) ---
   protected readonly subtotalCents = computed(() =>
@@ -225,6 +252,8 @@ export class Pos {
     });
 
     this.loadGrid();
+    // Re-link the remembered printer so the first sale of the day auto-prints without a tap.
+    void this.printService.reconnectSilently();
   }
 
   // --- Product grid ---
@@ -438,6 +467,7 @@ export class Pos {
       quantity: 1,
       quantityOnHand: item.quantityOnHand,
       isSerialized: false,
+      isStockTracked: item.isStockTracked,
     };
   }
 
@@ -453,6 +483,7 @@ export class Pos {
       quantity: 1,
       quantityOnHand: item.quantityOnHand,
       isSerialized: true,
+      isStockTracked: true,
     };
   }
 
@@ -607,7 +638,7 @@ export class Pos {
   }
 
   protected overStock(line: CartLine): boolean {
-    return !line.isSerialized && line.quantity > line.quantityOnHand;
+    return line.isStockTracked && !line.isSerialized && line.quantity > line.quantityOnHand;
   }
 
   protected lineTotal(line: CartLine): string {
@@ -670,9 +701,71 @@ export class Pos {
         next: (result) => {
           this.result.set(result);
           this.phase.set('receipt');
+          this.autoPrint(result.receiptData);
         },
         error: (error: unknown) => this.checkoutError.set(httpErrorMessage(error)),
       });
+  }
+
+  // --- Receipt printing ---
+
+  /** Pair (or switch) the printer. The chip is the one tap that satisfies the gesture rule. */
+  protected connectPrinter(): void {
+    if (this.printBusy()) {
+      return;
+    }
+    this.printNotice.set(null);
+    void this.printService.connect().catch((error: unknown) => this.flagPrintError(error));
+  }
+
+  /**
+   * Fire-and-forget after checkout: the kitchen slip + queue stub. A failure only posts an
+   * inline notice — the sale is already committed and must never look blocked by paper.
+   */
+  private autoPrint(receipt: ReceiptData): void {
+    if (!this.printService.supported) {
+      return;
+    }
+    this.printNotice.set(null);
+    void this.printService.printSale(receipt).catch((error: unknown) => this.flagPrintError(error));
+  }
+
+  /** Reprint the kitchen slip + stub for the sale on screen. */
+  protected reprint(): void {
+    const receipt = this.result()?.receiptData;
+    if (!receipt || this.printBusy()) {
+      return;
+    }
+    this.printNotice.set(null);
+    void this.printService
+      .printSaleInteractive(receipt)
+      .catch((error: unknown) => this.flagPrintError(error));
+  }
+
+  /** Print just the customer's number stub again. */
+  protected reprintStub(): void {
+    const receipt = this.result()?.receiptData;
+    if (!receipt || this.printBusy()) {
+      return;
+    }
+    this.printNotice.set(null);
+    void this.printService
+      .printStubInteractive(receipt)
+      .catch((error: unknown) => this.flagPrintError(error));
+  }
+
+  /** Fallback for a driver-installed printer (USB to a PC): the browser's own print dialog. */
+  protected systemPrint(): void {
+    window.print();
+  }
+
+  private flagPrintError(error: unknown): void {
+    if (error instanceof PrinterError && error.cancelled) {
+      return;
+    }
+    this.printNotice.set(
+      error instanceof Error ? error.message : 'Could not reach the printer.',
+    );
   }
 
   /** Start a fresh sale, keeping the operator on the scan field. */
@@ -687,6 +780,7 @@ export class Pos {
     this.showNote.set(false);
     this.checkoutError.set(null);
     this.searchNotice.set(null);
+    this.printNotice.set(null);
     this.result.set(null);
     this.phase.set('selling');
     // Stock moved on the last sale; pull a fresh catalog so the grid reflects it.

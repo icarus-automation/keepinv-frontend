@@ -3,10 +3,10 @@
   <div class="flex items-center gap-3 border-b border-line px-5 py-4">
     <div class="min-w-0 flex-1">
       <h2 class="truncate text-lg font-semibold tracking-tight text-ink">
-        {{ isEdit() ? 'Edit product' : 'New product' }}
+        {{ isEdit() ? 'Edit menu item' : 'New menu item' }}
       </h2>
       <p class="mt-0.5 text-sm text-muted">
-        {{ isEdit() ? 'Update the catalog details for this item.' : 'Add an item to the catalog. Stock is set later through movements.' }}
+        {{ isEdit() ? 'Update this item and how selling it moves stock.' : 'Add something the register can sell, and say what selling it uses up.' }}
       </p>
     </div>
   </div>
@@ -132,10 +132,127 @@
       </div>
     </fieldset>
 
-    <!-- Stock & reorder: only for real stock items. A recipe (bowl) draws its stock from
-         ingredients and a refill isn't tracked, so neither is inventoried or reordered on its
-         own — hide both fieldsets for any non-stock item. -->
-    @if (!isNonStock()) {
+    <!-- Stock behaviour: what selling one of these actually uses up. -->
+    <fieldset class="space-y-3">
+      <legend class="text-sm font-semibold tracking-tight text-ink">When this sells</legend>
+      <div class="grid gap-2 sm:grid-cols-3" role="group" aria-label="Stock behaviour">
+        @for (option of behaviourOptions; track option.value) {
+          <button
+            type="button"
+            (click)="setBehaviour(option.value)"
+            [attr.aria-pressed]="behaviour() === option.value"
+            class="rounded-lg border p-3 text-left outline-none transition-colors focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+            [class]="behaviour() === option.value ? 'border-signal bg-signal/5' : 'border-line hover:border-signal/50'"
+          >
+            <span class="flex items-center gap-2 text-sm font-medium text-ink">
+              <i [class]="option.icon" class="text-sm text-signal" aria-hidden="true"></i>
+              {{ option.label }}
+            </span>
+            <span class="mt-1 block text-xs leading-snug text-muted">{{ option.hint }}</span>
+          </button>
+        }
+      </div>
+
+      @if (behaviour() === 'recipe') {
+        <div class="rounded-lg border border-line bg-panel/40 p-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <p class="text-sm font-medium text-ink">Ingredients used per serving</p>
+            <p-button
+              type="button"
+              icon="pi pi-plus"
+              label="New ingredient"
+              [text]="true"
+              (onClick)="openQuick(quickIngredientName); ingredientPopover.toggle($event)"
+              styleClass="text-xs font-medium"
+              ariaLabel="Create a new ingredient"
+            />
+          </div>
+
+          <ul class="mt-2 space-y-2">
+            @for (row of recipeRows.controls; track row; let i = $index) {
+              <li class="flex items-center gap-2">
+                <div class="min-w-0 flex-1">
+                  <p-select
+                    [formControl]="row.controls.componentId"
+                    [options]="ingredientOptions()"
+                    optionLabel="name"
+                    optionValue="id"
+                    [filter]="true"
+                    filterBy="name"
+                    [loading]="optionsLoading()"
+                    placeholder="Choose an ingredient"
+                    appendTo="body"
+                    [ariaLabel]="'Ingredient ' + (i + 1)"
+                    styleClass="w-full text-sm"
+                    [invalid]="row.controls.componentId.touched && row.controls.componentId.invalid"
+                  >
+                    <ng-template let-option pTemplate="item">
+                      <span class="flex w-full items-baseline justify-between gap-3">
+                        <span class="truncate">{{ option.name }}</span>
+                        <span class="shrink-0 text-xs tabular-nums text-muted">
+                          {{ option.quantityOnHand }} on hand
+                        </span>
+                      </span>
+                    </ng-template>
+                  </p-select>
+                </div>
+                <p-inputnumber
+                  [formControl]="row.controls.quantity"
+                  [min]="1"
+                  [max]="999"
+                  [maxFractionDigits]="0"
+                  [useGrouping]="false"
+                  [inputId]="'pf-recipe-qty-' + i"
+                  [ariaLabel]="'Quantity for ingredient ' + (i + 1)"
+                  styleClass="w-20"
+                  inputStyleClass="w-20 text-center text-sm tabular-nums"
+                />
+                <button
+                  type="button"
+                  (click)="removeRecipeRow(i)"
+                  [attr.aria-label]="'Remove ingredient ' + (i + 1)"
+                  class="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-line text-muted outline-none transition-colors hover:text-danger focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+                >
+                  <i class="pi pi-times text-xs" aria-hidden="true"></i>
+                </button>
+              </li>
+            }
+          </ul>
+
+          <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
+            <p-button
+              type="button"
+              icon="pi pi-plus"
+              label="Add ingredient"
+              [outlined]="true"
+              (onClick)="addRecipeRow()"
+              styleClass="text-sm font-medium"
+            />
+            @if (recipeCostDisplay(); as cost) {
+              <p class="text-xs text-muted">
+                Ingredient cost ≈
+                <span class="font-medium tabular-nums text-ink">{{ cost }}</span> per serving
+                @if (recipeMarginDisplay(); as margin) {
+                  · margin <span class="font-medium tabular-nums text-ink">{{ margin }}</span>
+                }
+              </p>
+            }
+          </div>
+          <p class="mt-2 text-xs text-muted">
+            Selling one deducts these from stock. Stock the ingredients, not this item.
+          </p>
+        </div>
+      } @else if (behaviour() === 'always') {
+        <p class="text-xs text-muted">
+          This item never runs out and deducts nothing — every sale is still recorded.
+        </p>
+      }
+    </fieldset>
+
+    <!-- Stock & reorder: only for an own-stock item. A recipe draws its stock from ingredients
+         and an always-available item isn't tracked, so neither is inventoried or reordered on
+         its own. -->
+    @if (behaviour() === 'own-stock') {
     <fieldset class="space-y-4">
       <legend class="text-sm font-semibold tracking-tight text-ink">Stock</legend>
       <div class="grid gap-4 sm:grid-cols-2">
@@ -347,7 +464,7 @@
     <div class="flex items-center gap-1.5">
       <p-button
         type="submit"
-        [label]="saving() ? 'Saving...' : isEdit() ? 'Save changes' : 'Create product'"
+        [label]="saving() ? 'Saving...' : isEdit() ? 'Save changes' : 'Create menu item'"
         [loading]="saving()"
         [disabled]="saving()"
         styleClass="font-medium"
@@ -448,6 +565,39 @@
         styleClass="shrink-0 font-medium"
       />
     </div>
+    @if (quickError()) {
+      <p role="alert" class="mt-1.5 text-xs text-danger">{{ quickError() }}</p>
+    }
+  </div>
+</p-popover>
+
+<p-popover #ingredientPopover>
+  <div class="w-72">
+    <label for="qc-ingredient" class="text-sm font-medium text-ink">New ingredient</label>
+    <div class="mt-1.5 flex items-start gap-2">
+      <input
+        pInputText
+        id="qc-ingredient"
+        type="text"
+        [formControl]="quickIngredientName"
+        autocomplete="off"
+        maxlength="150"
+        placeholder="e.g. Lugaw Cup"
+        (keydown.enter)="$event.preventDefault(); createIngredient(ingredientPopover)"
+        class="w-full text-sm"
+      />
+      <p-button
+        type="button"
+        [label]="quickBusy() ? '...' : 'Add'"
+        [loading]="quickBusy()"
+        [disabled]="quickBusy()"
+        (onClick)="createIngredient(ingredientPopover)"
+        styleClass="shrink-0 font-medium"
+      />
+    </div>
+    <p class="mt-1.5 text-xs text-muted">
+      Starts at 0 on hand — stock and price it on the Ingredients page.
+    </p>
     @if (quickError()) {
       <p role="alert" class="mt-1.5 text-xs text-danger">{{ quickError() }}</p>
     }

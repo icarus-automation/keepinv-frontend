@@ -53,3 +53,26 @@
     max-width: 80rem;
   }
 }
+
+/*
+ * "Print via system dialog" fallback for the POS receipt: only the `.print-area`
+ * (the on-screen receipt) reaches paper, sized for a 58mm roll. Visibility (not
+ * display) keeps the layout intact so the receipt keeps its position math.
+ */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+  .print-area {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 58mm;
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+}

@@ -67,6 +67,7 @@ const LEADER_TIMEOUT_MS = 1500;
  */
 const NEW_SHORTCUTS: Record<string, { readonly path: string }> = {
   p: { path: '/products' },
+  i: { path: '/ingredients' },
   a: { path: '/inventory-audit' },
 };
 
@@ -120,10 +121,16 @@ export class Layout {
       label: 'Catalog',
       items: [
         {
-          label: 'Products',
-          icon: 'pi pi-box',
+          label: 'Menu Items',
+          icon: 'pi pi-shopping-bag',
           path: 'products',
-          newShortcut: { key: 'p', verb: 'New product' },
+          newShortcut: { key: 'p', verb: 'New menu item' },
+        },
+        {
+          label: 'Ingredients',
+          icon: 'pi pi-box',
+          path: 'ingredients',
+          newShortcut: { key: 'i', verb: 'New ingredient' },
         },
         { label: 'Categories', icon: 'pi pi-th-large', path: 'categories' },
         { label: 'Locations', icon: 'pi pi-map-marker', path: 'locations' },
