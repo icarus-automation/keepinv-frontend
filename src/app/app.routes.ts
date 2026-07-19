@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 import { authGuard } from './modules/auth/guards/auth.guard';
 import { guestGuard } from './modules/auth/guards/guest.guard';
-import { accessGuard, lockedGuard, posGuard } from '../common/entitlements/entitlement.guards';
+import { accessGuard, adminGuard, lockedGuard, posGuard } from '../common/entitlements/entitlement.guards';
 
 /**
  * Every authenticated route carries a `title`: it names the page in the shell header (see
@@ -36,6 +36,7 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         title: 'Dashboard',
+        canActivate: [adminGuard],
         loadComponent: () => import('./modules/dashboard/dashboard').then((m) => m.Dashboard),
       },
       {
@@ -53,32 +54,37 @@ export const routes: Routes = [
       {
         path: 'reports',
         title: 'Sales Report',
-        canActivate: [posGuard],
+        canActivate: [posGuard, adminGuard],
         loadComponent: () => import('./modules/pos/report/sales-report').then((m) => m.SalesReport),
       },
       {
         path: 'expenses',
         title: 'Expenses',
+        canActivate: [adminGuard],
         loadComponent: () => import('./modules/expenses/expenses').then((m) => m.Expenses),
       },
       {
         path: 'categories',
         title: 'Categories',
+        canActivate: [adminGuard],
         loadComponent: () => import('./modules/categories/categories').then((m) => m.Categories),
       },
       {
         path: 'suppliers',
         title: 'Suppliers',
+        canActivate: [adminGuard],
         loadComponent: () => import('./modules/suppliers/suppliers').then((m) => m.Suppliers),
       },
       {
         path: 'locations',
         title: 'Locations',
+        canActivate: [adminGuard],
         loadComponent: () => import('./modules/locations/locations').then((m) => m.Locations),
       },
       {
         path: 'stock-movement-types',
         title: 'Movement Types',
+        canActivate: [adminGuard],
         loadComponent: () =>
           import('./modules/stock-movement-types/stock-movement-types').then(
             (m) => m.StockMovementTypes,
@@ -87,33 +93,39 @@ export const routes: Routes = [
       {
         path: 'products',
         title: 'Menu Items',
+        canActivate: [adminGuard],
         loadComponent: () => import('./modules/products/products').then((m) => m.Products),
       },
       {
         path: 'ingredients',
         title: 'Ingredients',
+        canActivate: [adminGuard],
         loadComponent: () =>
           import('./modules/ingredients/ingredients').then((m) => m.Ingredients),
       },
       {
         path: 'stock-movements',
         title: 'Stock Movements',
+        canActivate: [adminGuard],
         loadComponent: () =>
           import('./modules/stock-movements/stock-movements').then((m) => m.StockMovements),
       },
       {
         path: 'inventory-audit',
         title: 'Inventory Audit',
+        canActivate: [adminGuard],
         loadComponent: () =>
           import('./modules/inventory-audit/inventory-audit').then((m) => m.InventoryAudit),
       },
       {
         path: 'tools',
+        canActivate: [adminGuard],
         loadChildren: () => import('./modules/tools/tools.routes').then((m) => m.TOOLS_ROUTES),
       },
       {
         path: 'settings',
         title: 'Settings',
+        canActivate: [adminGuard],
         loadComponent: () => import('./modules/settings/settings').then((m) => m.Settings),
       },
     ],

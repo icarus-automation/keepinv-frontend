@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 
 import { MoneyPipe } from '../../../products/utils/money.pipe';
+import { categoryColor } from '../../../../../common/theme/category-palette';
 import { PosSearchItem } from '../../types/pos.types';
 
 /** Menu order for the section headers (lugawjuan): bowls first, then refills, extras, drinks. */
@@ -30,7 +31,11 @@ interface GridSection {
       <section class="mb-7 last:mb-0">
         @if (showHeaders()) {
           <h3 class="mb-3.5 flex items-center gap-3">
-            <span class="h-3 w-3 rounded-[4px] bg-signal" aria-hidden="true"></span>
+            <span
+              class="h-3 w-3 rounded-[4px]"
+              [style.background-color]="color(section.name)"
+              aria-hidden="true"
+            ></span>
             <span class="text-sm font-bold uppercase tracking-[0.14em] text-ink">{{ section.name }}</span>
             <span class="h-px flex-1 bg-line" aria-hidden="true"></span>
           </h3>
@@ -44,7 +49,8 @@ interface GridSection {
                 [disabled]="!item.isSellable"
                 (click)="onSelect(item)"
                 [attr.aria-label]="item.name + ', ' + (item.sellingPrice | money)"
-                class="group flex h-full min-h-[8.5rem] w-full flex-col justify-between gap-4 rounded-xl border border-line bg-counter p-4 text-left outline-none transition-colors hover:border-signal focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-panel disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:border-line"
+                [style.border-left-color]="color(item.categoryName ?? section.name)"
+                class="group flex h-full min-h-[8.5rem] w-full flex-col justify-between gap-4 rounded-xl border border-l-4 border-line bg-counter p-4 text-left outline-none transition-colors hover:border-signal focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-panel disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:border-line"
               >
                 <span class="block line-clamp-3 text-lg font-semibold leading-snug text-ink">
                   {{ item.name }}
@@ -99,6 +105,16 @@ export class ProductGrid {
   private sectionRank(name: string): number {
     const index = SECTION_ORDER.indexOf(name.toLowerCase());
     return index === -1 ? SECTION_ORDER.length : index;
+  }
+
+  /**
+   * A stable warm accent for a menu category, painted as each tile's left edge (and its section
+   * header key). Keyed off the trimmed, lower-cased category name so every tile in a section shares
+   * one color and the counter can find the right group by color at a glance. Falls back to "Menu"
+   * for uncategorized items, matching the section grouping above.
+   */
+  protected color(key: string | null | undefined): string {
+    return categoryColor(key?.trim().toLowerCase() || 'menu');
   }
 
   protected onSelect(item: PosSearchItem): void {

@@ -5,8 +5,11 @@
       <h2 class="truncate text-base font-semibold tabular-nums text-ink">{{ sale().receiptNo }}</h2>
       <app-sale-status-badge [status]="status()" />
     </div>
-    <p class="mt-0.5 text-xs tabular-nums text-muted">
-      {{ sale().completedAt | date: 'MMM d, y, h:mm a' }}
+    <p class="mt-0.5 text-xs text-muted">
+      <span class="tabular-nums">{{ sale().completedAt | date: 'MMM d, y, h:mm a' }}</span>
+      @if (cashierName(); as name) {
+        · <span class="inline-flex items-center gap-1"><i class="pi pi-user text-[0.65rem]" aria-hidden="true"></i>{{ name }}</span>
+      }
     </p>
   </div>
   <p class="shrink-0 text-right text-base font-semibold tabular-nums text-ink">

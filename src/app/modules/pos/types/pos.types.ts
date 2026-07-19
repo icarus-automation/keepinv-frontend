@@ -7,8 +7,8 @@
 /** A sale's lifecycle. Mirrors the backend `SaleStatus` enum. */
 export type SaleStatus = 'COMPLETED' | 'VOIDED';
 
-/** How a sale was paid. Mirrors the backend `PaymentMethod` enum. */
-export type PaymentMethod = 'CASH' | 'CARD' | 'GCASH' | 'MAYA' | 'BANK_TRANSFER' | 'OTHER';
+/** How a sale was paid. Mirrors the backend `PaymentMethod` enum (reduced to three values). */
+export type PaymentMethod = 'CASH' | 'GCASH' | 'BANK_TRANSFER';
 
 /**
  * A search hit from `GET /pos/search-items`: either a stock product (sold by
@@ -187,11 +187,8 @@ export interface PaymentMethodMeta {
 /** Payment methods in counter order, Cash first (the default tender). */
 export const PAYMENT_METHODS: readonly PaymentMethodMeta[] = [
   { value: 'CASH', label: 'Cash', icon: 'pi pi-money-bill' },
-  { value: 'CARD', label: 'Card', icon: 'pi pi-credit-card' },
   { value: 'GCASH', label: 'GCash', icon: 'pi pi-mobile' },
-  { value: 'MAYA', label: 'Maya', icon: 'pi pi-wallet' },
   { value: 'BANK_TRANSFER', label: 'Bank transfer', icon: 'pi pi-building' },
-  { value: 'OTHER', label: 'Other', icon: 'pi pi-ellipsis-h' },
 ];
 
 /** Resolve a payment method's label and icon, falling back to Cash for unknown values. */

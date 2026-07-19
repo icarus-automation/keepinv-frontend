@@ -59,6 +59,125 @@
       />
     </div>
   } @else if (report(); as r) {
+    <!-- All stores: cross-store comparison for a multi-store owner (Irene runs two shops) -->
+    @if (showConsolidated() && combined(); as total) {
+      <section aria-label="All stores this month" class="mt-6">
+        <div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+          <h2 class="text-sm font-semibold text-ink">
+            All stores
+            <span class="text-xs font-normal text-muted">· This month · {{ total.storeCount }} stores</span>
+          </h2>
+          @if (leaderName(); as leader) {
+            <p class="inline-flex items-center gap-1.5 text-xs text-muted">
+              <i class="pi pi-star-fill text-[0.7rem] text-signal" aria-hidden="true"></i>
+              <span class="font-medium text-ink">{{ leader }}</span> is leading
+            </p>
+          }
+        </div>
+
+        <!-- Combined totals across every store -->
+        <dl class="mt-3 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-4">
+          <div class="bg-counter p-4">
+            <dt class="text-xs font-medium text-muted">Revenue</dt>
+            <dd class="mt-1 text-xl font-semibold tabular-nums text-ink">{{ total.revenue | money }}</dd>
+          </div>
+          <div class="bg-counter p-4">
+            <dt class="text-xs font-medium text-muted">Gross profit</dt>
+            <dd class="mt-1 text-xl font-semibold tabular-nums text-ink">{{ total.grossProfit | money }}</dd>
+          </div>
+          <div class="bg-counter p-4">
+            <dt class="text-xs font-medium text-muted">Expenses</dt>
+            <dd class="mt-1 text-xl font-semibold tabular-nums text-ink">{{ total.totalExpenses | money }}</dd>
+          </div>
+          <div class="bg-counter p-4">
+            <dt class="text-xs font-medium text-muted">Net profit</dt>
+            <dd
+              class="mt-1 text-xl font-semibold tabular-nums"
+              [class]="total.netProfit >= 0 ? 'text-success' : 'text-danger'"
+            >
+              {{ total.netProfit | money }}
+            </dd>
+          </div>
+        </dl>
+
+        <!-- Per-store comparison, best performer first -->
+        <div class="mt-3 overflow-hidden rounded-lg border border-line bg-counter">
+          <ul>
+            @for (store of storeRows(); track store.id) {
+              <li class="border-b border-line px-4 py-4 last:border-0">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="min-w-0">
+                    <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <span
+                        class="h-2.5 w-2.5 shrink-0 rounded-full"
+                        [style.background-color]="store.color"
+                        aria-hidden="true"
+                      ></span>
+                      <span class="truncate text-sm font-semibold text-ink">{{ store.name }}</span>
+                      @if (store.isLeader) {
+                        <span class="inline-flex items-center gap-1 rounded border border-line px-1.5 py-0.5 text-[0.625rem] font-medium uppercase tracking-wide text-muted">
+                          <i class="pi pi-star-fill text-[0.55rem] text-signal" aria-hidden="true"></i>
+                          Leading
+                        </span>
+                      }
+                      @if (store.isActive) {
+                        <span class="rounded border border-line px-1.5 py-0.5 text-[0.625rem] font-medium uppercase tracking-wide text-muted">
+                          Current
+                        </span>
+                      }
+                    </div>
+                    <p class="mt-1 text-xs tabular-nums text-muted">
+                      {{ store.revenue | money }} revenue · {{ store.salesCount }} sale{{ store.salesCount === 1 ? '' : 's' }}
+                    </p>
+                  </div>
+                  <div class="shrink-0 text-right">
+                    <p
+                      class="text-sm font-semibold tabular-nums"
+                      [class]="store.netProfit >= 0 ? 'text-success' : 'text-danger'"
+                    >
+                      {{ store.netProfit | money }}
+                    </p>
+                    <p class="text-[0.7rem] tabular-nums text-muted">{{ store.marginPct }}% margin</p>
+                  </div>
+                </div>
+                <div class="mt-2.5 flex items-center gap-3">
+                  <div
+                    class="h-1.5 flex-1 overflow-hidden rounded-full bg-line"
+                    role="img"
+                    [attr.aria-label]="store.name + ' revenue ' + (store.revenue | money)"
+                  >
+                    <div
+                      class="h-full rounded-full"
+                      [style.width.%]="store.barWidth"
+                      [style.background-color]="store.color"
+                    ></div>
+                  </div>
+                  @if (!store.isActive) {
+                    <button
+                      type="button"
+                      (click)="openStore(store.id)"
+                      [disabled]="switchingStore()"
+                      class="inline-flex shrink-0 items-center gap-1 rounded-md border border-line px-2 py-1 text-xs font-medium text-ink outline-none transition-colors hover:border-signal focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter disabled:cursor-wait motion-reduce:transition-none"
+                    >
+                      Open <i class="pi pi-arrow-right text-[0.6rem]" aria-hidden="true"></i>
+                    </button>
+                  }
+                </div>
+              </li>
+            }
+          </ul>
+        </div>
+      </section>
+
+      <!-- Everything below is the active store only -->
+      <div class="mt-8 flex items-center gap-2 border-t border-line pt-6">
+        <i class="pi pi-shop text-sm text-muted" aria-hidden="true"></i>
+        <h2 class="text-sm font-semibold text-ink">
+          This store <span class="font-normal text-muted">· {{ activeOrgName() }}</span>
+        </h2>
+      </div>
+    }
+
     <!-- Stock KPIs -->
     <section aria-label="Stock overview" class="mt-6">
       <dl class="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-4">

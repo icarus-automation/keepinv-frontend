@@ -1,12 +1,14 @@
 # Lugawjuan receipt printing — Xprinter XP-58H (58mm, USB+BT)
 
-What prints after every completed sale, on one strip of paper:
+Two separate slips, printed at different moments:
 
-1. **Kitchen slip** — shop name, `KITCHEN SLIP`, the day's order number huge (`#12`), time,
-   each line as `2x Lugaw with Egg` in double-height bold, the sale note if any, and the total.
-   Its job is that the kitchen never misses an order.
-2. A tear gap, then the **customer stub** — shop name, `YOUR ORDER NUMBER`, `#12` huge, time.
-   The cashier tears once between the two and hands the stub over.
+1. **Kitchen slip** — auto-prints the instant a sale completes: shop name, `KITCHEN SLIP`, the
+   day's order number huge (`#12`), time, each line as `2x Lugaw with Egg` in double-height bold,
+   the sale note if any, and the total. Its job is that the kitchen never misses an order, so it
+   comes out on its own with no waiting.
+2. **Customer stub** — printed on demand: on the sale-complete screen the cashier taps
+   **Print stub** to give the customer their number (shop name, `YOUR ORDER NUMBER`, `#12` huge,
+   time, `Salamat po!`). Only customers who want a number get one — no paper is wasted otherwise.
 
 Order numbers restart at `#1` each day (Manila time) and are stored on the sale's receipt
 snapshot, so a reprint months later shows the same number. Sales made before this feature print
@@ -20,16 +22,17 @@ a `#` + receipt-number tail instead.
 3. On **Point of Sale**, tap the **Connect printer** chip beside the search box.
 4. Pick the printer (usually `XP-58H` or similar) in the chooser. The chip turns to
    `Ready` with a green dot.
-5. Ring up a test sale — the kitchen slip + stub print by themselves.
+5. Ring up a test sale — the kitchen slip prints by itself; tap **Print stub** to print a stub.
 
 After the first pairing the app remembers the printer and reconnects silently on reload where
 Chrome supports it; otherwise the chip needs one tap per session.
 
 ## Daily flow
 
-- **Auto-print**: completing a sale prints slip + stub immediately. A printer problem shows a
-  red notice under the receipt but never blocks the sale.
-- **Reprint**: on the sale-complete screen — `Print again` (slip + stub) or `Stub only`.
+- **Auto-print**: completing a sale prints the kitchen slip immediately. A printer problem shows
+  a red notice under the receipt but never blocks the sale.
+- **Customer stub**: on the sale-complete screen tap `Print stub` when the customer wants their
+  number. `Reprint slip` re-prints the kitchen slip.
 - **Old sales**: Sales → pick a sale → `Print slip`.
 
 ## Troubleshooting

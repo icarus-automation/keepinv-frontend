@@ -23,8 +23,12 @@ import { SalesReportService } from '../pos/report/sales-report.service';
 import { ReportSummary, summarizeSales } from '../pos/report/report.types';
 import { ProfitLossService } from '../expenses/services/profit-loss.service';
 import { ProfitLossReport } from '../expenses/types/expense.types';
+import { OrganizationService } from '../organization/services/organization.service';
+import { categoryColor } from '../../../common/theme/category-palette';
 import { DashboardService } from './services/dashboard.service';
+import { ConsolidatedReportService } from './services/consolidated-report.service';
 import { AttentionBucket, InventoryDashboardReport } from './types/dashboard.types';
+import { ConsolidatedReport } from './types/consolidated.types';
 
 interface AttentionTile {
   readonly label: string;
@@ -46,6 +50,24 @@ interface DistributionRow {
   readonly label: string;
   readonly quantity: number;
   readonly sublabel?: string;
+}
+
+/** One store's line in the cross-store comparison: its numbers plus its bar width and flags. */
+interface StoreComparisonRow {
+  readonly id: string;
+  readonly name: string;
+  /** Stable palette color keyed off the store id, shared with the comparison bar. */
+  readonly color: string;
+  readonly revenue: number;
+  readonly netProfit: number;
+  readonly marginPct: number;
+  readonly salesCount: number;
+  /** Revenue as a percentage of the top-earning store, floored so a non-zero store stays visible. */
+  readonly barWidth: number;
+  /** The best performer (`stores[0]` when there's more than one store to compare). */
+  readonly isLeader: boolean;
+  /** The store currently active in the session — no "switch" affordance shown for it. */
+  readonly isActive: boolean;
 }
 
 // Chart colours picked to sit with the warm "Lit Workbench" palette. Kept as explicit values so the
@@ -84,14 +106,25 @@ const UNIT_STATUS_LABELS: Record<string, string> = {
 })
 export class Dashboard {
   private readonly dashboardService = inject(DashboardService);
+  private readonly consolidatedService = inject(ConsolidatedReportService);
   private readonly salesReport = inject(SalesReportService);
   private readonly profitLoss = inject(ProfitLossService);
   private readonly productsService = inject(ProductsService);
   private readonly entitlements = inject(EntitlementsService);
+  private readonly organization = inject(OrganizationService);
   private readonly destroyRef = inject(DestroyRef);
 
   /** POS-tier only: revenue, payment mix, and P&L need sales data BASIC tenants don't have. */
   protected readonly canUsePos = this.entitlements.canUsePos;
+
+  /** Multi-store owner: the "All stores" comparison band is shown only to them. */
+  protected readonly showConsolidated = computed(
+    () => this.organization.hasMultipleStores() && this.organization.canManage(),
+  );
+  /** The active store's name, used to label the single-store part of the page when comparing. */
+  protected readonly activeOrgName = computed(() => this.organization.organization()?.name ?? null);
+  private readonly activeOrgId = computed(() => this.organization.organization()?.id ?? null);
+  protected readonly switchingStore = signal(false);
 
   protected readonly loading = signal(true);
   protected readonly loadError = signal<string | null>(null);
@@ -102,6 +135,38 @@ export class Dashboard {
   protected readonly pnl = signal<ProfitLossReport | null>(null);
   /** Products at or below their reorder point, for the reorder shortcut list. */
   protected readonly lowStockProducts = signal<Product[]>([]);
+
+  /** Cross-store roll-up (month-to-date); null when not a multi-store owner or not loaded. */
+  protected readonly consolidated = signal<ConsolidatedReport | null>(null);
+  protected readonly combined = computed(() => this.consolidated()?.combined ?? null);
+
+  /** Per-store comparison rows, best performer first, each carrying its bar width and flags. */
+  protected readonly storeRows = computed<StoreComparisonRow[]>(() => {
+    const report = this.consolidated();
+    if (!report) {
+      return [];
+    }
+    const maxRevenue = Math.max(1, ...report.stores.map((store) => store.revenue));
+    const activeId = this.activeOrgId();
+    return report.stores.map((store, index) => ({
+      id: store.organizationId,
+      name: store.organizationName,
+      color: categoryColor(store.organizationId),
+      revenue: store.revenue,
+      netProfit: store.netProfit,
+      marginPct: store.revenue > 0 ? Math.round((store.netProfit / store.revenue) * 100) : 0,
+      salesCount: store.salesCount,
+      barWidth: store.revenue > 0 ? Math.max(4, (store.revenue / maxRevenue) * 100) : 0,
+      isLeader: index === 0 && report.stores.length > 1,
+      isActive: store.organizationId === activeId,
+    }));
+  });
+
+  /** The leading store's name, for the one-line "who's ahead" highlight. Null with <2 stores. */
+  protected readonly leaderName = computed(() => {
+    const rows = this.storeRows();
+    return rows.length > 1 ? rows[0].name : null;
+  });
 
   /** No products at all: a first-run shop, not a load failure — teach instead of showing zeros. */
   protected readonly isEmpty = computed(() => {
@@ -272,19 +337,44 @@ export class Dashboard {
             .load(monthStart.toISOString(), to.toISOString())
             .pipe(catchError(() => of<ProfitLossReport | null>(null)))
         : of<ProfitLossReport | null>(null),
+      consolidated: this.showConsolidated()
+        ? this.consolidatedService
+            .load(monthStart.toISOString(), to.toISOString())
+            .pipe(catchError(() => of<ConsolidatedReport | null>(null)))
+        : of<ConsolidatedReport | null>(null),
     })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.loading.set(false)),
       )
       .subscribe({
-        next: ({ report, lowStock, sales, pnl }) => {
+        next: ({ report, lowStock, sales, pnl, consolidated }) => {
           this.report.set(report);
           this.lowStockProducts.set(lowStock);
           this.salesSummary.set(sales);
           this.pnl.set(pnl);
+          this.consolidated.set(consolidated);
         },
         error: (error: unknown) => this.loadError.set(httpErrorMessage(error)),
+      });
+  }
+
+  /**
+   * Drill into a store by making it the active org, then hard-reloading so every per-org screen
+   * (this dashboard included) re-hydrates against it. The consolidated numbers themselves need no
+   * switch — this is the bridge from the overview to a single store's detail.
+   */
+  protected openStore(id: string): void {
+    if (this.switchingStore() || id === this.activeOrgId()) {
+      return;
+    }
+    this.switchingStore.set(true);
+    this.organization
+      .setActiveOrganization(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => window.location.reload(),
+        error: () => this.switchingStore.set(false),
       });
   }
 

@@ -34,7 +34,11 @@ export const appConfig: ApplicationConfig = {
       return auth.loadSession().pipe(
         switchMap((user) =>
           user
-            ? forkJoin([organizations.loadActiveOrganization(), entitlements.load()])
+            ? forkJoin([
+                organizations.loadActiveOrganization(),
+                organizations.loadOrganizations(),
+                entitlements.load(),
+              ])
             : of(null),
         ),
       );

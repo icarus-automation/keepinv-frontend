@@ -7,6 +7,22 @@
 @import 'primeicons/primeicons.css';
 
 /*
+ * `split:` — the POS register-beside-menu layout. It turns on for a real desktop (>=1024px, the
+ * old `lg` trigger, preserved) OR any tablet held in landscape (>=820px wide and >=600px tall).
+ * The height floor is what keeps a phone in landscape out: phones are short (<600px) in landscape,
+ * so they keep the portrait "scroll down to the cart" flow, exactly as the counter expects.
+ * Block form (two `@slot` media rules = OR); a single comma-separated media list mis-parses.
+ */
+@custom-variant split {
+  @media (min-width: 1024px) {
+    @slot;
+  }
+  @media (orientation: landscape) and (min-width: 820px) and (min-height: 600px) {
+    @slot;
+  }
+}
+
+/*
  * Design tokens: "The Lit Workbench".
  * Warm-tinted neutrals (never pure #fff/#000) carrying a single amber signal.
  * Amber is reserved for the primary action and focus only (the One Signal Rule).

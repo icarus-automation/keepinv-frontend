@@ -1,4 +1,4 @@
-<div class="page pb-28 lg:pb-0">
+<div class="page pb-28 split:pb-0">
   @if (phase() === 'receipt' && result(); as sale) {
     <!-- Success: the captured receipt -->
     <div class="mx-auto max-w-md">
@@ -12,7 +12,9 @@
             <p class="mt-2 text-4xl font-bold leading-none tabular-nums text-signal">
               #{{ sale.receiptData.orderNo }}
             </p>
-            <p class="mt-1 text-xs text-muted">Order number — call this out; it's on the stub</p>
+            <p class="mt-1 text-xs text-muted">
+              Kitchen slip printed. Tap <span class="font-medium text-ink">Print stub</span> to hand the customer their number.
+            </p>
           }
           <p class="mt-2 text-sm text-muted">
             Change due
@@ -43,20 +45,20 @@
         @if (printService.supported) {
           <p-button
             type="button"
-            label="Print again"
-            icon="pi pi-print"
+            label="Print stub"
+            icon="pi pi-ticket"
             [outlined]="true"
             [disabled]="printBusy()"
-            (onClick)="reprint()"
+            (onClick)="printStub()"
             styleClass="font-medium"
           />
           <p-button
             type="button"
-            label="Stub only"
-            icon="pi pi-ticket"
+            label="Reprint slip"
+            icon="pi pi-print"
             [text]="true"
             [disabled]="printBusy()"
-            (onClick)="reprintStub()"
+            (onClick)="reprintSlip()"
             styleClass="font-medium text-muted"
           />
         }
@@ -73,7 +75,9 @@
     </div>
   } @else {
     <!-- Selling: the touch grid is primary; scan/search stays as a fallback -->
-    <div class="lg:grid lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start lg:gap-5">
+    <!-- Portrait (phone/tablet): menu first, cart below, scroll to transact. Landscape tablet / -->
+    <!-- desktop (`split:`): menu on the left, the register rail on the right. -->
+    <div class="split:grid split:grid-cols-[minmax(0,1fr)_24rem] split:items-start split:gap-5">
       <!-- Left: search + product grid -->
       <main class="min-w-0">
         <!-- Scan / search + printer -->
@@ -240,7 +244,7 @@
       </main>
 
       <!-- Right: cart + tender rail -->
-      <aside aria-label="Cart and payment" class="mt-4 space-y-4 lg:mt-0 lg:sticky lg:top-6">
+      <aside aria-label="Cart and payment" class="mt-4 space-y-4 split:mt-0 split:sticky split:top-6">
         <!-- Cart -->
         <section aria-label="Cart" class="overflow-hidden rounded-lg border border-line bg-counter">
           <div class="flex items-center justify-between border-b border-line px-4 py-2.5">
@@ -335,7 +339,7 @@
         </section>
 
         <!-- Payment -->
-        <div class="rounded-lg border border-line bg-counter p-4 lg:p-5">
+        <div class="rounded-lg border border-line bg-counter p-4 split:p-5">
           <!-- Total -->
           <div>
             <p class="text-xs font-medium text-muted">Total due</p>
@@ -432,8 +436,8 @@
             </p>
           }
 
-          <!-- Complete (desktop) -->
-          <div class="mt-5 hidden lg:block">
+          <!-- Complete (in the rail: landscape tablet / desktop) -->
+          <div class="mt-5 hidden split:block">
             <p-button
               type="button"
               label="Complete sale"
@@ -451,8 +455,8 @@
       </aside>
     </div>
 
-    <!-- Mobile action bar -->
-    <div class="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-panel px-4 py-3 lg:hidden">
+    <!-- Portrait action bar (hidden once the register rail is visible) -->
+    <div class="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-panel px-4 py-3 split:hidden">
       <div class="mx-auto flex max-w-7xl items-center justify-between gap-4">
         <div class="min-w-0">
           <p class="text-xs text-muted">Total due</p>

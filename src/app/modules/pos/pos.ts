@@ -719,31 +719,32 @@ export class Pos {
   }
 
   /**
-   * Fire-and-forget after checkout: the kitchen slip + queue stub. A failure only posts an
-   * inline notice — the sale is already committed and must never look blocked by paper.
+   * Fire-and-forget after checkout: the kitchen slip only, so the kitchen starts the order at
+   * once. The customer's number stub is a separate on-demand tap. A failure only posts an inline
+   * notice — the sale is already committed and must never look blocked by paper.
    */
   private autoPrint(receipt: ReceiptData): void {
     if (!this.printService.supported) {
       return;
     }
     this.printNotice.set(null);
-    void this.printService.printSale(receipt).catch((error: unknown) => this.flagPrintError(error));
+    void this.printService.printSlip(receipt).catch((error: unknown) => this.flagPrintError(error));
   }
 
-  /** Reprint the kitchen slip + stub for the sale on screen. */
-  protected reprint(): void {
+  /** Reprint the kitchen slip for the sale on screen (a jam, a lost slip). */
+  protected reprintSlip(): void {
     const receipt = this.result()?.receiptData;
     if (!receipt || this.printBusy()) {
       return;
     }
     this.printNotice.set(null);
     void this.printService
-      .printSaleInteractive(receipt)
+      .printSlipInteractive(receipt)
       .catch((error: unknown) => this.flagPrintError(error));
   }
 
-  /** Print just the customer's number stub again. */
-  protected reprintStub(): void {
+  /** Print the customer's number stub — the staff's usual next tap after the kitchen slip. */
+  protected printStub(): void {
     const receipt = this.result()?.receiptData;
     if (!receipt || this.printBusy()) {
       return;

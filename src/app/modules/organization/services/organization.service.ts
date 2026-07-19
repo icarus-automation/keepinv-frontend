@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, map, of, tap } from 'rxjs';
+import { Observable, catchError, map, of, switchMap, tap } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
 import { ApiResponse } from '../../../../common/responses/api.response';
@@ -31,6 +31,13 @@ export class OrganizationService {
   private readonly activeOrg = signal<FullOrganization | null>(null);
   /** The active organization, or null when signed out or membership-less. */
   readonly organization = this.activeOrg.asReadonly();
+
+  /** Every organization the signed-in user belongs to (Irene owns two stores). */
+  private readonly orgList = signal<Organization[]>([]);
+  readonly organizations = this.orgList.asReadonly();
+
+  /** True only for a multi-store account: gates the store switcher and the consolidated view. */
+  readonly hasMultipleStores = computed(() => this.orgList().length > 1);
 
   /** The signed-in user's role in the active org, or null (e.g. the platform operator). */
   readonly myRole = computed<OrgRole | null>(() => {
@@ -65,6 +72,31 @@ export class OrganizationService {
           }
         }),
       );
+  }
+
+  /**
+   * Lists every organization the signed-in user belongs to. Better Auth's own route
+   * returns the array directly (no `ApiResponse` envelope). Safe as an app initializer:
+   * never throws, resolving to an empty list on failure or when signed out.
+   */
+  loadOrganizations(): Observable<Organization[]> {
+    return this.http.get<Organization[] | null>(`${this.orgBaseUrl}/list`).pipe(
+      map((orgs) => orgs ?? []),
+      catchError(() => of<Organization[]>([])),
+      tap((orgs) => this.orgList.set(orgs)),
+    );
+  }
+
+  /**
+   * Switches the session's active organization, then re-hydrates the full active org so
+   * the shell rebrands. Callers reload the current screen's data afterwards (a full
+   * reload is simplest and safest for the infrequent store-switch). Owner-facing only;
+   * the switcher is hidden for single-store accounts.
+   */
+  setActiveOrganization(organizationId: string): Observable<FullOrganization | null> {
+    return this.http
+      .post(`${this.orgBaseUrl}/set-active`, { organizationId })
+      .pipe(switchMap(() => this.loadActiveOrganization()));
   }
 
   /**

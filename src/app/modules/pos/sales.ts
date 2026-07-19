@@ -219,6 +219,12 @@ export class Sales {
     return paymentMethodMeta(method).label;
   }
 
+  /** The cashier who rang up a sale (name, or email as a fallback); null when unattributed. */
+  protected cashierName(sale: SaleListItem): string | null {
+    const cashier = sale.cashier;
+    return cashier ? cashier.name?.trim() || cashier.email : null;
+  }
+
   protected goToPos(): void {
     void this.router.navigate(['/pos']);
   }

@@ -137,7 +137,46 @@
       </div>
 
       <div class="flex shrink-0 items-center gap-1.5">
-        @if (showTools()) {
+        @if (hasMultipleStores()) {
+          <button
+            type="button"
+            (click)="storeMenu.toggle($event)"
+            aria-haspopup="menu"
+            aria-controls="store-menu"
+            [attr.aria-expanded]="storeMenuOpen()"
+            [attr.aria-label]="'Active store: ' + orgName() + '. Switch store'"
+            [disabled]="switchingStore()"
+            class="inline-flex h-9 items-center gap-1.5 rounded-md border border-line px-2.5 text-sm font-medium text-ink outline-none transition-colors hover:border-signal focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter disabled:cursor-wait motion-reduce:transition-none"
+          >
+            <i
+              [class]="switchingStore() ? 'pi pi-spin pi-spinner' : 'pi pi-shop'"
+              class="shrink-0 text-base text-muted"
+              aria-hidden="true"
+            ></i>
+            <span class="hidden max-w-[9rem] truncate sm:inline">{{ orgName() }}</span>
+            <i class="pi pi-angle-down shrink-0 text-xs text-muted" aria-hidden="true"></i>
+          </button>
+          <p-menu
+            #storeMenu
+            id="store-menu"
+            [model]="storeMenuItems()"
+            [popup]="true"
+            appendTo="body"
+            styleClass="w-60"
+            (onShow)="storeMenuOpen.set(true)"
+            (onHide)="storeMenuOpen.set(false)"
+          >
+            <ng-template #start>
+              <p class="px-3 pb-1.5 pt-2.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-muted">
+                Switch store
+              </p>
+            </ng-template>
+          </p-menu>
+
+          <span class="mx-1 h-6 w-px shrink-0 bg-line" aria-hidden="true"></span>
+        }
+
+        @if (canManage() && showTools()) {
           <a
             routerLink="/tools"
             [class]="chromeButtonClasses(toolsActive())"
@@ -149,16 +188,18 @@
             <i class="pi pi-wrench text-xl" aria-hidden="true"></i>
           </a>
         }
-        <a
-          routerLink="/settings"
-          [class]="chromeButtonClasses(settingsActive())"
-          [attr.aria-current]="settingsActive() ? 'page' : null"
-          aria-label="Settings"
-          pTooltip="Settings"
-          tooltipPosition="bottom"
-        >
-          <i class="pi pi-cog text-xl" aria-hidden="true"></i>
-        </a>
+        @if (canManage()) {
+          <a
+            routerLink="/settings"
+            [class]="chromeButtonClasses(settingsActive())"
+            [attr.aria-current]="settingsActive() ? 'page' : null"
+            aria-label="Settings"
+            pTooltip="Settings"
+            tooltipPosition="bottom"
+          >
+            <i class="pi pi-cog text-xl" aria-hidden="true"></i>
+          </a>
+        }
 
         <span class="mx-1 h-6 w-px shrink-0 bg-line" aria-hidden="true"></span>
 

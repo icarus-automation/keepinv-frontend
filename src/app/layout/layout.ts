@@ -7,7 +7,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   ActivatedRouteSnapshot,
   NavigationEnd,
@@ -93,6 +93,13 @@ export class Layout {
   private static readonly POS_PATHS = new Set(['pos', 'sales', 'reports']);
 
   /**
+   * The only surfaces a `member` (cashier) may reach — everything else answers 403 for staff, so
+   * the rail hides it and `adminGuard` bounces a deep link back to `/pos`. Sales Report is NOT here:
+   * cashiers ring up sales and read their own history, but the analytics report stays owner/admin.
+   */
+  private static readonly MEMBER_PATHS = new Set(['pos', 'sales']);
+
+  /**
    * The rail holds only the work an operator repeats through the day. Occasional jobs (Tools) and
    * chrome (Settings) live in the header instead — that is what keeps this list short enough to
    * fit a laptop screen without scrolling. Resist adding to it.
@@ -145,16 +152,59 @@ export class Layout {
   ];
 
   // POS items (Point of Sale, Sales, Sales Report) only show on plans that include the module.
-  // Sections left empty by the filter are dropped so no orphan caption renders.
+  // A `member` (cashier) is narrowed further to just POS + Sales. Sections left empty by the filter
+  // are dropped so no orphan caption renders.
   protected readonly navSections = computed<readonly NavSection[]>(() => {
     const canUsePos = this.entitlements.canUsePos();
+    const memberOnly = this.organizationService.myRole() === 'member';
     return Layout.ALL_SECTIONS.map((section) => ({
       ...section,
-      items: section.items.filter(
-        (item) => !item.path || canUsePos || !Layout.POS_PATHS.has(item.path),
-      ),
+      items: section.items.filter((item) => {
+        if (memberOnly) {
+          return !!item.path && Layout.MEMBER_PATHS.has(item.path);
+        }
+        return !item.path || canUsePos || !Layout.POS_PATHS.has(item.path);
+      }),
     })).filter((section) => section.items.length > 0);
   });
+
+  // --- Store switcher (multi-store owner: Irene runs two shops) ---
+  protected readonly organizations = this.organizationService.organizations;
+  protected readonly hasMultipleStores = this.organizationService.hasMultipleStores;
+  /** Owner/admin gate for admin-only header chrome (Tools, Settings) — hidden for cashiers. */
+  protected readonly canManage = this.organizationService.canManage;
+  protected readonly storeMenuOpen = signal(false);
+  protected readonly switchingStore = signal(false);
+
+  /** One row per store the user belongs to; the active store is checked and disabled. */
+  protected readonly storeMenuItems = computed<MenuItem[]>(() => {
+    const activeId = this.organization()?.id ?? null;
+    const switching = this.switchingStore();
+    return this.organizations().map((org) => ({
+      label: org.name,
+      icon: org.id === activeId ? 'pi pi-check' : 'pi pi-shop',
+      disabled: switching || org.id === activeId,
+      command: () => this.switchStore(org.id),
+    }));
+  });
+
+  /**
+   * Move the session to another store, then hard-reload so every per-org screen re-hydrates
+   * against the new active org (the simplest correct behavior for an infrequent switch).
+   */
+  protected switchStore(id: string): void {
+    if (this.switchingStore() || id === this.organization()?.id) {
+      return;
+    }
+    this.switchingStore.set(true);
+    this.organizationService
+      .setActiveOrganization(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => window.location.reload(),
+        error: () => this.switchingStore.set(false),
+      });
+  }
 
   /** Leader-chord state: true while waiting for the second key after `N`. */
   protected readonly leader = signal(false);

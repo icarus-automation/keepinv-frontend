@@ -71,6 +71,7 @@ export class Login {
         switchMap(() =>
           forkJoin([
             this.organizationService.loadActiveOrganization(),
+            this.organizationService.loadOrganizations(),
             this.entitlements.load(),
           ]),
         ),

@@ -19,6 +19,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { httpErrorMessage } from '../../../../common/http/http-error-message';
 import { PrinterError } from '../../../../common/printing/label-printer';
 import { MoneyPipe } from '../../products/utils/money.pipe';
+import { OrganizationService } from '../../organization/services/organization.service';
 import { PosService } from '../services/pos.service';
 import { ReceiptPrintService } from '../services/receipt-print.service';
 import { PosUser, SaleListItem, SaleResult, SaleStatus } from '../types/pos.types';
@@ -49,6 +50,7 @@ import { SaleStatusBadge } from '../components/sale-status-badge';
 export class SaleDetail {
   private readonly service = inject(PosService);
   protected readonly printService = inject(ReceiptPrintService);
+  private readonly organization = inject(OrganizationService);
   private readonly destroyRef = inject(DestroyRef);
 
   /** The selected ledger row. Drives the header immediately; the body loads from it. */
@@ -75,7 +77,16 @@ export class SaleDetail {
   protected readonly status = computed<SaleStatus>(
     () => this.result()?.sale.status ?? this.sale().status,
   );
-  protected readonly canVoid = computed(() => this.status() === 'COMPLETED' && !!this.result());
+  /** Only an owner/admin may void — a cashier (member) can read and reprint, but not reverse a sale. */
+  protected readonly canVoid = computed(
+    () => this.status() === 'COMPLETED' && !!this.result() && this.organization.canManage(),
+  );
+
+  /** Who rang up this sale, from the loaded record (falling back to the ledger row while it loads). */
+  protected readonly cashierName = computed(() => {
+    const user = this.result()?.sale.cashier ?? this.sale().cashier;
+    return user ? this.formatUser(user) : null;
+  });
   protected readonly voidedBy = computed(() => {
     const sale = this.result()?.sale;
     return sale?.voidedBy ? this.formatUser(sale.voidedBy) : null;
@@ -126,14 +137,14 @@ export class SaleDetail {
     this.load(this.sale().id);
   }
 
-  /** Reprint this sale's kitchen slip + queue stub (pairs the printer first if needed). */
+  /** Reprint this sale's kitchen slip (pairs the printer first if needed). */
   protected print(): void {
     const receipt = this.result()?.receiptData;
     if (!receipt || this.printBusy()) {
       return;
     }
     this.printError.set(null);
-    void this.printService.printSaleInteractive(receipt).catch((error: unknown) => {
+    void this.printService.printSlipInteractive(receipt).catch((error: unknown) => {
       if (error instanceof PrinterError && error.cancelled) {
         return;
       }

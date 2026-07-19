@@ -11,6 +11,18 @@ export const posGuard: CanActivateFn = () => {
   return entitlements.canUsePos() ? true : router.parseUrl('/');
 };
 
+/**
+ * Owner/admin-only routes. A `member` (cashier) hitting any admin/back-office screen — whether by
+ * deep link or a stale bookmark — is bounced to `/pos`, their home surface, since the API answers
+ * those endpoints with 403 for staff. Keep this in lockstep with the role filter in `layout.ts`
+ * (cashiers keep POS + Sales; everything else is owner/admin).
+ */
+export const adminGuard: CanActivateFn = () => {
+  const organization = inject(OrganizationService);
+  const router = inject(Router);
+  return organization.canManage() ? true : router.parseUrl('/pos');
+};
+
 /** Blocks PRO-only routes (/tools/barcode-sheet) for BASIC tenants. Redirects home. */
 export const proGuard: CanActivateFn = () => {
   const entitlements = inject(EntitlementsService);

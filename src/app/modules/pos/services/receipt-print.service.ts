@@ -6,16 +6,17 @@ import {
 } from '../../../../common/printing/receipt/receipt-printer.service';
 import {
   SlipData,
-  renderKitchenSlipWithStub,
+  renderKitchenSlip,
   renderQueueStub,
 } from '../../../../common/printing/receipt/receipt-slips';
 import { ReceiptData } from '../types/pos.types';
 
 /**
- * Turns a sale's receipt snapshot into paper on the XP-58H: the kitchen slip (so no order is
- * missed) plus the customer's number-only queue stub, in one job with a tear gap between. Owns
- * the mapping from {@link ReceiptData} to the printer's slip shape — the sell screen and the
- * sales-ledger detail both print through here, so the paper always reads the same.
+ * Turns a sale's receipt snapshot into paper on the XP-58H, as two separate jobs: the kitchen
+ * slip (auto-printed so no order is missed) and the customer's number-only queue stub (printed
+ * on demand, so staff hand it over only when a customer needs their number). Owns the mapping
+ * from {@link ReceiptData} to the printer's slip shape — the sell screen and the sales-ledger
+ * detail both print through here, so the paper always reads the same.
  */
 @Injectable({ providedIn: 'root' })
 export class ReceiptPrintService {
@@ -39,20 +40,20 @@ export class ReceiptPrintService {
     return this.printer.reconnectSilently();
   }
 
-  /** Kitchen slip + queue stub for one sale. Throws `PrinterError` when the paper can't happen. */
-  printSale(receipt: ReceiptData): Promise<void> {
-    return this.printer.print(renderKitchenSlipWithStub(this.toSlipData(receipt)));
+  /** The kitchen slip for one sale (the auto-print). Throws `PrinterError` when paper can't happen. */
+  printSlip(receipt: ReceiptData): Promise<void> {
+    return this.printer.print(renderKitchenSlip(this.toSlipData(receipt)));
   }
 
-  /** Just the customer's number stub (a lost stub, a second customer on one order). */
+  /** The customer's number-only stub — printed on demand, handed to whoever's waiting. */
   printStub(receipt: ReceiptData): Promise<void> {
     return this.printer.print(renderQueueStub(this.toSlipData(receipt)));
   }
 
   /** Print from a user gesture: re-link silently, open the chooser if that fails, then print. */
-  async printSaleInteractive(receipt: ReceiptData): Promise<void> {
+  async printSlipInteractive(receipt: ReceiptData): Promise<void> {
     await this.ensureConnectedInteractive();
-    await this.printSale(receipt);
+    await this.printSlip(receipt);
   }
 
   async printStubInteractive(receipt: ReceiptData): Promise<void> {

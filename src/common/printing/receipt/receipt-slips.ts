@@ -74,20 +74,7 @@ function queueStub(doc: EscPosBuilder, data: SlipData): void {
     .line('Salamat po!');
 }
 
-/**
- * The auto-print job: the kitchen slip, a tear gap, then the customer's number-only stub. The
- * cashier tears once between them — the slip goes on the rail, the stub goes to the customer.
- */
-export function renderKitchenSlipWithStub(data: SlipData): Uint8Array {
-  const doc = new EscPosBuilder().reset();
-  kitchenSlip(doc, data);
-  doc.feed(TEAR_FEED);
-  queueStub(doc, data);
-  doc.feed(TEAR_FEED);
-  return doc.build();
-}
-
-/** Just the kitchen slip (a reprint after a jam or a lost slip). */
+/** The kitchen slip — the auto-print job so the kitchen never misses an order. */
 export function renderKitchenSlip(data: SlipData): Uint8Array {
   const doc = new EscPosBuilder().reset();
   kitchenSlip(doc, data);

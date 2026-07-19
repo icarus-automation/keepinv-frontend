@@ -150,7 +150,7 @@
                       }
                     </div>
                     <p class="truncate text-xs tabular-nums text-muted">
-                      {{ sale.completedAt | date: 'MMM d, h:mm a' }} · {{ sale._count.items }} item{{ sale._count.items === 1 ? '' : 's' }} · {{ methodLabel(sale.paymentMethod) }}
+                      {{ sale.completedAt | date: 'MMM d, h:mm a' }} · {{ sale._count.items }} item{{ sale._count.items === 1 ? '' : 's' }} · {{ methodLabel(sale.paymentMethod) }}@if (cashierName(sale); as who) { · {{ who }} }
                     </p>
                   </div>
                   <p class="shrink-0 text-right text-sm font-medium tabular-nums text-ink">
