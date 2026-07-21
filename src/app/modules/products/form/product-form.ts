@@ -34,6 +34,7 @@ import { Popover, PopoverModule } from 'primeng/popover';
 import { CategoriesService } from '../../categories/services/categories.service';
 import { SuppliersService } from '../../suppliers/services/suppliers.service';
 import { LocationsService } from '../../locations/services/locations.service';
+import { MenuService } from '../../menu/services/menu.service';
 import { Category } from '../../categories/types/category.types';
 import { Supplier } from '../../suppliers/types/supplier.types';
 import { Location } from '../../locations/types/location.types';
@@ -152,6 +153,7 @@ export class ProductForm implements OnInit {
   private readonly categories = inject(CategoriesService);
   private readonly suppliers = inject(SuppliersService);
   private readonly locations = inject(LocationsService);
+  private readonly menu = inject(MenuService);
   private readonly destroyRef = inject(DestroyRef);
 
   /** Present in edit mode; null/undefined in create mode. */
@@ -166,6 +168,8 @@ export class ProductForm implements OnInit {
   protected readonly categoryOptions = signal<NamedRecord[]>([]);
   protected readonly supplierOptions = signal<NamedRecord[]>([]);
   protected readonly locationOptions = signal<NamedRecord[]>([]);
+  /** Drinks menu lines. Empty for a catalog that has none, which hides the placement section. */
+  protected readonly menuGroupOptions = signal<NamedRecord[]>([]);
   protected readonly optionsLoading = signal(true);
 
   protected readonly saving = signal(false);
@@ -185,6 +189,9 @@ export class ProductForm implements OnInit {
     categoryId: ['', [Validators.required]],
     supplierId: this.formBuilder.control<string | null>(null),
     locationId: this.formBuilder.control<string | null>(null),
+    // Drinks menu placement: which line this product is a size of, and what its button reads.
+    menuGroupId: this.formBuilder.control<string | null>(null),
+    menuSizeLabel: ['', [Validators.maxLength(40)]],
   });
 
   // --- Stock behaviour + recipe ---
@@ -305,6 +312,8 @@ export class ProductForm implements OnInit {
       categoryId: product.categoryId,
       supplierId: product.supplierId,
       locationId: product.locationId,
+      menuGroupId: product.menuGroupId,
+      menuSizeLabel: product.menuSizeLabel ?? '',
     });
     // Respect a platform the product already carries: don't let URL auto-detect overwrite it.
     if (product.reorderPlatform) {
@@ -335,17 +344,20 @@ export class ProductForm implements OnInit {
       suppliers: this.suppliers.list(),
       locations: this.locations.list(),
       catalog: this.products.listAll(),
+      menuGroups: this.menu.listGroups(),
     })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.optionsLoading.set(false)),
       )
       .subscribe({
-        next: ({ categories, suppliers, locations, catalog }) => {
+        next: ({ categories, suppliers, locations, catalog, menuGroups }) => {
           this.categoryOptions.set(this.mergeCurrent(categories, product?.category ?? null));
           this.supplierOptions.set(this.mergeCurrent(suppliers, product?.supplier ?? null));
           this.locationOptions.set(this.mergeCurrent(locations, product?.location ?? null));
           this.ingredientOptions.set(this.toIngredientOptions(catalog, product));
+          // The whole section stays hidden for a catalog with no drinks menu (lugawjuan).
+          this.menuGroupOptions.set(menuGroups.map((group) => ({ id: group.id, name: group.name })));
         },
         error: (error: unknown) =>
           this.formError.set(httpErrorMessage(error)),
@@ -473,6 +485,9 @@ export class ProductForm implements OnInit {
       categoryId: raw.categoryId,
       supplierId: raw.supplierId || null,
       locationId: raw.locationId || null,
+      // Detaching sends null; the label only means anything while a group is attached.
+      menuGroupId: raw.menuGroupId || null,
+      menuSizeLabel: raw.menuGroupId ? raw.menuSizeLabel.trim() : '',
       // This form authors the sellable menu; kitchen-only stock is created on /ingredients.
       isStockOnly: false,
       isStockTracked: behaviour !== 'always',

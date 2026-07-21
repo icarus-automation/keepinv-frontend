@@ -1,0 +1,267 @@
+<div class="page">
+  <div class="flex flex-wrap items-start justify-between gap-3">
+    <p class="max-w-prose text-sm text-muted">
+      Flavors the cashier picks after choosing a size. They hold no stock and need no SKU — only the
+      cups behind each size are counted. Sizes and their prices live on
+      <span class="font-medium text-ink">Menu Items</span>.
+    </p>
+    <p-button
+      type="button"
+      [label]="showGroupForm() ? 'Cancel' : 'New menu line'"
+      [icon]="showGroupForm() ? 'pi pi-times' : 'pi pi-plus'"
+      [outlined]="true"
+      (onClick)="toggleGroupForm()"
+      styleClass="shrink-0 font-medium"
+    />
+  </div>
+
+  @if (showGroupForm()) {
+    <form
+      (ngSubmit)="createGroup()"
+      class="mt-4 rounded-lg border border-line bg-counter p-4 sm:flex sm:items-end sm:gap-3"
+    >
+      <div class="min-w-0 flex-1">
+        <label for="menu-group-name" class="text-xs font-medium text-muted">Line name</label>
+        <input
+          pInputText
+          id="menu-group-name"
+          type="text"
+          [formControl]="groupForm.controls.name"
+          maxlength="100"
+          autocomplete="off"
+          placeholder="e.g. Milktea, Coffee, Hot Tea"
+          class="mt-1.5 w-full"
+        />
+      </div>
+      <div class="mt-3 min-w-0 flex-1 sm:mt-0">
+        <label for="menu-group-description" class="text-xs font-medium text-muted">Description</label>
+        <input
+          pInputText
+          id="menu-group-description"
+          type="text"
+          [formControl]="groupForm.controls.description"
+          maxlength="255"
+          autocomplete="off"
+          placeholder="Optional"
+          class="mt-1.5 w-full"
+        />
+      </div>
+      <p-button
+        type="submit"
+        label="Create"
+        icon="pi pi-check"
+        [loading]="savingGroup()"
+        styleClass="mt-3 font-medium sm:mt-0"
+      />
+    </form>
+  }
+
+  @if (actionError(); as error) {
+    <p role="alert" class="mt-4 flex items-start gap-1.5 text-sm font-medium text-danger">
+      <i class="pi pi-exclamation-circle mt-0.5 text-xs" aria-hidden="true"></i>
+      <span>{{ error }}</span>
+    </p>
+  }
+
+  @if (loading()) {
+    <div class="grid place-items-center py-20 text-muted">
+      <i class="pi pi-spin pi-spinner text-2xl" aria-hidden="true"></i>
+      <span class="sr-only">Loading menu…</span>
+    </div>
+  } @else if (loadError(); as error) {
+    <div class="mt-4 rounded-lg border border-dashed border-line px-6 py-12 text-center">
+      <i class="pi pi-exclamation-triangle text-2xl text-danger" aria-hidden="true"></i>
+      <p class="mt-2 text-sm font-medium text-ink">{{ error }}</p>
+      <p-button
+        type="button"
+        label="Retry"
+        icon="pi pi-refresh"
+        [text]="true"
+        (onClick)="load()"
+        styleClass="mt-2 font-medium"
+      />
+    </div>
+  } @else if (isEmpty()) {
+    <div class="mt-4 rounded-lg border border-dashed border-line px-6 py-16 text-center">
+      <span class="mx-auto grid h-11 w-11 place-items-center rounded-full bg-panel text-muted">
+        <i class="pi pi-list text-xl" aria-hidden="true"></i>
+      </span>
+      <p class="mt-3 text-sm font-medium text-ink">No menu lines yet</p>
+      <p class="mx-auto mt-1 max-w-sm text-sm text-muted">
+        Create a line like “Milktea”, add its flavors here, then attach its sizes from Menu Items.
+        Until a line exists, the POS keeps its plain product grid.
+      </p>
+    </div>
+  } @else {
+    <div class="mt-5 space-y-5">
+      @for (group of groups(); track group.id) {
+        <section class="overflow-hidden rounded-lg border border-line bg-counter">
+          <header class="flex flex-wrap items-start justify-between gap-3 border-b border-line px-5 py-3.5">
+            <div class="min-w-0">
+              <h2 class="text-base font-semibold text-ink">{{ group.name }}</h2>
+              <p class="mt-0.5 text-xs text-muted">
+                {{ group.flavors.length }} flavor{{ group.flavors.length === 1 ? '' : 's' }}
+                @if (soldOutCount(group) > 0) {
+                  · <span class="font-medium text-danger">{{ soldOutCount(group) }} sold out</span>
+                }
+              </p>
+            </div>
+
+            <!-- Sizes are read-only here: they carry price, recipe and cup stock. -->
+            <div class="flex flex-wrap items-center gap-1.5">
+              @for (size of group.products; track size.id) {
+                <span
+                  class="inline-flex items-center gap-1.5 rounded-md border border-line px-2.5 py-1 text-xs font-medium text-muted"
+                >
+                  {{ sizeLabel(size) }}
+                  <span class="tabular-nums text-ink">{{ size.sellingPrice | money }}</span>
+                </span>
+              } @empty {
+                <span class="text-xs font-medium text-danger">
+                  No sizes attached — set one on Menu Items
+                </span>
+              }
+            </div>
+          </header>
+
+          <ul class="divide-y divide-line">
+            @for (flavor of group.flavors; track flavor.id) {
+              <li class="flex flex-wrap items-center justify-between gap-3 px-5 py-2.5">
+                <div class="min-w-0">
+                  <p class="truncate text-sm font-medium" [class]="flavor.isAvailable ? 'text-ink' : 'text-muted line-through'">
+                    {{ flavor.name }}
+                  </p>
+                  @if (hasSurcharge(flavor)) {
+                    <p class="text-xs tabular-nums text-muted">
+                      +{{ flavor.priceDelta | money }} on every size
+                    </p>
+                  }
+                </div>
+
+                @if (archivingFlavorId() === flavor.id) {
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs text-muted">Remove for good?</span>
+                    <p-button
+                      type="button"
+                      label="Remove"
+                      severity="danger"
+                      size="small"
+                      [loading]="busyFlavorId() === flavor.id"
+                      (onClick)="archiveFlavor(group, flavor)"
+                      styleClass="font-medium"
+                    />
+                    <p-button
+                      type="button"
+                      label="Cancel"
+                      size="small"
+                      [text]="true"
+                      (onClick)="cancelArchive()"
+                      styleClass="font-medium text-muted"
+                    />
+                  </div>
+                } @else {
+                  <div class="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      (click)="toggleAvailability(group, flavor)"
+                      [disabled]="busyFlavorId() === flavor.id"
+                      [attr.aria-pressed]="!flavor.isAvailable"
+                      [attr.aria-label]="
+                        (flavor.isAvailable ? 'Mark ' : 'Bring back ') + flavor.name
+                      "
+                      class="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter disabled:cursor-wait"
+                      [class]="
+                        flavor.isAvailable
+                          ? 'border-line text-muted hover:text-ink'
+                          : 'border-danger/40 bg-danger/5 text-danger'
+                      "
+                    >
+                      @if (busyFlavorId() === flavor.id) {
+                        <i class="pi pi-spin pi-spinner text-[0.7rem]" aria-hidden="true"></i>
+                      } @else {
+                        <i
+                          [class]="flavor.isAvailable ? 'pi pi-check-circle' : 'pi pi-ban'"
+                          class="text-[0.7rem]"
+                          aria-hidden="true"
+                        ></i>
+                      }
+                      {{ flavor.isAvailable ? 'Available' : 'Sold out' }}
+                    </button>
+                    <button
+                      type="button"
+                      (click)="confirmArchive(flavor.id)"
+                      [attr.aria-label]="'Remove ' + flavor.name"
+                      class="grid h-7 w-7 place-items-center rounded-md text-muted outline-none transition-colors hover:text-danger focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+                    >
+                      <i class="pi pi-trash text-xs" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                }
+              </li>
+            }
+          </ul>
+
+          <div class="border-t border-line px-5 py-3">
+            @if (addingToGroupId() === group.id) {
+              <form (ngSubmit)="addFlavor(group.id)" class="flex flex-wrap items-end gap-2">
+                <div class="min-w-0 flex-1">
+                  <label [for]="'menu-flavor-' + group.id" class="text-xs font-medium text-muted">
+                    Flavor name
+                  </label>
+                  <input
+                    pInputText
+                    [id]="'menu-flavor-' + group.id"
+                    type="text"
+                    [formControl]="flavorForm.controls.name"
+                    maxlength="100"
+                    autocomplete="off"
+                    placeholder="e.g. Wintermelon"
+                    class="mt-1.5 w-full text-sm"
+                  />
+                </div>
+                <div class="w-32">
+                  <label [for]="'menu-delta-' + group.id" class="text-xs font-medium text-muted">
+                    Extra charge
+                  </label>
+                  <input
+                    pInputText
+                    [id]="'menu-delta-' + group.id"
+                    type="number"
+                    inputmode="decimal"
+                    min="0"
+                    step="0.01"
+                    [formControl]="flavorForm.controls.priceDelta"
+                    class="mt-1.5 w-full text-right text-sm tabular-nums"
+                  />
+                </div>
+                <p-button
+                  type="submit"
+                  label="Add"
+                  icon="pi pi-check"
+                  [loading]="savingFlavor()"
+                  styleClass="font-medium"
+                />
+                <p-button
+                  type="button"
+                  label="Done"
+                  [text]="true"
+                  (onClick)="closeFlavorForm()"
+                  styleClass="font-medium text-muted"
+                />
+              </form>
+            } @else {
+              <button
+                type="button"
+                (click)="openFlavorForm(group.id)"
+                class="inline-flex items-center gap-1.5 rounded-md text-xs font-medium text-muted outline-none transition-colors hover:text-ink focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+              >
+                <i class="pi pi-plus text-[0.65rem]" aria-hidden="true"></i>
+                Add a flavor to {{ group.name }}
+              </button>
+            }
+          </div>
+        </section>
+      }
+    </div>
+  }
+</div>

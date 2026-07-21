@@ -370,6 +370,47 @@
         </div>
       </div>
 
+      <!-- Menu placement: only meaningful once the shop defines drink lines to be a size of. -->
+      @if (menuGroupOptions().length > 0) {
+        <div class="flex flex-col gap-1.5">
+          <label for="pf-menu-group" class="text-sm font-medium">
+            Menu line <span class="font-normal text-muted">(optional)</span>
+          </label>
+          <div class="grid gap-2 sm:grid-cols-2">
+            <p-select
+              inputId="pf-menu-group"
+              formControlName="menuGroupId"
+              [options]="menuGroupOptions()"
+              optionLabel="name"
+              optionValue="id"
+              [showClear]="true"
+              [loading]="optionsLoading()"
+              placeholder="Not on the drinks menu"
+              appendTo="body"
+              styleClass="w-full text-sm"
+            />
+            <!-- The label only exists once a line is chosen, so it appears with it. -->
+            @if (form.controls.menuGroupId.value) {
+              <input
+                pInputText
+                id="pf-menu-size-label"
+                type="text"
+                formControlName="menuSizeLabel"
+                maxlength="40"
+                autocomplete="off"
+                placeholder="Size label, e.g. 16oz"
+                aria-label="Size label"
+                class="w-full text-sm"
+              />
+            }
+          </div>
+          <p class="text-xs text-muted">
+            Makes this product one size of that line: the cashier picks the size, then a flavor.
+            Flavors are managed on <span class="font-medium text-ink">Menu &amp; Flavors</span>.
+          </p>
+        </div>
+      }
+
       <!-- Supplier (optional) -->
       <div class="flex flex-col gap-1.5">
         <label for="pf-supplier" class="text-sm font-medium">

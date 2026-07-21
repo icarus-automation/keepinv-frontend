@@ -97,6 +97,12 @@ export const routes: Routes = [
         loadComponent: () => import('./modules/products/products').then((m) => m.Products),
       },
       {
+        path: 'menu',
+        title: 'Menu & Flavors',
+        canActivate: [adminGuard],
+        loadComponent: () => import('./modules/menu/menu').then((m) => m.Menu),
+      },
+      {
         path: 'ingredients',
         title: 'Ingredients',
         canActivate: [adminGuard],

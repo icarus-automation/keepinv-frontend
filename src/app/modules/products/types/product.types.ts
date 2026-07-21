@@ -84,6 +84,14 @@ export interface Product {
   components: ProductComponent[];
 
   /**
+   * Set when this product is one size inside a drinks menu group ("Milktea" → 16oz / 22oz): the
+   * POS then requires a flavor from that group before it can be rung up. Null on ordinary tiles.
+   */
+  menuGroupId: string | null;
+  menuSizeLabel: string | null;
+  menuSortOrder: number;
+
+  /**
    * Relation counts embedded by the list/detail endpoints. `componentOf` counts the active menu
    * items that consume this product as an ingredient — the Ingredients page's "used in N items".
    * Absent on bare create/update responses (the catalog re-hydrates after a write).
@@ -132,6 +140,11 @@ export interface ProductRequest {
   isStockOnly?: boolean;
   /** false = always sellable and never decremented (a refill). */
   isStockTracked?: boolean;
+  /** Attach this product to a drinks menu group as one of its sizes; `null` detaches it. */
+  menuGroupId?: string | null;
+  /** What the size button reads, e.g. "16oz". */
+  menuSizeLabel?: string;
+  menuSortOrder?: number;
   /** Replace-all recipe: sending the key rewrites the whole recipe; omitting it keeps the current one. */
   components?: ProductComponentRequest[];
 }

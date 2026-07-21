@@ -70,4 +70,17 @@ export interface ProfitLossReport {
   expensesByCategory: ExpenseCategoryTotal[];
   marginByProduct: MarginRow[];
   marginByCategory: MarginRow[];
+  /** Units and revenue per drink flavor. Empty for a catalog without a size/flavor menu. */
+  flavorMix: FlavorMixRow[];
+}
+
+/**
+ * One flavor's share of the period, folded across every size it sold in. Keyed on the sale item's
+ * snapshot name, so a renamed or retired flavor keeps its history instead of vanishing.
+ */
+export interface FlavorMixRow {
+  id: string | null;
+  name: string;
+  unitsSold: number;
+  revenue: number;
 }

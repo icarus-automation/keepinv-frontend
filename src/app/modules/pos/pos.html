@@ -81,7 +81,10 @@
       <!-- Left: search + product grid -->
       <main class="min-w-0">
         <!-- Scan / search + printer -->
-        <div class="flex items-stretch gap-2">
+        <!-- The drinks counter orders off the menu picker only: a size scanned or searched here -->
+        <!-- would enter the cart with no flavor and the sale would be refused, so it's hidden. -->
+        <div class="flex items-stretch justify-end gap-2">
+        @if (!usesDrinkMenu()) {
         <div class="relative min-w-0 flex-1">
           <label for="pos-scan" class="sr-only">Scan or search items</label>
           <i
@@ -171,6 +174,7 @@
             </ul>
           }
         </div>
+        }
 
         <!-- Printer chip: connection status + the pairing tap Web Bluetooth requires -->
         @if (printService.supported) {
@@ -207,12 +211,12 @@
           </p>
         }
 
-        <!-- Product grid: tap a photo to drop it in the cart -->
+        <!-- Menu: the size/flavor picker for a drinks tenant, the product grid for everyone else -->
         <div class="mt-4">
           @if (gridLoading()) {
             <div class="grid place-items-center py-20 text-muted">
               <i class="pi pi-spin pi-spinner text-2xl" aria-hidden="true"></i>
-              <span class="sr-only">Loading products…</span>
+              <span class="sr-only">Loading menu…</span>
             </div>
           } @else if (gridError(); as error) {
             <div class="rounded-lg border border-dashed border-line px-6 py-12 text-center">
@@ -220,13 +224,15 @@
               <p class="mt-2 text-sm font-medium text-ink">{{ error }}</p>
               <button
                 type="button"
-                (click)="loadGrid()"
+                (click)="loadMenu()"
                 class="mt-3 inline-flex items-center gap-1.5 rounded-md border border-line px-3 py-1.5 text-xs font-medium text-ink outline-none transition-colors hover:border-signal focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
               >
                 <i class="pi pi-refresh text-[0.7rem]" aria-hidden="true"></i>
                 Retry
               </button>
             </div>
+          } @else if (usesDrinkMenu()) {
+            <app-drink-menu [groups]="menuGroups()" (pickDrink)="addDrink($event)" />
           } @else if (gridProducts().length === 0) {
             <div class="rounded-lg border border-dashed border-line px-6 py-16 text-center">
               <span class="mx-auto grid h-11 w-11 place-items-center rounded-full bg-panel text-muted">
@@ -273,7 +279,13 @@
                 <li class="border-b border-line px-3 py-2.5 last:border-0">
                   <div class="flex items-start gap-2">
                     <div class="min-w-0 flex-1">
-                      <p class="truncate text-sm font-medium text-ink">{{ line.name }}</p>
+                      @if (line.flavorName; as flavor) {
+                        <!-- Flavor leads: it's what the customer said and what the kitchen makes. -->
+                        <p class="truncate text-sm font-semibold text-ink">{{ flavor }}</p>
+                        <p class="truncate text-xs text-muted">{{ line.name }}</p>
+                      } @else {
+                        <p class="truncate text-sm font-medium text-ink">{{ line.name }}</p>
+                      }
                       <p class="truncate text-xs tabular-nums text-muted">
                         {{ unitPrice(line) }} each@if (line.unitIdentifier) {
                           · <span class="text-ink">{{ line.unitIdentifier }}</span>
@@ -282,7 +294,7 @@
                       @if (overStock(line)) {
                         <p class="mt-0.5 inline-flex items-center gap-1 text-xs font-medium text-danger">
                           <i class="pi pi-exclamation-triangle text-[0.65rem]" aria-hidden="true"></i>
-                          Over stock ({{ line.quantityOnHand }} on hand)
+                          Over stock ({{ line.quantityOnHand }} left for this size)
                         </p>
                       }
                     </div>

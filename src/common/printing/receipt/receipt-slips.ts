@@ -7,6 +7,8 @@ import { EscPosBuilder, RECEIPT_COLS, wrapText } from './escpos';
  */
 export interface SlipItem {
   readonly name: string;
+  /** The flavor ordered, printed under the drink so the kitchen scoops the right powder. */
+  readonly flavor?: string;
   readonly quantity: number;
 }
 
@@ -41,11 +43,19 @@ function kitchenSlip(doc: EscPosBuilder, data: SlipData): void {
   doc.align('left');
   for (const item of data.items) {
     const prefix = `${item.quantity}x `;
+    const indent = ' '.repeat(prefix.length);
     const lines = wrapText(item.name, RECEIPT_COLS - prefix.length);
     doc.size(1, ITEM_HEIGHT).bold(true);
     doc.line(`${prefix}${lines[0]}`);
     for (const continuation of lines.slice(1)) {
-      doc.line(`${' '.repeat(prefix.length)}${continuation}`);
+      doc.line(`${indent}${continuation}`);
+    }
+    // The flavor is the instruction the kitchen acts on, so it prints at the same arm's-length
+    // size as the drink, indented under it rather than crammed onto the same line.
+    if (item.flavor) {
+      for (const line of wrapText(item.flavor, RECEIPT_COLS - prefix.length)) {
+        doc.line(`${indent}${line}`);
+      }
     }
     doc.bold(false).size(1, 1);
   }

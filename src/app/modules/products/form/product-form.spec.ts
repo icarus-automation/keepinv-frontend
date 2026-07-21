@@ -43,6 +43,12 @@ describe('ProductForm', () => {
         data: [],
         meta: { total: 0, page: 1, limit: 50, lastPage: 1 },
       });
+    // Drinks menu lines, so a size can be attached to one. Empty here: no menu placement section.
+    httpMock.expectOne(`${environment.apiBaseUrl}/menu/groups`).flush({
+      statusCode: 200,
+      message: 'ok',
+      data: [],
+    });
     await fixture.whenStable();
   });
 

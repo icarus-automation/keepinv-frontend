@@ -139,6 +139,7 @@ export class Layout {
           path: 'ingredients',
           newShortcut: { key: 'i', verb: 'New ingredient' },
         },
+        { label: 'Menu & Flavors', icon: 'pi pi-list', path: 'menu' },
         { label: 'Categories', icon: 'pi pi-th-large', path: 'categories' },
         { label: 'Locations', icon: 'pi pi-map-marker', path: 'locations' },
         { label: 'Suppliers', icon: 'pi pi-truck', path: 'suppliers' },

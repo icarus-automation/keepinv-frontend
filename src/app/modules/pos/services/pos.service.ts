@@ -10,6 +10,7 @@ import {
 } from '../../../../common/responses/api.response';
 import {
   CheckoutRequest,
+  PosMenuGroup,
   PosSearchItem,
   SaleListItem,
   SaleResult,
@@ -97,6 +98,17 @@ export class PosService {
     return this.products
       .listAll({ kind: 'SELLABLE' })
       .pipe(map((products) => products.map(toGridSearchItem)));
+  }
+
+  /**
+   * The size/flavor ordering menu. A non-empty list switches the sell screen to the drinks
+   * picker; an empty one leaves the tenant on the plain product grid. No feature flag is
+   * involved — a tenant that defines no menu groups simply never sees the picker.
+   */
+  getMenu(): Observable<PosMenuGroup[]> {
+    return this.http
+      .get<ApiResponse<PosMenuGroup[]>>(`${this.baseUrl}/menu`)
+      .pipe(map((response) => response.data));
   }
 
   /** Search products and serialized units by name, SKU, barcode, serial, or asset tag. */

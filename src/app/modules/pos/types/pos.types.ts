@@ -47,10 +47,53 @@ export interface PosSearchItem {
   categoryName?: string;
 }
 
-/** One line in a checkout payload. Serialized units carry a `productUnitId` and quantity 1. */
+/**
+ * One size inside a menu group — the priced, stock-bearing product a sale is actually booked
+ * against. `available` counts the servings its cup pool still allows.
+ */
+export interface PosMenuSize {
+  productId: string;
+  /** The size button's label, e.g. "16oz" or "Iced 22oz". */
+  label: string;
+  /** Decimal string, e.g. "39.00". The line price is this plus the flavor's `priceDelta`. */
+  sellingPrice: string;
+  available: number;
+  /** false = always sellable: the count is meaningless and stays hidden. */
+  isStockTracked: boolean;
+  isSellable: boolean;
+}
+
+/** A flavor option. Holds no stock of its own; it only shifts the price and names the drink. */
+export interface PosMenuFlavor {
+  id: string;
+  name: string;
+  /** Decimal string added to the size price — the premium flavors run "10.00" over. */
+  priceDelta: string;
+  /** The counter's sold-out toggle: still listed, greyed out, not orderable. */
+  isAvailable: boolean;
+}
+
+/**
+ * One drink line the customer orders by picking a size and then a flavor (`GET /pos/menu`).
+ * An empty menu means the tenant sells off the plain product grid instead — that's the whole
+ * switch between the lugawjuan POS and the drinks POS, with no per-tenant flag anywhere.
+ */
+export interface PosMenuGroup {
+  id: string;
+  name: string;
+  description: string | null;
+  sizes: PosMenuSize[];
+  flavors: PosMenuFlavor[];
+}
+
+/**
+ * One line in a checkout payload. Serialized units carry a `productUnitId` and quantity 1; a
+ * menu-group size carries the `menuFlavorId` the customer picked, which the API requires.
+ */
 export interface CheckoutItem {
   productId: string;
   productUnitId?: string;
+  menuFlavorId?: string;
   quantity: number;
 }
 
@@ -69,6 +112,8 @@ export interface ReceiptItemData {
   name: string;
   sku: string;
   barcode: string | null;
+  /** The flavor ordered ("Taro"). Absent on plain tiles and on snapshots predating the menu. */
+  flavor?: string;
   unitIdentifier?: string;
   quantity: number;
   unitPrice: string;
@@ -136,8 +181,11 @@ export interface SaleItem {
   productSku: string;
   productBarcode: string | null;
   unitIdentifier: string | null;
+  /** Snapshot of the flavor ordered, kept even after that flavor is renamed or retired. */
+  flavorName: string | null;
   productId: string;
   productUnitId: string | null;
+  menuFlavorId: string | null;
 }
 
 /** The live sale with the relations the detail pane reads. The receipt body is rendered from the snapshot. */

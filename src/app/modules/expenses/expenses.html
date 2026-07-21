@@ -283,6 +283,25 @@
           }
         </section>
 
+        <!-- Flavor mix: only a drinks catalog produces these rows, so the card hides itself -->
+        <!-- entirely for tenants that sell off the plain product grid. -->
+        @if (report.flavorMix.length > 0) {
+          <section aria-label="Flavors by cups sold" class="rounded-lg border border-line bg-counter p-5">
+            <h2 class="text-sm font-medium text-ink">Flavors by cups sold</h2>
+            <ul class="mt-4 space-y-2">
+              @for (row of report.flavorMix; track row.name) {
+                <li class="flex items-center justify-between gap-3 text-sm">
+                  <span class="min-w-0 truncate text-ink">{{ row.name }}</span>
+                  <span class="flex shrink-0 items-center gap-3 tabular-nums">
+                    <span class="font-medium text-ink">{{ row.unitsSold }} sold</span>
+                    <span class="text-muted">{{ row.revenue | money }}</span>
+                  </span>
+                </li>
+              }
+            </ul>
+          </section>
+        }
+
         <section aria-label="Top products by margin" class="rounded-lg border border-line bg-counter p-5">
           <h2 class="text-sm font-medium text-ink">Top products by margin</h2>
           @if (report.marginByProduct.length === 0) {

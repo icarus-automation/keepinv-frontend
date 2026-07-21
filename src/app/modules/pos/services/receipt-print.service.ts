@@ -85,7 +85,11 @@ export class ReceiptPrintService {
         minute: '2-digit',
         hour12: true,
       }),
-      items: receipt.items.map((item) => ({ name: item.name, quantity: item.quantity })),
+      items: receipt.items.map((item) => ({
+        name: item.name,
+        flavor: item.flavor,
+        quantity: item.quantity,
+      })),
       total: receipt.totals.total,
       note: receipt.note,
     };

@@ -30,7 +30,9 @@
     @for (item of data().items; track item.productUnitId ?? item.productId) {
       <li class="flex items-start justify-between gap-3 border-b border-line/70 py-2 last:border-0">
         <div class="min-w-0">
-          <p class="truncate text-sm font-medium">{{ item.name }}</p>
+          <p class="truncate text-sm font-medium">
+            {{ item.name }}@if (item.flavor) { · <span class="font-semibold">{{ item.flavor }}</span> }
+          </p>
           <p class="truncate text-xs tabular-nums text-muted">
             {{ item.sku }}@if (item.unitIdentifier) { · {{ item.unitIdentifier }} }
           </p>

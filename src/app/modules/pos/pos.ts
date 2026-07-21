@@ -25,6 +25,9 @@ import {
   PAYMENT_METHODS,
   PaymentMethod,
   PaymentMethodMeta,
+  PosMenuFlavor,
+  PosMenuGroup,
+  PosMenuSize,
   PosSearchItem,
   ReceiptData,
   SaleResult,
@@ -32,6 +35,7 @@ import {
 } from './types/pos.types';
 import { Receipt } from './components/receipt';
 import { ProductGrid } from './components/product-grid/product-grid';
+import { DrinkMenu, DrinkPick } from './components/drink-menu/drink-menu';
 
 /**
  * One line in the working cart. A serialized unit carries a `productUnitId` and a
@@ -46,6 +50,9 @@ interface CartLine {
   readonly name: string;
   readonly sku: string;
   readonly unitIdentifier?: string;
+  /** The flavor picked for a drinks line; the API requires it and the slip prints it. */
+  readonly menuFlavorId?: string;
+  readonly flavorName?: string;
   readonly unitPriceCents: number;
   quantity: number;
   readonly quantityOnHand: number;
@@ -90,6 +97,7 @@ const SCANNER_FIRST = false;
     MoneyPipe,
     Receipt,
     ProductGrid,
+    DrinkMenu,
   ],
   templateUrl: './pos.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -110,6 +118,15 @@ export class Pos {
   protected readonly gridProducts = signal<PosSearchItem[]>([]);
   protected readonly gridLoading = signal(true);
   protected readonly gridError = signal<string | null>(null);
+
+  // --- Drinks menu (size → flavor ordering) ---
+  /**
+   * Non-empty for a tenant that defines menu groups (A Cup of Joy): the sell screen swaps the
+   * product grid for the size/flavor picker. Lugawjuan defines none, so it stays on the grid —
+   * that single check is the whole difference between the two counters.
+   */
+  protected readonly menuGroups = signal<PosMenuGroup[]>([]);
+  protected readonly usesDrinkMenu = computed(() => this.menuGroups().length > 0);
 
   // --- Cart ---
   protected readonly cart = signal<CartLine[]>([]);
@@ -251,12 +268,39 @@ export class Pos {
       }
     });
 
-    this.loadGrid();
+    this.loadMenu();
     // Re-link the remembered printer so the first sale of the day auto-prints without a tap.
     void this.printService.reconnectSilently();
   }
 
-  // --- Product grid ---
+  // --- Menu / product grid ---
+
+  /**
+   * Ask for the drinks menu first. A tenant that defines groups orders off the picker and never
+   * needs the product grid — and must not see it, since every drink size demands a flavor the
+   * grid can't supply. Only when the menu comes back empty do we fall back to loading the grid.
+   */
+  protected loadMenu(): void {
+    this.gridLoading.set(true);
+    this.gridError.set(null);
+    this.service
+      .getMenu()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (groups) => {
+          this.menuGroups.set(groups);
+          if (groups.length > 0) {
+            this.gridLoading.set(false);
+            return;
+          }
+          this.loadGrid();
+        },
+        error: (error: unknown) => {
+          this.gridError.set(httpErrorMessage(error));
+          this.gridLoading.set(false);
+        },
+      });
+  }
 
   /** Load (or reload) the whole sellable catalog for the touch grid. */
   protected loadGrid(): void {
@@ -272,6 +316,48 @@ export class Pos {
         next: (items) => this.gridProducts.set(items),
         error: (error: unknown) => this.gridError.set(httpErrorMessage(error)),
       });
+  }
+
+  /**
+   * Add one drink from the menu picker. Lines are keyed by size *and* flavor, so a Taro and an
+   * Ube of the same size stay two lines instead of collapsing into a single "2x" the kitchen
+   * would misread — the API keys its own merge the same way.
+   */
+  protected addDrink(pick: DrinkPick): void {
+    const { group, size, flavor } = pick;
+    if (!size.isSellable || !flavor.isAvailable) {
+      this.flagNotice(`${flavor.name} is not available right now.`);
+      return;
+    }
+
+    const index = this.cart().findIndex(
+      (line) => line.productId === size.productId && line.menuFlavorId === flavor.id,
+    );
+    if (index >= 0) {
+      this.cart.update((lines) =>
+        lines.map((line, i) => (i === index ? { ...line, quantity: line.quantity + 1 } : line)),
+      );
+    } else {
+      this.cart.update((lines) => [this.drinkLine(group, size, flavor), ...lines]);
+    }
+    this.checkoutError.set(null);
+  }
+
+  private drinkLine(group: PosMenuGroup, size: PosMenuSize, flavor: PosMenuFlavor): CartLine {
+    return {
+      key: `c${this.keySeq++}`,
+      productId: size.productId,
+      // Mirrors the seeded product name ("Milktea (16oz)") so cart, receipt and slip all agree.
+      name: `${group.name} (${size.label})`,
+      sku: '',
+      menuFlavorId: flavor.id,
+      flavorName: flavor.name,
+      unitPriceCents: priceToCents(size.sellingPrice) + priceToCents(flavor.priceDelta),
+      quantity: 1,
+      quantityOnHand: size.available,
+      isSerialized: false,
+      isStockTracked: size.isStockTracked,
+    };
   }
 
   // --- Scan / search ---
@@ -637,8 +723,19 @@ export class Pos {
     this.refocus();
   }
 
+  /**
+   * Warn before the counter finds out at checkout. Every flavor of one size draws the same cup
+   * pool, so the whole size's demand counts against it — three Taro plus three Ube of the 16oz
+   * is six cups, even though neither line alone looks over.
+   */
   protected overStock(line: CartLine): boolean {
-    return line.isStockTracked && !line.isSerialized && line.quantity > line.quantityOnHand;
+    if (!line.isStockTracked || line.isSerialized) {
+      return false;
+    }
+    const demandOnSameStock = this.cart()
+      .filter((row) => row.productId === line.productId && !row.productUnitId)
+      .reduce((sum, row) => sum + row.quantity, 0);
+    return demandOnSameStock > line.quantityOnHand;
   }
 
   protected lineTotal(line: CartLine): string {
@@ -687,6 +784,7 @@ export class Pos {
         items: this.cart().map((line) => ({
           productId: line.productId,
           productUnitId: line.productUnitId,
+          menuFlavorId: line.menuFlavorId,
           quantity: line.quantity,
         })),
         paymentMethod: this.method(),
@@ -784,8 +882,8 @@ export class Pos {
     this.printNotice.set(null);
     this.result.set(null);
     this.phase.set('selling');
-    // Stock moved on the last sale; pull a fresh catalog so the grid reflects it.
-    this.loadGrid();
+    // Cups moved on the last sale; pull a fresh menu (or grid) so availability reflects it.
+    this.loadMenu();
   }
 
   private refocus(): void {
