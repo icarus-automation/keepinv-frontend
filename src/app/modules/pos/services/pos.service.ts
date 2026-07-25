@@ -16,65 +16,11 @@ import {
   SaleResult,
   SalesListQuery,
 } from '../types/pos.types';
-import { ProductsService } from '../../products/services/products.service';
-import { Product } from '../../products/types/product.types';
 
 /** A page of sales plus its pagination metadata. */
 export interface SalesPage {
   items: SaleListItem[];
   meta: PageMeta;
-}
-
-/**
- * A recipe bowl can make as many servings as its scarcest tracked ingredient allows (an untracked
- * ingredient never constrains); an untracked product (a refill) is always sellable; anything else
- * is gated on its own count. Returns `Infinity` for the always-sellable cases so the caller can
- * tell "unlimited" apart from a real zero.
- */
-function gridAvailability(product: Product): number {
-  if (product.components.length > 0) {
-    return product.components.reduce((min, line) => {
-      if (!line.component.isStockTracked) {
-        return min;
-      }
-      const servings = Math.floor(line.component.quantityOnHand / Math.max(1, line.quantity));
-      return Math.min(min, servings);
-    }, Number.POSITIVE_INFINITY);
-  }
-  if (!product.isStockTracked) {
-    return Number.POSITIVE_INFINITY;
-  }
-  return product.quantityOnHand;
-}
-
-/**
- * Map a catalog {@link Product} onto the {@link PosSearchItem} shape the touch grid
- * and cart already share, so a grid tap flows through the exact same `addItem` path
- * as a scan or search pick. Stock-gated: an out-of-stock stock product isn't
- * sellable; serialized products still resolve through the unit picker, which keys
- * off stock too.
- */
-function toGridSearchItem(product: Product): PosSearchItem {
-  const available = gridAvailability(product);
-  const isStockTracked = Number.isFinite(available);
-
-  return {
-    kind: 'PRODUCT',
-    productId: product.id,
-    name: product.name,
-    sku: product.sku,
-    barcode: product.barcode,
-    brand: product.brand,
-    sellingPrice: product.sellingPrice,
-    // Refills and all-untracked recipes have no meaningful count; the grid reads isStockTracked
-    // to hide the badge rather than print a placeholder number.
-    quantityOnHand: isStockTracked ? available : 0,
-    isSerialized: product.isSerialized,
-    isSellable: available > 0,
-    isStockTracked,
-    imageUrl: product.imageUrl,
-    categoryName: product.category?.name ?? '',
-  };
 }
 
 /**
@@ -86,18 +32,16 @@ function toGridSearchItem(product: Product): PosSearchItem {
 @Injectable({ providedIn: 'root' })
 export class PosService {
   private readonly http = inject(HttpClient);
-  private readonly products = inject(ProductsService);
   private readonly baseUrl = `${environment.apiBaseUrl}/pos`;
 
   /**
-   * The whole sellable catalog for the touch grid (lugawjuan), mapped to
-   * {@link PosSearchItem}. kind=SELLABLE keeps the shared base pools (stock-only
-   * ingredients) out server-side; the list endpoint already excludes archived rows.
+   * The whole sellable catalog for the touch grid (lugawjuan). Staff-facing, like search-items and
+   * menu — GET /products is owner/admin only, so a `member` cashier has no other way to see it.
    */
   listSellableProducts(): Observable<PosSearchItem[]> {
-    return this.products
-      .listAll({ kind: 'SELLABLE' })
-      .pipe(map((products) => products.map(toGridSearchItem)));
+    return this.http
+      .get<ApiResponse<PosSearchItem[]>>(`${this.baseUrl}/products`)
+      .pipe(map((response) => response.data));
   }
 
   /**
