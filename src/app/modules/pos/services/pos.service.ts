@@ -14,7 +14,9 @@ import {
   PosSearchItem,
   SaleListItem,
   SaleResult,
+  SalesFilters,
   SalesListQuery,
+  SalesSummary,
 } from '../types/pos.types';
 
 /** A page of sales plus its pagination metadata. */
@@ -85,28 +87,47 @@ export class PosService {
 
   /** A page of the sales ledger. */
   listSales(query: SalesListQuery): Observable<SalesPage> {
-    let params = new HttpParams().set('page', query.page).set('limit', query.limit);
-
-    const search = query.search?.trim();
-    if (search) {
-      params = params.set('search', search);
-    }
-    if (query.status) {
-      params = params.set('status', query.status);
-    }
-    if (query.paymentMethod) {
-      params = params.set('paymentMethod', query.paymentMethod);
-    }
-    if (query.dateFrom) {
-      params = params.set('dateFrom', query.dateFrom);
-    }
-    if (query.dateTo) {
-      params = params.set('dateTo', query.dateTo);
-    }
+    const params = this.filterParams(query).set('page', query.page).set('limit', query.limit);
 
     return this.http
       .get<PaginatedApiResponse<SaleListItem>>(`${this.baseUrl}/sales`, { params })
       .pipe(map((response) => ({ items: response.data, meta: response.meta })));
+  }
+
+  /**
+   * Totals for every sale the same filters match, not just the page on screen — the counter's
+   * remittance figure. Summed by the database, so it stays exact however long the ledger runs.
+   */
+  salesSummary(filters: SalesFilters): Observable<SalesSummary> {
+    return this.http
+      .get<ApiResponse<SalesSummary>>(`${this.baseUrl}/sales/summary`, {
+        params: this.filterParams(filters),
+      })
+      .pipe(map((response) => response.data));
+  }
+
+  /** The filter half of a ledger query, shared so the list and its totals always agree. */
+  private filterParams(filters: SalesFilters): HttpParams {
+    let params = new HttpParams();
+
+    const search = filters.search?.trim();
+    if (search) {
+      params = params.set('search', search);
+    }
+    if (filters.status) {
+      params = params.set('status', filters.status);
+    }
+    if (filters.paymentMethod) {
+      params = params.set('paymentMethod', filters.paymentMethod);
+    }
+    if (filters.dateFrom) {
+      params = params.set('dateFrom', filters.dateFrom);
+    }
+    if (filters.dateTo) {
+      params = params.set('dateTo', filters.dateTo);
+    }
+
+    return params;
   }
 
   /** The full sale (live record + receipt snapshot) for the detail pane. */

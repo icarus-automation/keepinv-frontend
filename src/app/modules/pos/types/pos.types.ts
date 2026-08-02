@@ -213,16 +213,47 @@ export interface SaleResult {
   receiptData: ReceiptData;
 }
 
-/** Query for the server-paginated sales ledger. Mirrors the backend `FilterSalesDTO`. */
-export interface SalesListQuery {
-  page: number;
-  /** Capped at 50 by the backend. */
-  limit: number;
+/**
+ * What narrows the sales ledger. Mirrors the backend `SalesSummaryDTO`, and is shared by the list
+ * and its totals so a tally can never describe a different set of sales than the rows on screen.
+ */
+export interface SalesFilters {
   search?: string;
   status?: SaleStatus;
   paymentMethod?: PaymentMethod;
   dateFrom?: string;
   dateTo?: string;
+}
+
+/** Query for the server-paginated sales ledger. Mirrors the backend `FilterSalesDTO`. */
+export interface SalesListQuery extends SalesFilters {
+  page: number;
+  /** Capped at 50 by the backend. */
+  limit: number;
+}
+
+/** One method's takings over the summarised window (`GET /pos/sales/summary`). */
+export interface SalesSummaryMethod {
+  paymentMethod: PaymentMethod;
+  /** Decimal string, e.g. "3950.00". */
+  amount: string;
+  count: number;
+}
+
+/**
+ * Totals for the sales the current filters describe — what the counter reconciles the drawer
+ * against at remittance. Carries takings only: capital and margin live on the owner-only report.
+ */
+export interface SalesSummary {
+  /** Completed sales only; voided sales are excluded and reported separately. */
+  grossSales: string;
+  salesCount: number;
+  /** Units sold, not the number of lines. */
+  itemsSold: number;
+  /** Only the methods that took money, largest first. */
+  byPaymentMethod: SalesSummaryMethod[];
+  voidedCount: number;
+  voidedAmount: string;
 }
 
 /** Display metadata for a payment method: the chip label and its icon. */

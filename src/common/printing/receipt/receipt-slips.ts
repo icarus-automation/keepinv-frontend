@@ -26,6 +26,12 @@ export interface SlipData {
 
 /** Item lines print double-height, so the kitchen reads them at arm's length. */
 const ITEM_HEIGHT = 2;
+/**
+ * The total prints double-height too — it's the line the customer checks and staff read back.
+ * Height only, never width: at double width the head fits 16 columns, so a 32-column `row()`
+ * would wrap the amount onto a second line. Same width, taller glyphs, one line, always.
+ */
+const TOTAL_HEIGHT = 2;
 /** Blank lines that push a finished slip past the tear bar. */
 const TEAR_FEED = 4;
 
@@ -67,7 +73,15 @@ function kitchenSlip(doc: EscPosBuilder, data: SlipData): void {
     }
   }
 
-  doc.rule().bold(true).row('TOTAL', `P${data.total}`).bold(false);
+  // Reset the size straight after: the builder's character size is sticky, and the tear feed
+  // that follows would otherwise advance in double-height lines.
+  doc
+    .rule()
+    .size(1, TOTAL_HEIGHT)
+    .bold(true)
+    .row('TOTAL', `P${data.total}`)
+    .bold(false)
+    .size(1, 1);
 }
 
 function queueStub(doc: EscPosBuilder, data: SlipData): void {

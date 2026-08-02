@@ -2,8 +2,9 @@
   <!-- Header -->
   <div class="flex flex-col items-start gap-4 sm:flex-row sm:justify-between">
     <p class="max-w-prose text-sm text-muted">
-      Every completed sale, newest first. Search by receipt number or item, open one to read its
-      receipt, and void a sale to return its items to stock.
+      Every completed sale, newest first. Tap <span class="font-medium text-ink">Today</span> for the
+      day's takings and what should be in the drawer, search by receipt number or item, open one to
+      read its receipt, and void a sale to return its items to stock.
     </p>
     <p-button
       type="button"
@@ -28,7 +29,7 @@
     <div class="mt-8 rounded-lg border border-line bg-counter px-6 py-12 text-center">
       <p class="text-sm font-medium text-ink">Couldn't load sales</p>
       <p class="mx-auto mt-1 max-w-sm text-sm text-muted">{{ loadError() }}</p>
-      <p-button type="button" label="Retry" [text]="true" (onClick)="load()" styleClass="mt-3 font-medium" />
+      <p-button type="button" label="Retry" [text]="true" (onClick)="reload()" styleClass="mt-3 font-medium" />
     </div>
   } @else if (isEmptyLedger()) {
     <div class="mt-8 rounded-lg border border-dashed border-line px-6 py-16 text-center">
@@ -67,6 +68,19 @@
         />
       </div>
       <div class="flex flex-wrap items-center gap-2">
+        <div class="flex gap-1.5" role="group" aria-label="Quick date range">
+          @for (chip of quickRanges; track chip.value) {
+            <button
+              type="button"
+              (click)="setQuickRange(chip.value)"
+              [attr.aria-pressed]="activeQuickRange() === chip.value"
+              class="rounded-md border px-3 py-1.5 text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+              [class]="activeQuickRange() === chip.value ? 'border-signal bg-signal/10 text-ink' : 'border-line text-muted hover:text-ink'"
+            >
+              {{ chip.label }}
+            </button>
+          }
+        </div>
         <p-select
           [formControl]="statusControl"
           [options]="statusOptions"
@@ -112,6 +126,82 @@
         }
       </div>
     </div>
+
+    <!-- Totals for whatever the filters above describe: the remittance figure. -->
+    <section aria-label="Sales totals" class="mt-4" [attr.aria-busy]="summaryLoading()">
+      @if (summaryError(); as error) {
+        <div class="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-line bg-counter px-4 py-3">
+          <p class="text-sm text-muted">Couldn't total these sales. {{ error }}</p>
+          <p-button
+            type="button"
+            label="Retry"
+            [text]="true"
+            (onClick)="loadSummary()"
+            styleClass="font-medium"
+          />
+        </div>
+      } @else if (summary(); as totals) {
+        <dl class="flex flex-wrap items-start gap-x-8 gap-y-4 rounded-lg border border-line bg-counter p-4 sm:gap-x-10 sm:p-5">
+          <div class="min-w-[7rem]">
+            <dt class="text-xs font-medium text-muted">Total sales · {{ summaryWindow() }}</dt>
+            <dd class="mt-1 text-2xl font-semibold tabular-nums text-ink sm:text-3xl">
+              {{ totals.grossSales | money }}
+            </dd>
+          </div>
+
+          <div class="min-w-[7rem]">
+            <dt class="text-xs font-medium text-muted">Cash</dt>
+            <dd class="mt-1 text-2xl font-semibold tabular-nums text-ink sm:text-3xl">
+              {{ cashTotal() | money }}
+            </dd>
+            <dd class="mt-0.5 text-xs text-muted">Count the drawer against this</dd>
+          </div>
+
+          @for (slice of nonCashMethods(); track slice.paymentMethod) {
+            <div class="min-w-[6rem]">
+              <dt class="text-xs font-medium text-muted">{{ methodLabel(slice.paymentMethod) }}</dt>
+              <dd class="mt-1 text-lg font-semibold tabular-nums text-ink">
+                {{ slice.amount | money }}
+              </dd>
+              <dd class="mt-0.5 text-xs tabular-nums text-muted">
+                {{ slice.count }} sale{{ slice.count === 1 ? '' : 's' }} · not in the drawer
+              </dd>
+            </div>
+          }
+
+          <div class="min-w-[6rem]">
+            <dt class="text-xs font-medium text-muted">Sales</dt>
+            <dd class="mt-1 text-lg font-semibold tabular-nums text-ink">{{ totals.salesCount }}</dd>
+            <dd class="mt-0.5 text-xs tabular-nums text-muted">
+              {{ totals.itemsSold }} item{{ totals.itemsSold === 1 ? '' : 's' }} sold
+            </dd>
+          </div>
+        </dl>
+
+        @if (totals.voidedCount > 0) {
+          <p class="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-danger">
+            <i class="pi pi-ban text-[0.7rem]" aria-hidden="true"></i>
+            {{ totals.voidedCount }} voided sale{{ totals.voidedCount === 1 ? '' : 's' }} ·
+            {{ totals.voidedAmount | money }} not counted above
+          </p>
+        }
+        @if (summaryNarrowed()) {
+          <p class="mt-2 flex items-start gap-1.5 text-xs text-muted">
+            <i class="pi pi-info-circle mt-px text-[0.7rem]" aria-hidden="true"></i>
+            <span>Your search and filters narrow this total. Clear them for the full window.</span>
+          </p>
+        }
+      } @else {
+        <div class="flex flex-wrap items-start gap-x-10 gap-y-4 rounded-lg border border-line bg-counter p-4 sm:p-5">
+          @for (placeholder of [0, 1, 2]; track placeholder) {
+            <div>
+              <div class="h-3 w-20 animate-pulse rounded bg-line motion-reduce:animate-none"></div>
+              <div class="mt-2 h-7 w-24 animate-pulse rounded bg-line motion-reduce:animate-none"></div>
+            </div>
+          }
+        </div>
+      }
+    </section>
 
     <!-- Two-pane: ledger + receipt/detail -->
     <div class="mt-4 lg:grid lg:grid-cols-[26rem_minmax(0,1fr)] lg:items-start lg:gap-5">
