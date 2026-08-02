@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, filter, finalize, merge } from 'rxjs';
@@ -35,6 +36,20 @@ import { SaleDetail } from './detail/sale-detail';
 interface SelectOption<T> {
   readonly label: string;
   readonly value: T;
+}
+
+/**
+ * The totals band is the only thing on this page that needs `GET /pos/sales/summary`, so it is the
+ * first thing to break when the app ships ahead of the API. Both skew symptoms are unactionable at
+ * the counter: a 404 when the route is missing, and a 400 when `sales/:id` catches "summary" and its
+ * UUID pipe rejects it. Show plain copy rather than leaking "Validation failed (uuid is expected)"
+ * onto the shop floor; the ledger below is unaffected either way.
+ */
+function summaryErrorMessage(error: unknown): string {
+  if (error instanceof HttpErrorResponse && (error.status === 400 || error.status === 404)) {
+    return 'Totals are unavailable right now.';
+  }
+  return httpErrorMessage(error);
 }
 
 /** The two windows staff actually reconcile against: the shift just ended, or last night's. */
@@ -249,7 +264,7 @@ export class Sales {
           if (token !== this.summaryToken) {
             return;
           }
-          this.summaryError.set(httpErrorMessage(error));
+          this.summaryError.set(summaryErrorMessage(error));
           this.summaryLoading.set(false);
         },
       });
