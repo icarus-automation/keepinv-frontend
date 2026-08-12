@@ -9,6 +9,7 @@ import {
   MenuFlavorRequest,
   MenuGroup,
   MenuGroupRequest,
+  MenuSizeRequest,
 } from '../types/menu.types';
 
 /**
@@ -43,6 +44,12 @@ export class MenuService {
   archiveGroup(id: string): Observable<MenuGroup> {
     return this.http
       .delete<ApiResponse<MenuGroup>>(`${this.baseUrl}/groups/${id}`)
+      .pipe(map((response) => response.data));
+  }
+
+  createSize(groupId: string, body: MenuSizeRequest): Observable<unknown> {
+    return this.http
+      .post<ApiResponse<unknown>>(`${this.baseUrl}/groups/${groupId}/sizes`, body)
       .pipe(map((response) => response.data));
   }
 

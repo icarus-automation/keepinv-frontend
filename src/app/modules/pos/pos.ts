@@ -30,6 +30,7 @@ import {
   PosMenuSize,
   PosSearchItem,
   ReceiptData,
+  SaleDiscountType,
   SaleResult,
   priceToCents,
 } from './types/pos.types';
@@ -127,6 +128,10 @@ export class Pos {
    */
   protected readonly menuGroups = signal<PosMenuGroup[]>([]);
   protected readonly usesDrinkMenu = computed(() => this.menuGroups().length > 0);
+  protected readonly otherProducts = computed(() =>
+    this.gridProducts().filter((p) => !p.menuGroupId),
+  );
+  protected readonly posMode = signal<'drinks' | 'others'>('drinks');
 
   // --- Cart ---
   protected readonly cart = signal<CartLine[]>([]);
@@ -164,6 +169,21 @@ export class Pos {
     initialValue: this.tenderControl.value,
   });
 
+  // --- Statutory Discount (Senior / PWD) ---
+  protected readonly discountType = signal<SaleDiscountType>('NONE');
+  protected readonly discountIdName = new FormControl('', { nonNullable: true });
+  protected readonly discountIdNumber = new FormControl('', { nonNullable: true });
+  protected readonly isSharingWithOthers = signal(false);
+  protected readonly partySize = signal(1);
+  protected readonly coveredCount = signal(1);
+
+  protected readonly idNameVal = toSignal(this.discountIdName.valueChanges, {
+    initialValue: this.discountIdName.value,
+  });
+  protected readonly idNumberVal = toSignal(this.discountIdNumber.valueChanges, {
+    initialValue: this.discountIdNumber.value,
+  });
+
   // --- Note / checkout ---
   protected readonly showNote = signal(false);
   protected readonly noteControl = new FormControl('', { nonNullable: true });
@@ -196,7 +216,28 @@ export class Pos {
   protected readonly subtotalCents = computed(() =>
     this.cart().reduce((sum, line) => sum + line.unitPriceCents * line.quantity, 0),
   );
-  protected readonly totalCents = this.subtotalCents;
+  protected readonly discountCents = computed(() => {
+    const type = this.discountType();
+    if (type === 'NONE') return 0;
+    const subtotal = this.subtotalCents();
+    if (subtotal <= 0) return 0;
+    const party = this.isSharingWithOthers() ? Math.max(1, this.partySize()) : 1;
+    const covered = this.isSharingWithOthers()
+      ? Math.min(party, Math.max(1, this.coveredCount()))
+      : 1;
+    const coveredBase = (subtotal * covered) / party;
+    return Math.min(subtotal, Math.round(coveredBase * 0.20));
+  });
+  protected readonly discountDisplay = computed(() => {
+    const cents = this.discountCents();
+    return (cents / 100).toLocaleString('en-PH', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  });
+  protected readonly totalCents = computed(() =>
+    Math.max(0, this.subtotalCents() - this.discountCents()),
+  );
   protected readonly itemCount = computed(() =>
     this.cart().reduce((sum, line) => sum + line.quantity, 0),
   );
@@ -211,13 +252,17 @@ export class Pos {
     Math.max(0, this.effectiveTenderedCents() - this.totalCents()),
   );
 
-  protected readonly canComplete = computed(
-    () =>
-      !this.committing() &&
-      this.cart().length > 0 &&
-      this.totalCents() > 0 &&
-      this.effectiveTenderedCents() >= this.totalCents(),
-  );
+  protected readonly canComplete = computed(() => {
+    if (this.committing() || this.cart().length === 0 || this.totalCents() <= 0) {
+      return false;
+    }
+    if (this.discountType() !== 'NONE') {
+      const name = (this.idNameVal() ?? '').trim();
+      const num = (this.idNumberVal() ?? '').trim();
+      if (!name || !num) return false;
+    }
+    return this.effectiveTenderedCents() >= this.totalCents();
+  });
 
   /** Why Complete is disabled, in counter-terse words. Null once the sale can go through. */
   protected readonly completeHint = computed(() => {
@@ -289,10 +334,6 @@ export class Pos {
       .subscribe({
         next: (groups) => {
           this.menuGroups.set(groups);
-          if (groups.length > 0) {
-            this.gridLoading.set(false);
-            return;
-          }
           this.loadGrid();
         },
         error: (error: unknown) => {
@@ -770,6 +811,48 @@ export class Pos {
     this.showNote.update((open) => !open);
   }
 
+  protected setDiscountType(type: SaleDiscountType): void {
+    this.discountType.set(type);
+    if (type === 'NONE') {
+      this.discountIdName.setValue('');
+      this.discountIdNumber.setValue('');
+      this.isSharingWithOthers.set(false);
+      this.partySize.set(1);
+      this.coveredCount.set(1);
+    }
+  }
+
+  protected toggleSharing(): void {
+    const next = !this.isSharingWithOthers();
+    this.isSharingWithOthers.set(next);
+    if (!next) {
+      this.partySize.set(1);
+      this.coveredCount.set(1);
+    }
+  }
+
+  protected incrementParty(): void {
+    this.partySize.update((n) => n + 1);
+  }
+
+  protected decrementParty(): void {
+    this.partySize.update((n) => {
+      const next = Math.max(1, n - 1);
+      if (this.coveredCount() > next) {
+        this.coveredCount.set(next);
+      }
+      return next;
+    });
+  }
+
+  protected incrementCovered(): void {
+    this.coveredCount.update((n) => Math.min(this.partySize(), n + 1));
+  }
+
+  protected decrementCovered(): void {
+    this.coveredCount.update((n) => Math.max(1, n - 1));
+  }
+
   // --- Checkout ---
 
   protected checkout(): void {
@@ -778,6 +861,18 @@ export class Pos {
     }
     this.committing.set(true);
     this.checkoutError.set(null);
+
+    const discountPayload =
+      this.discountType() !== 'NONE'
+        ? {
+            type: this.discountType() as 'SENIOR' | 'PWD',
+            idName: this.discountIdName.value.trim(),
+            idNumber: this.discountIdNumber.value.trim(),
+            ...(this.isSharingWithOthers()
+              ? { partySize: this.partySize(), coveredCount: this.coveredCount() }
+              : {}),
+          }
+        : undefined;
 
     this.service
       .checkout({
@@ -790,6 +885,7 @@ export class Pos {
         paymentMethod: this.method(),
         amountTendered: this.effectiveTenderedCents() / 100,
         note: this.noteControl.value.trim() || undefined,
+        discount: discountPayload,
       })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
@@ -877,6 +973,12 @@ export class Pos {
     this.tenderControl.setValue(null, { emitEvent: false });
     this.noteControl.setValue('', { emitEvent: false });
     this.showNote.set(false);
+    this.discountType.set('NONE');
+    this.discountIdName.setValue('', { emitEvent: false });
+    this.discountIdNumber.setValue('', { emitEvent: false });
+    this.isSharingWithOthers.set(false);
+    this.partySize.set(1);
+    this.coveredCount.set(1);
     this.checkoutError.set(null);
     this.searchNotice.set(null);
     this.printNotice.set(null);

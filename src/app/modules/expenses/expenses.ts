@@ -22,7 +22,20 @@ import { MoneyPipe } from '../products/utils/money.pipe';
 import { ExpensesService } from './services/expenses.service';
 import { ExpenseCategoriesService } from './services/expense-categories.service';
 import { ProfitLossService } from './services/profit-loss.service';
-import { Expense, ExpenseCategory, ProfitLossReport } from './types/expense.types';
+import { Expense, ExpenseCategory, ProfitLossReport, RecurringExpense, SuggestedRecurringExpense } from './types/expense.types';
+
+function manilaDateKey(date: Date = new Date()): string {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Manila',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(date);
+  const year = parts.find((p) => p.type === 'year')?.value;
+  const month = parts.find((p) => p.type === 'month')?.value;
+  const day = parts.find((p) => p.type === 'day')?.value;
+  return `${year}-${month}-${day}`;
+}
 
 /** A preset reporting window, or a custom date range. */
 type ExpensePeriod = 'today' | '7d' | '30d' | 'mtd' | 'custom';
@@ -79,6 +92,19 @@ export class Expenses {
   protected readonly loading = signal(true);
   protected readonly loadError = signal<string | null>(null);
 
+  // --- Fixed / Recurring expenses ---
+  protected readonly recurringTemplates = signal<RecurringExpense[]>([]);
+  protected readonly recurringSuggestions = signal<SuggestedRecurringExpense[]>([]);
+  protected readonly showAddRecurring = signal(false);
+  protected readonly recurringForm = this.formBuilder.nonNullable.group({
+    name: ['', [Validators.required, Validators.maxLength(100)]],
+    amount: this.formBuilder.control<number | null>(null, [Validators.required, Validators.min(0.01)]),
+    expenseCategoryId: this.formBuilder.control<string | null>(null, [Validators.required]),
+    startsOn: this.formBuilder.control<Date | null>(new Date(), [Validators.required]),
+  });
+  protected readonly savingRecurring = signal(false);
+  protected readonly recurringError = signal<string | null>(null);
+
   protected readonly categoryOptions = computed(() =>
     this.categories().map((category) => ({ id: category.id, name: category.name })),
   );
@@ -120,7 +146,113 @@ export class Expenses {
         this.load();
       });
 
+    this.triggerAutoPostDue();
+    this.loadRecurring();
     this.load();
+  }
+
+  private triggerAutoPostDue(): void {
+    const todayKey = manilaDateKey();
+    const lastKey = localStorage.getItem('keepinv_last_recurring_post_date');
+    if (lastKey !== todayKey) {
+      this.expensesService
+        .postDueRecurring()
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (res) => {
+            localStorage.setItem('keepinv_last_recurring_post_date', todayKey);
+            if (res.postedCount > 0) {
+              this.load();
+            }
+          },
+        });
+    }
+  }
+
+  protected loadRecurring(): void {
+    forkJoin({
+      templates: this.expensesService.listRecurring(),
+      suggestions: this.expensesService.getRecurringSuggestions(),
+    })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: ({ templates, suggestions }) => {
+          this.recurringTemplates.set(templates);
+          this.recurringSuggestions.set(suggestions);
+        },
+      });
+  }
+
+  protected toggleAddRecurring(): void {
+    this.showAddRecurring.update((v) => !v);
+    this.recurringError.set(null);
+  }
+
+  protected submitRecurring(): void {
+    if (this.recurringForm.invalid) {
+      this.recurringForm.markAllAsTouched();
+      this.recurringError.set('Fill in name, amount, category, and start date.');
+      return;
+    }
+    const val = this.recurringForm.getRawValue();
+    if (!val.name || val.amount == null || !val.expenseCategoryId || !val.startsOn) return;
+
+    this.savingRecurring.set(true);
+    this.recurringError.set(null);
+
+    this.expensesService
+      .createRecurring({
+        name: val.name,
+        amount: val.amount,
+        expenseCategoryId: val.expenseCategoryId,
+        frequency: 'DAILY',
+        startsOn: val.startsOn.toISOString(),
+      })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.savingRecurring.set(false)),
+      )
+      .subscribe({
+        next: () => {
+          this.showAddRecurring.set(false);
+          this.recurringForm.reset({ name: '', amount: null, expenseCategoryId: null, startsOn: new Date() });
+          this.loadRecurring();
+          this.triggerAutoPostDue();
+        },
+        error: (err: unknown) => this.recurringError.set(httpErrorMessage(err)),
+      });
+  }
+
+  protected toggleRecurringActive(template: RecurringExpense): void {
+    this.expensesService
+      .updateRecurring(template.id, { isActive: !template.isActive })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({ next: () => this.loadRecurring() });
+  }
+
+  protected archiveRecurring(template: RecurringExpense): void {
+    this.expensesService
+      .archiveRecurring(template.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({ next: () => this.loadRecurring() });
+  }
+
+  protected acceptSuggestion(s: SuggestedRecurringExpense): void {
+    this.expensesService
+      .createRecurring({
+        name: s.suggestedName,
+        amount: Number(s.amount),
+        expenseCategoryId: s.expenseCategoryId,
+        frequency: 'DAILY',
+        startsOn: new Date().toISOString(),
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.loadRecurring();
+          this.triggerAutoPostDue();
+        },
+      });
   }
 
   protected setPeriod(period: ExpensePeriod): void {

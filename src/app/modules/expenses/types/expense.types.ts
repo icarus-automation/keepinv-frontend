@@ -84,3 +84,42 @@ export interface FlavorMixRow {
   unitsSold: number;
   revenue: number;
 }
+
+export type RecurrenceFrequency = 'DAILY' | 'WEEKLY' | 'MONTHLY';
+
+export interface RecurringExpense {
+  id: string;
+  name: string;
+  amount: string;
+  frequency: RecurrenceFrequency;
+  weekdays: number[];
+  dayOfMonth: number | null;
+  startsOn: string;
+  endsOn: string | null;
+  isActive: boolean;
+  isArchived: boolean;
+  expenseCategoryId: string;
+  expenseCategory?: ExpenseCategory;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RecurringExpenseRequest {
+  name: string;
+  amount: number;
+  expenseCategoryId: string;
+  frequency?: RecurrenceFrequency;
+  weekdays?: number[];
+  dayOfMonth?: number;
+  startsOn: string;
+  endsOn?: string;
+  isActive?: boolean;
+}
+
+export interface SuggestedRecurringExpense {
+  expenseCategoryId: string;
+  categoryName: string;
+  amount: string;
+  suggestedName: string;
+  distinctDaysCount: number;
+}

@@ -49,11 +49,23 @@ export class Menu {
   });
   protected readonly savingFlavor = signal(false);
 
+  /** Quick-add a size to one group. */
+  protected readonly addingSizeToGroupId = signal<string | null>(null);
+  protected readonly sizeForm = this.formBuilder.nonNullable.group({
+    label: ['', [Validators.required]],
+    sellingPrice: [0, [Validators.required, Validators.min(0.01)]],
+    costPrice: [0],
+  });
+  protected readonly savingSize = signal(false);
+
   /** New group (rare: a whole new drink line). */
   protected readonly showGroupForm = signal(false);
   protected readonly groupForm = this.formBuilder.nonNullable.group({
     name: ['', [Validators.required]],
     description: [''],
+    firstFlavorName: [''],
+    firstSizeLabel: [''],
+    firstSizePrice: [null as number | null],
   });
   protected readonly savingGroup = signal(false);
 
@@ -90,12 +102,16 @@ export class Menu {
 
   protected toggleGroupForm(): void {
     this.showGroupForm.update((open) => !open);
-    this.groupForm.reset({ name: '', description: '' });
+    this.groupForm.reset({ name: '', description: '', firstFlavorName: '', firstSizeLabel: '', firstSizePrice: null });
     this.actionError.set(null);
   }
 
   protected createGroup(): void {
     const name = this.groupForm.controls.name.value.trim();
+    const firstFlavorName = this.groupForm.controls.firstFlavorName.value.trim();
+    const firstSizeLabel = this.groupForm.controls.firstSizeLabel.value.trim();
+    const firstSizePrice = this.groupForm.controls.firstSizePrice.value;
+
     if (!name || this.savingGroup()) {
       this.groupForm.controls.name.markAsTouched();
       return;
@@ -104,16 +120,76 @@ export class Menu {
     this.savingGroup.set(true);
     this.actionError.set(null);
     this.service
-      .createGroup({ name, description: this.groupForm.controls.description.value.trim() || undefined })
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.savingGroup.set(false)),
-      )
+      .createGroup({
+        name,
+        description: this.groupForm.controls.description.value.trim() || undefined,
+        firstFlavorName: firstFlavorName || undefined,
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (group) => {
-          this.groups.update((current) => [...current, group]);
-          this.showGroupForm.set(false);
-          this.groupForm.reset({ name: '', description: '' });
+          if (firstSizeLabel && firstSizePrice && firstSizePrice > 0) {
+            this.service
+              .createSize(group.id, { label: firstSizeLabel, sellingPrice: firstSizePrice })
+              .pipe(
+                takeUntilDestroyed(this.destroyRef),
+                finalize(() => {
+                  this.savingGroup.set(false);
+                  this.showGroupForm.set(false);
+                  this.load();
+                }),
+              )
+              .subscribe({
+                error: (error: unknown) => this.actionError.set(httpErrorMessage(error)),
+              });
+          } else {
+            this.savingGroup.set(false);
+            this.showGroupForm.set(false);
+            this.load();
+          }
+        },
+        error: (error: unknown) => {
+          this.savingGroup.set(false);
+          this.actionError.set(httpErrorMessage(error));
+        },
+      });
+  }
+
+  // --- Sizes ---
+
+  protected openSizeForm(groupId: string): void {
+    this.addingSizeToGroupId.set(groupId);
+    this.sizeForm.reset({ label: '', sellingPrice: 0, costPrice: 0 });
+    this.actionError.set(null);
+  }
+
+  protected closeSizeForm(): void {
+    this.addingSizeToGroupId.set(null);
+    this.actionError.set(null);
+  }
+
+  protected addSize(groupId: string): void {
+    const label = this.sizeForm.controls.label.value.trim();
+    const sellingPrice = Number(this.sizeForm.controls.sellingPrice.value);
+    const costPrice = Number(this.sizeForm.controls.costPrice.value) || 0;
+
+    if (!label || sellingPrice <= 0 || this.savingSize()) {
+      this.sizeForm.markAllAsTouched();
+      return;
+    }
+
+    this.savingSize.set(true);
+    this.actionError.set(null);
+    this.service
+      .createSize(groupId, { label, sellingPrice, costPrice })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.savingSize.set(false)),
+      )
+      .subscribe({
+        next: () => {
+          this.closeSizeForm();
+          this.load();
         },
         error: (error: unknown) => this.actionError.set(httpErrorMessage(error)),
       });

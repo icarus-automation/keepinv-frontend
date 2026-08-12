@@ -4,7 +4,7 @@ import { Observable, map } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
 import { ApiResponse } from '../../../../common/responses/api.response';
-import { Expense, ExpenseRequest } from '../types/expense.types';
+import { Expense, ExpenseRequest, RecurringExpense, RecurringExpenseRequest, SuggestedRecurringExpense } from '../types/expense.types';
 
 export interface ExpenseFilter {
   expenseCategoryId?: string;
@@ -43,5 +43,49 @@ export class ExpensesService {
     return this.http
       .delete<ApiResponse<Expense>>(`${this.baseUrl}/${id}`)
       .pipe(map((response) => response.data));
+  }
+
+  // --- Fixed / Recurring expenses ---
+
+  listRecurring(): Observable<RecurringExpense[]> {
+    return this.http
+      .get<ApiResponse<RecurringExpense[]>>(`${this.baseUrl}/recurring`)
+      .pipe(map((res) => res.data));
+  }
+
+  getRecurringSuggestions(): Observable<SuggestedRecurringExpense[]> {
+    return this.http
+      .get<ApiResponse<SuggestedRecurringExpense[]>>(`${this.baseUrl}/recurring/suggestions`)
+      .pipe(map((res) => res.data));
+  }
+
+  postDueRecurring(date?: string): Observable<{ postedCount: number; datesEvaluated: number }> {
+    let params = new HttpParams();
+    if (date) params = params.set('date', date);
+    return this.http
+      .post<ApiResponse<{ postedCount: number; datesEvaluated: number }>>(
+        `${this.baseUrl}/recurring/post-due`,
+        {},
+        { params },
+      )
+      .pipe(map((res) => res.data));
+  }
+
+  createRecurring(body: RecurringExpenseRequest): Observable<RecurringExpense> {
+    return this.http
+      .post<ApiResponse<RecurringExpense>>(`${this.baseUrl}/recurring`, body)
+      .pipe(map((res) => res.data));
+  }
+
+  updateRecurring(id: string, body: Partial<RecurringExpenseRequest>): Observable<RecurringExpense> {
+    return this.http
+      .patch<ApiResponse<RecurringExpense>>(`${this.baseUrl}/recurring/${id}`, body)
+      .pipe(map((res) => res.data));
+  }
+
+  archiveRecurring(id: string): Observable<RecurringExpense> {
+    return this.http
+      .delete<ApiResponse<RecurringExpense>>(`${this.baseUrl}/recurring/${id}`)
+      .pipe(map((res) => res.data));
   }
 }

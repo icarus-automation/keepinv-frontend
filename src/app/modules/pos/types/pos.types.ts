@@ -20,6 +20,7 @@ export interface PosSearchItem {
   kind: 'PRODUCT' | 'PRODUCT_UNIT';
   productId: string;
   productUnitId?: string;
+  menuGroupId?: string | null;
   name: string;
   sku: string;
   barcode: string | null;
@@ -97,12 +98,23 @@ export interface CheckoutItem {
   quantity: number;
 }
 
+export type SaleDiscountType = 'NONE' | 'SENIOR' | 'PWD';
+
+export interface CheckoutDiscount {
+  type: 'SENIOR' | 'PWD';
+  idName: string;
+  idNumber: string;
+  coveredCount?: number;
+  partySize?: number;
+}
+
 /** Body for `POST /pos/checkout`. `amountTendered` is a number with at most 2 decimals. */
 export interface CheckoutRequest {
   items: CheckoutItem[];
   paymentMethod: PaymentMethod;
   amountTendered: number;
   note?: string;
+  discount?: CheckoutDiscount;
 }
 
 /** One printed line on a receipt snapshot. */
@@ -137,7 +149,15 @@ export interface ReceiptData {
   completedAt: string;
   cashier: { id: string; name: string; email: string };
   items: ReceiptItemData[];
-  totals: { subtotal: string; total: string };
+  totals: { subtotal: string; discount?: string; total: string };
+  discount?: {
+    type: SaleDiscountType;
+    rate: string;
+    idName: string;
+    idNumber: string;
+    coveredCount: number;
+    partySize: number;
+  };
   payment: { method: PaymentMethod; amountTendered: string; changeDue: string };
   note?: string;
 }
@@ -156,6 +176,8 @@ export interface SaleListItem {
   receiptNo: string;
   status: SaleStatus;
   subtotal: string;
+  discountType?: SaleDiscountType;
+  discountAmount?: string;
   total: string;
   /** Cost of goods sold, captured at sale time. Drives the profit report; never shown on receipts. */
   totalCost: string;
@@ -194,6 +216,12 @@ export interface SaleWithRelations {
   receiptNo: string;
   status: SaleStatus;
   subtotal: string;
+  discountType?: SaleDiscountType;
+  discountAmount?: string;
+  discountIdName?: string | null;
+  discountIdNumber?: string | null;
+  discountCoveredCount?: number | null;
+  discountPartySize?: number | null;
   total: string;
   amountTendered: string;
   changeDue: string;
@@ -247,6 +275,7 @@ export interface SalesSummaryMethod {
 export interface SalesSummary {
   /** Completed sales only; voided sales are excluded and reported separately. */
   grossSales: string;
+  discountTotal?: string;
   salesCount: number;
   /** Units sold, not the number of lines. */
   itemsSold: number;

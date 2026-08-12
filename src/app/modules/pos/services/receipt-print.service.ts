@@ -61,6 +61,12 @@ export class ReceiptPrintService {
     await this.printStub(receipt);
   }
 
+  /** Send arbitrary EscPos bytes (e.g. End of Day report slips) to the thermal printer. */
+  async printBytesInteractive(bytes: Uint8Array): Promise<void> {
+    await this.ensureConnectedInteractive();
+    await this.printer.print(bytes);
+  }
+
   private async ensureConnectedInteractive(): Promise<void> {
     const status = this.status();
     if (status === 'ready' || status === 'printing') {

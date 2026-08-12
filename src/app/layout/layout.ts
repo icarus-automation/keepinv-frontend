@@ -90,14 +90,14 @@ export class Layout {
   private readonly destroyRef = inject(DestroyRef);
 
   /** Paths that belong to the POS module — hidden for BASIC (Inventory-only) tenants. */
-  private static readonly POS_PATHS = new Set(['pos', 'sales', 'reports']);
+  private static readonly POS_PATHS = new Set(['pos', 'sales', 'reports', 'end-of-day']);
 
   /**
    * The only surfaces a `member` (cashier) may reach — everything else answers 403 for staff, so
    * the rail hides it and `adminGuard` bounces a deep link back to `/pos`. Sales Report is NOT here:
    * cashiers ring up sales and read their own history, but the analytics report stays owner/admin.
    */
-  private static readonly MEMBER_PATHS = new Set(['pos', 'sales']);
+  private static readonly MEMBER_PATHS = new Set(['pos', 'sales', 'end-of-day']);
 
   /**
    * The rail holds only the work an operator repeats through the day. Occasional jobs (Tools) and
@@ -115,6 +115,7 @@ export class Layout {
         { label: 'Point of Sale', icon: 'pi pi-shopping-cart', path: 'pos' },
         { label: 'Sales', icon: 'pi pi-chart-line', path: 'sales' },
         { label: 'Sales Report', icon: 'pi pi-chart-bar', path: 'reports' },
+        { label: 'End of Day', icon: 'pi pi-print', path: 'end-of-day' },
         {
           label: 'Inventory Audit',
           icon: 'pi pi-check-square',

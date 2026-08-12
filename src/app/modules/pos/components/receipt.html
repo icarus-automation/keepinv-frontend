@@ -50,6 +50,22 @@
       <dt>Subtotal</dt>
       <dd class="tabular-nums">{{ data().totals.subtotal | money }}</dd>
     </div>
+    @if (data().totals.discount; as discountAmt) {
+      <div class="mt-1 flex items-center justify-between gap-3 text-success">
+        <dt>
+          Discount
+          @if (data().discount; as d) {
+            ({{ d.type }} 20%@if (d.partySize > 1) { · {{ d.coveredCount }}/{{ d.partySize }} share })
+          }
+        </dt>
+        <dd class="tabular-nums">-{{ discountAmt | money }}</dd>
+      </div>
+      @if (data().discount; as d) {
+        <div class="text-[0.7rem] text-muted">
+          {{ d.idName }} ({{ d.idNumber }})
+        </div>
+      }
+    }
     <div class="mt-1 flex items-baseline justify-between gap-3">
       <dt class="text-base font-semibold">Total</dt>
       <dd class="text-xl font-semibold tabular-nums">{{ data().totals.total | money }}</dd>

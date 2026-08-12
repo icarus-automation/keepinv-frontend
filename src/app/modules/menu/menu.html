@@ -18,41 +18,85 @@
   @if (showGroupForm()) {
     <form
       (ngSubmit)="createGroup()"
-      class="mt-4 rounded-lg border border-line bg-counter p-4 sm:flex sm:items-end sm:gap-3"
+      class="mt-4 rounded-lg border border-line bg-counter p-4 space-y-3"
     >
-      <div class="min-w-0 flex-1">
-        <label for="menu-group-name" class="text-xs font-medium text-muted">Line name</label>
-        <input
-          pInputText
-          id="menu-group-name"
-          type="text"
-          [formControl]="groupForm.controls.name"
-          maxlength="100"
-          autocomplete="off"
-          placeholder="e.g. Milktea, Coffee, Hot Tea"
-          class="mt-1.5 w-full"
+      <div class="sm:flex sm:items-end sm:gap-3">
+        <div class="min-w-0 flex-1">
+          <label for="menu-group-name" class="text-xs font-medium text-muted">Line name</label>
+          <input
+            pInputText
+            id="menu-group-name"
+            type="text"
+            [formControl]="groupForm.controls.name"
+            maxlength="100"
+            autocomplete="off"
+            placeholder="e.g. Milktea, Coffee, Hot Tea"
+            class="mt-1.5 w-full"
+          />
+        </div>
+        <div class="mt-3 min-w-0 flex-1 sm:mt-0">
+          <label for="menu-group-description" class="text-xs font-medium text-muted">Description</label>
+          <input
+            pInputText
+            id="menu-group-description"
+            type="text"
+            [formControl]="groupForm.controls.description"
+            maxlength="255"
+            autocomplete="off"
+            placeholder="Optional"
+            class="mt-1.5 w-full"
+          />
+        </div>
+      </div>
+      <div class="sm:flex sm:items-end sm:gap-3 border-t border-line/50 pt-3">
+        <div class="min-w-0 flex-1">
+          <label for="menu-first-flavor" class="text-xs font-medium text-muted">First flavor (optional)</label>
+          <input
+            pInputText
+            id="menu-first-flavor"
+            type="text"
+            [formControl]="groupForm.controls.firstFlavorName"
+            maxlength="100"
+            autocomplete="off"
+            placeholder="e.g. Taro, Wintermelon"
+            class="mt-1.5 w-full"
+          />
+        </div>
+        <div class="mt-3 min-w-0 flex-1 sm:mt-0">
+          <label for="menu-first-size-label" class="text-xs font-medium text-muted">First size label (optional)</label>
+          <input
+            pInputText
+            id="menu-first-size-label"
+            type="text"
+            [formControl]="groupForm.controls.firstSizeLabel"
+            maxlength="40"
+            autocomplete="off"
+            placeholder="e.g. 16oz, Regular"
+            class="mt-1.5 w-full"
+          />
+        </div>
+        <div class="mt-3 w-32 sm:mt-0">
+          <label for="menu-first-size-price" class="text-xs font-medium text-muted">Price (₱)</label>
+          <input
+            pInputText
+            id="menu-first-size-price"
+            type="number"
+            inputmode="decimal"
+            min="0"
+            step="0.01"
+            [formControl]="groupForm.controls.firstSizePrice"
+            placeholder="0.00"
+            class="mt-1.5 w-full text-right"
+          />
+        </div>
+        <p-button
+          type="submit"
+          label="Create line"
+          icon="pi pi-check"
+          [loading]="savingGroup()"
+          styleClass="mt-3 font-medium sm:mt-0 shrink-0"
         />
       </div>
-      <div class="mt-3 min-w-0 flex-1 sm:mt-0">
-        <label for="menu-group-description" class="text-xs font-medium text-muted">Description</label>
-        <input
-          pInputText
-          id="menu-group-description"
-          type="text"
-          [formControl]="groupForm.controls.description"
-          maxlength="255"
-          autocomplete="off"
-          placeholder="Optional"
-          class="mt-1.5 w-full"
-        />
-      </div>
-      <p-button
-        type="submit"
-        label="Create"
-        icon="pi pi-check"
-        [loading]="savingGroup()"
-        styleClass="mt-3 font-medium sm:mt-0"
-      />
     </form>
   }
 
@@ -118,11 +162,100 @@
                 </span>
               } @empty {
                 <span class="text-xs font-medium text-danger">
-                  No sizes attached — set one on Menu Items
+                  No sizes attached
                 </span>
               }
+              <button
+                type="button"
+                (click)="openSizeForm(group.id)"
+                class="inline-flex items-center gap-1 rounded-md border border-dashed border-line px-2 py-1 text-xs font-medium text-muted hover:border-signal hover:text-ink"
+              >
+                <i class="pi pi-plus text-[0.6rem]" aria-hidden="true"></i>
+                Add size
+              </button>
             </div>
           </header>
+
+          @if (group.products.length === 0 || group.flavors.length === 0) {
+            <div class="m-4 flex flex-wrap items-center justify-between gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-xs text-amber-900 dark:text-amber-200">
+              <div class="flex items-center gap-2">
+                <i class="pi pi-exclamation-triangle text-amber-600 dark:text-amber-400 text-sm" aria-hidden="true"></i>
+                <span>Can't be ordered yet — add a size and a flavor</span>
+              </div>
+              <div class="flex items-center gap-2">
+                @if (group.products.length === 0) {
+                  <button type="button" (click)="openSizeForm(group.id)" class="font-medium underline hover:text-ink">Add size</button>
+                }
+                @if (group.flavors.length === 0) {
+                  <button type="button" (click)="openFlavorForm(group.id)" class="font-medium underline hover:text-ink">Add flavor</button>
+                }
+              </div>
+            </div>
+          }
+
+          @if (addingSizeToGroupId() === group.id) {
+            <form (ngSubmit)="addSize(group.id)" class="flex flex-wrap items-end gap-2 border-b border-line px-5 py-3 bg-panel/30">
+              <div class="min-w-0 flex-1">
+                <label [for]="'menu-size-label-' + group.id" class="text-xs font-medium text-muted">
+                  Size label
+                </label>
+                <input
+                  pInputText
+                  [id]="'menu-size-label-' + group.id"
+                  type="text"
+                  [formControl]="sizeForm.controls.label"
+                  maxlength="40"
+                  autocomplete="off"
+                  placeholder="e.g. 16oz, Large"
+                  class="mt-1.5 w-full text-sm"
+                />
+              </div>
+              <div class="w-32">
+                <label [for]="'menu-size-price-' + group.id" class="text-xs font-medium text-muted">
+                  Selling price
+                </label>
+                <input
+                  pInputText
+                  [id]="'menu-size-price-' + group.id"
+                  type="number"
+                  inputmode="decimal"
+                  min="0"
+                  step="0.01"
+                  [formControl]="sizeForm.controls.sellingPrice"
+                  class="mt-1.5 w-full text-right text-sm tabular-nums"
+                />
+              </div>
+              <div class="w-32">
+                <label [for]="'menu-size-cost-' + group.id" class="text-xs font-medium text-muted">
+                  Cost price (opt)
+                </label>
+                <input
+                  pInputText
+                  [id]="'menu-size-cost-' + group.id"
+                  type="number"
+                  inputmode="decimal"
+                  min="0"
+                  step="0.01"
+                  [formControl]="sizeForm.controls.costPrice"
+                  class="mt-1.5 w-full text-right text-sm tabular-nums"
+                />
+              </div>
+              <p-button
+                type="submit"
+                label="Add size"
+                icon="pi pi-check"
+                [loading]="savingSize()"
+                styleClass="font-medium"
+              />
+              <p-button
+                type="button"
+                label="Cancel"
+                [text]="true"
+                (onClick)="closeSizeForm()"
+                styleClass="font-medium text-muted"
+              />
+            </form>
+          }
 
           <ul class="divide-y divide-line">
             @for (flavor of group.flavors; track flavor.id) {

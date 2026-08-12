@@ -58,6 +58,12 @@ export const routes: Routes = [
         loadComponent: () => import('./modules/pos/report/sales-report').then((m) => m.SalesReport),
       },
       {
+        path: 'end-of-day',
+        title: 'End of Day Reports',
+        canActivate: [posGuard],
+        loadComponent: () => import('./modules/end-of-day/end-of-day').then((m) => m.EndOfDay),
+      },
+      {
         path: 'expenses',
         title: 'Expenses',
         canActivate: [adminGuard],

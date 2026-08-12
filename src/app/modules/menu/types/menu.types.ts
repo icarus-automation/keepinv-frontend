@@ -42,6 +42,16 @@ export interface MenuGroupRequest {
   name?: string;
   description?: string;
   sortOrder?: number;
+  firstFlavorName?: string;
+}
+
+/** Body for adding a size product to a group. */
+export interface MenuSizeRequest {
+  label: string;
+  sellingPrice: number;
+  costPrice?: number;
+  componentId?: string;
+  componentQuantity?: number;
 }
 
 /** Body for creating or patching a flavor. `priceDelta` is a number with at most 2 decimals. */

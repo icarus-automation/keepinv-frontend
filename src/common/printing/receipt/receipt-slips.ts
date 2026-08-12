@@ -113,3 +113,130 @@ export function renderQueueStub(data: SlipData): Uint8Array {
   doc.feed(TEAR_FEED);
   return doc.build();
 }
+
+export interface SalesDayReportData {
+  shopName: string;
+  date: string;
+  grossSales: string;
+  discountTotal: string;
+  netSales: string;
+  salesCount: number;
+  itemsSold: number;
+  byPaymentMethod: { paymentMethod: string; amount: string; count: number }[];
+  expensesToday: string;
+  voidedCount: number;
+  voidedAmount: string;
+}
+
+export interface InventoryReportItem {
+  productId?: string;
+  productName: string;
+  sku: string;
+  categoryName: string;
+  openingStock: number;
+  stockIn: number;
+  stockOut: number;
+  salesQty: number;
+  closingStock: number;
+}
+
+export interface InventoryReportData {
+  shopName: string;
+  date: string;
+  generatedAt: string;
+  items: InventoryReportItem[];
+}
+
+export function renderSalesDayReport(data: SalesDayReportData): Uint8Array {
+  const doc = new EscPosBuilder().reset();
+  doc
+    .align('center')
+    .bold(true)
+    .line(data.shopName.toUpperCase())
+    .bold(false)
+    .line('SALES DAY REPORT')
+    .line(data.date)
+    .rule();
+
+  doc.align('left');
+  doc.row('Gross Sales', `P${data.grossSales}`);
+  doc.row('Discounts', `-P${data.discountTotal}`);
+  doc.size(1, 2).bold(true).row('NET SALES', `P${data.netSales}`).bold(false).size(1, 1);
+  doc.rule();
+
+  doc.row('Transactions', `${data.salesCount}`);
+  doc.row('Items Sold', `${data.itemsSold}`);
+  doc.rule();
+
+  doc.line('PAYMENT BREAKDOWN:');
+  for (const m of data.byPaymentMethod) {
+    doc.row(` ${m.paymentMethod} (${m.count})`, `P${m.amount}`);
+  }
+  doc.rule();
+
+  doc.row('Expenses Today', `P${data.expensesToday}`);
+  if (data.voidedCount > 0) {
+    doc.row(`Voided (${data.voidedCount})`, `P${data.voidedAmount}`);
+  }
+
+  doc.feed(TEAR_FEED);
+  return doc.build();
+}
+
+export function renderInventoryReport(data: InventoryReportData): Uint8Array {
+  const doc = new EscPosBuilder().reset();
+  doc
+    .align('center')
+    .bold(true)
+    .line(data.shopName.toUpperCase())
+    .bold(false)
+    .line('INVENTORY CLOSE REPORT')
+    .line(data.date)
+    .rule();
+
+  doc.align('left');
+  for (const item of data.items) {
+    doc.bold(true).line(item.productName).bold(false);
+    doc.row('  Start -> Close', `${item.openingStock} -> ${item.closingStock}`);
+    doc.row('  +In / -Out / Sold', `+${item.stockIn} / -${item.stockOut} / ${item.salesQty}`);
+  }
+  doc.rule();
+
+  doc.feed(TEAR_FEED);
+  return doc.build();
+}
+
+export function formatPlainSalesDayReport(data: SalesDayReportData): string {
+  const lines = [
+    `=== ${data.shopName.toUpperCase()} ===`,
+    `SALES DAY REPORT (${data.date})`,
+    `--------------------------------`,
+    `Gross Sales: P${data.grossSales}`,
+    `Discounts:   -P${data.discountTotal}`,
+    `NET SALES:   P${data.netSales}`,
+    `--------------------------------`,
+    `Transactions: ${data.salesCount}`,
+    `Items Sold:   ${data.itemsSold}`,
+    `--------------------------------`,
+    `PAYMENT METHODS:`,
+    ...data.byPaymentMethod.map((m) => `  ${m.paymentMethod}: P${m.amount} (${m.count})`),
+    `--------------------------------`,
+    `Expenses Today: P${data.expensesToday}`,
+  ];
+  if (data.voidedCount > 0) {
+    lines.push(`Voided (${data.voidedCount}): P${data.voidedAmount}`);
+  }
+  return lines.join('\n');
+}
+
+export function formatPlainInventoryReport(data: InventoryReportData): string {
+  const lines = [
+    `=== ${data.shopName.toUpperCase()} ===`,
+    `INVENTORY CLOSE REPORT (${data.date})`,
+    `--------------------------------`,
+    ...data.items.map(
+      (i) => `${i.productName} (${i.sku})\n  Start: ${i.openingStock} | In: +${i.stockIn} | Out: -${i.stockOut} | Sold: ${i.salesQty} | Close: ${i.closingStock}`,
+    ),
+  ];
+  return lines.join('\n');
+}
