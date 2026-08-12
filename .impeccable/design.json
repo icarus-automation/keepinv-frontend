@@ -1,0 +1,264 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-07T00:00:00Z",
+  "title": "Design System: keep inv",
+  "extensions": {
+    "colorMeta": {
+      "signal": {
+        "role": "primary",
+        "displayName": "Signal Amber",
+        "canonical": "oklch(72% 0.15 75)",
+        "tonalRamp": [
+          "oklch(97% 0.02 80)",
+          "oklch(94% 0.04 80)",
+          "oklch(90% 0.07 78)",
+          "oklch(85% 0.1 77)",
+          "oklch(78% 0.13 76)",
+          "oklch(72% 0.15 75)",
+          "oklch(66% 0.155 75)",
+          "oklch(58% 0.14 73)",
+          "oklch(50% 0.12 70)",
+          "oklch(43% 0.1 68)",
+          "oklch(33% 0.08 65)"
+        ]
+      },
+      "counter": {
+        "role": "neutral",
+        "displayName": "Counter White",
+        "canonical": "oklch(98% 0.006 75)",
+        "sharedRamp": "surface",
+        "tonalRamp": [
+          "oklch(99% 0.003 75)",
+          "oklch(98% 0.006 75)",
+          "oklch(95% 0.007 75)",
+          "oklch(90% 0.008 75)",
+          "oklch(84% 0.009 75)",
+          "oklch(72% 0.011 75)",
+          "oklch(62% 0.013 75)",
+          "oklch(50% 0.014 75)",
+          "oklch(44% 0.014 75)",
+          "oklch(34% 0.014 75)",
+          "oklch(28% 0.014 75)",
+          "oklch(24% 0.014 75)"
+        ]
+      },
+      "panel": {
+        "role": "neutral",
+        "displayName": "Panel",
+        "canonical": "oklch(96.2% 0.007 75)",
+        "sharedRamp": "surface",
+        "note": "Custom step inserted between surface.50 (counter) and surface.100; distinct chrome layer."
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(24% 0.014 75)",
+        "sharedRamp": "surface"
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted",
+        "canonical": "oklch(50% 0.014 75)",
+        "sharedRamp": "surface"
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Line",
+        "canonical": "oklch(90% 0.008 75)",
+        "sharedRamp": "surface"
+      },
+      "field": {
+        "role": "neutral",
+        "displayName": "Field Border",
+        "canonical": "oklch(62% 0.013 75)",
+        "sharedRamp": "surface"
+      },
+      "danger": {
+        "role": "error",
+        "displayName": "Danger",
+        "canonical": "oklch(52% 0.17 27)",
+        "tonalRamp": [
+          "oklch(92% 0.05 27)",
+          "oklch(82% 0.09 27)",
+          "oklch(72% 0.13 27)",
+          "oklch(62% 0.16 27)",
+          "oklch(52% 0.17 27)",
+          "oklch(44% 0.15 27)",
+          "oklch(34% 0.12 27)",
+          "oklch(22% 0.08 27)"
+        ]
+      },
+      "success": {
+        "role": "success",
+        "displayName": "Success",
+        "canonical": "oklch(53% 0.13 150)",
+        "tonalRamp": [
+          "oklch(92% 0.04 150)",
+          "oklch(82% 0.07 150)",
+          "oklch(72% 0.1 150)",
+          "oklch(62% 0.12 150)",
+          "oklch(53% 0.13 150)",
+          "oklch(45% 0.11 150)",
+          "oklch(35% 0.09 150)",
+          "oklch(22% 0.06 150)"
+        ]
+      },
+      "info": {
+        "role": "info",
+        "displayName": "Info",
+        "canonical": "oklch(54% 0.13 264)",
+        "tonalRamp": [
+          "oklch(92% 0.04 264)",
+          "oklch(82% 0.07 264)",
+          "oklch(72% 0.1 264)",
+          "oklch(63% 0.12 264)",
+          "oklch(54% 0.13 264)",
+          "oklch(46% 0.11 264)",
+          "oklch(36% 0.09 264)",
+          "oklch(23% 0.06 264)"
+        ]
+      },
+      "brand": {
+        "role": "identity",
+        "displayName": "Brand Green (keepInventory nod)",
+        "canonical": "oklch(52% 0.15 148)",
+        "tonalRamp": [
+          "oklch(92% 0.05 148)",
+          "oklch(82% 0.09 148)",
+          "oklch(72% 0.12 148)",
+          "oklch(62% 0.14 148)",
+          "oklch(52% 0.15 148)",
+          "oklch(44% 0.13 148)",
+          "oklch(34% 0.1 148)",
+          "oklch(22% 0.07 148)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "The one hero readout on a screen. Confirmed use: the POS running total only." },
+      "headline": { "displayName": "Headline", "purpose": "Large stat callouts — audit outcome counts, summary totals." },
+      "title": { "displayName": "Title", "purpose": "Screen titles (1rem) and section/dialog titles (0.875rem), both semibold." },
+      "body": { "displayName": "Body", "purpose": "Default UI text, table cells, row/card titles at medium weight." },
+      "label": { "displayName": "Label", "purpose": "Field labels, table headers, nav captions, badges, kbd hints." }
+    },
+    "shadows": [
+      { "name": "dropdown", "value": "0 10px 15px -3px oklch(24% 0.014 75 / 0.05), 0 4px 6px -4px oklch(24% 0.014 75 / 0.05)", "purpose": "Search-result / autocomplete popovers anchored to an input (shadow-lg shadow-ink/5)." },
+      { "name": "sheet", "value": "0 20px 25px -5px oklch(24% 0.014 75 / 0.1), 0 8px 10px -6px oklch(24% 0.014 75 / 0.1)", "purpose": "Modals and hand-rolled dialog sheets (shadow-xl)." },
+      { "name": "floating-hint", "value": "0 1px 2px 0 oklch(24% 0.014 75 / 0.05)", "purpose": "Fixed bottom-center keyboard-shortcut hint bar (shadow-sm)." }
+    ],
+    "motion": [
+      { "name": "state-transition", "value": "150ms-300ms ease-out", "purpose": "Default duration range for hover/focus/color transitions and progress-bar fills across the app." },
+      { "name": "reduced-motion", "value": "none", "purpose": "prefers-reduced-motion disables pulse skeletons, progress transforms, and color transitions app-wide." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one filled amber action per view — completes the task (e.g. Complete sale, New product).",
+      "html": "<button class=\"ds-btn-primary\" type=\"button\">Complete sale</button>",
+      "css": ".ds-btn-primary { background: var(--color-signal, oklch(72% 0.15 75)); color: var(--color-ink, oklch(24% 0.014 75)); font-weight: 600; font-size: 0.875rem; padding: 0.5rem 0.75rem; border-radius: 0.375rem; border: none; cursor: pointer; transition: background 0.15s ease-out; } .ds-btn-primary:hover { background: oklch(66% 0.155 75); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--color-counter, oklch(98% 0.006 75)), 0 0 0 4px var(--color-signal, oklch(72% 0.15 75)); } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; } @media (prefers-reduced-motion: reduce) { .ds-btn-primary { transition: none; } }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary action — transparent background, muted text (e.g. Retry, Clear filters).",
+      "html": "<button class=\"ds-btn-ghost\" type=\"button\">Clear filters</button>",
+      "css": ".ds-btn-ghost { background: transparent; color: var(--color-muted, oklch(50% 0.014 75)); font-weight: 500; font-size: 0.875rem; padding: 0.5rem 0.75rem; border-radius: 0.375rem; border: none; cursor: pointer; transition: color 0.15s ease-out, background 0.15s ease-out; } .ds-btn-ghost:hover { color: var(--color-ink, oklch(24% 0.014 75)); background: color-mix(in oklch, var(--color-line, oklch(90% 0.008 75)) 60%, transparent); } .ds-btn-ghost:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--color-counter, oklch(98% 0.006 75)), 0 0 0 4px var(--color-signal, oklch(72% 0.15 75)); } @media (prefers-reduced-motion: reduce) { .ds-btn-ghost { transition: none; } }"
+    },
+    {
+      "name": "Search / Scan Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Signature input: leading search icon, placeholder invites scanning. Focus must always be predictable so scanned input lands here.",
+      "html": "<div class=\"ds-search\"><svg class=\"ds-search-icon\" viewBox=\"0 0 20 20\" fill=\"none\" aria-hidden=\"true\"><circle cx=\"9\" cy=\"9\" r=\"6\" stroke=\"currentColor\" stroke-width=\"1.5\"/><path d=\"M17 17l-3.5-3.5\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\"/></svg><input class=\"ds-search-input\" type=\"search\" placeholder=\"Search or scan name, SKU, barcode…\" /></div>",
+      "css": ".ds-search { position: relative; } .ds-search-icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); width: 1rem; height: 1rem; color: var(--color-muted, oklch(50% 0.014 75)); } .ds-search-input { width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.25rem; font-size: 0.875rem; color: var(--color-ink, oklch(24% 0.014 75)); background: var(--color-counter, oklch(98% 0.006 75)); border: 1px solid var(--color-field, oklch(62% 0.013 75)); border-radius: 0.375rem; } .ds-search-input::placeholder { color: var(--color-muted, oklch(50% 0.014 75)); } .ds-search-input:focus-visible { outline: none; border-color: var(--color-signal, oklch(72% 0.15 75)); box-shadow: 0 0 0 2px var(--color-signal, oklch(72% 0.15 75)); }"
+    },
+    {
+      "name": "Status Badge (tint)",
+      "kind": "chip",
+      "refersTo": "badge-status",
+      "description": "Semantic outcome chip (audit result, movement status). Tinted background at 10%, never amber.",
+      "html": "<span class=\"ds-badge-status ds-badge-status--success\">Verified</span>",
+      "css": ".ds-badge-status { display: inline-flex; align-items: center; font-size: 0.75rem; font-weight: 500; padding: 0.125rem 0.5rem; border-radius: 0.375rem; letter-spacing: 0.02em; } .ds-badge-status--success { background: color-mix(in oklch, oklch(53% 0.13 150) 10%, transparent); color: oklch(53% 0.13 150); } .ds-badge-status--danger { background: color-mix(in oklch, oklch(52% 0.17 27) 10%, transparent); color: oklch(52% 0.17 27); } .ds-badge-status--info { background: color-mix(in oklch, oklch(54% 0.13 264) 10%, transparent); color: oklch(54% 0.13 264); }"
+    },
+    {
+      "name": "Neutral Badge (outline)",
+      "kind": "chip",
+      "refersTo": "badge-neutral",
+      "description": "Role tags and 'coming soon' markers — outline, uppercase, wide tracking.",
+      "html": "<span class=\"ds-badge-neutral\">Soon</span>",
+      "css": ".ds-badge-neutral { display: inline-flex; align-items: center; font-size: 0.625rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.03em; padding: 0.125rem 0.375rem; border-radius: 0.25rem; border: 1px solid var(--color-line, oklch(90% 0.008 75)); color: var(--color-muted, oklch(50% 0.014 75)); }"
+    },
+    {
+      "name": "Empty State Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Reused across catalog, audits, and lists: icon circle, semibold title, muted explanation, single CTA.",
+      "html": "<div class=\"ds-empty\"><span class=\"ds-empty-icon\"><svg viewBox=\"0 0 20 20\" fill=\"none\" aria-hidden=\"true\"><rect x=\"4\" y=\"7\" width=\"12\" height=\"9\" rx=\"1\" stroke=\"currentColor\" stroke-width=\"1.5\"/><path d=\"M4 7l6-4 6 4\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linejoin=\"round\"/></svg></span><p class=\"ds-empty-title\">No products yet</p><p class=\"ds-empty-desc\">Add your first product to start the catalog.</p><button class=\"ds-btn-primary\" type=\"button\">New product</button></div>",
+      "css": ".ds-empty { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; text-align: center; padding: 3rem 1.5rem; border: 1px dashed var(--color-line, oklch(90% 0.008 75)); border-radius: 0.5rem; background: var(--color-counter, oklch(98% 0.006 75)); } .ds-empty-icon { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: 9999px; background: var(--color-panel, oklch(96.2% 0.007 75)); color: var(--color-muted, oklch(50% 0.014 75)); } .ds-empty-icon svg { width: 1.25rem; height: 1.25rem; } .ds-empty-title { margin-top: 0.75rem; font-size: 0.875rem; font-weight: 600; color: var(--color-ink, oklch(24% 0.014 75)); } .ds-empty-desc { max-width: 20rem; font-size: 0.875rem; color: var(--color-muted, oklch(50% 0.014 75)); }"
+    },
+    {
+      "name": "Dialog / Sheet",
+      "kind": "custom",
+      "refersTo": "dialog-sheet",
+      "description": "Hand-rolled: mobile bottom sheet becoming a centered desktop dialog at sm (640px). Ink-tinted backdrop, never generic black.",
+      "html": "<div class=\"ds-sheet-backdrop\"><div class=\"ds-sheet\" role=\"dialog\" aria-modal=\"true\"><div class=\"ds-sheet-header\"><h2 class=\"ds-sheet-title\">Choose a unit</h2><button class=\"ds-sheet-close\" type=\"button\" aria-label=\"Close\"><svg viewBox=\"0 0 20 20\" fill=\"none\" aria-hidden=\"true\"><path d=\"M5 5l10 10M15 5L5 15\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\"/></svg></button></div><div class=\"ds-sheet-body\">Unit list goes here.</div></div></div>",
+      "css": ".ds-sheet-backdrop { display: flex; align-items: flex-end; justify-content: center; background: color-mix(in oklch, var(--color-ink, oklch(24% 0.014 75)) 40%, transparent); padding: 0; } .ds-sheet { width: 100%; max-height: 80vh; display: flex; flex-direction: column; overflow: hidden; background: var(--color-counter, oklch(98% 0.006 75)); border: 1px solid var(--color-line, oklch(90% 0.008 75)); border-radius: 0.75rem 0.75rem 0 0; box-shadow: 0 20px 25px -5px oklch(24% 0.014 75 / 0.1); } .ds-sheet-header { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.75rem 1rem; border-bottom: 1px solid var(--color-line, oklch(90% 0.008 75)); } .ds-sheet-title { font-size: 0.875rem; font-weight: 600; color: var(--color-ink, oklch(24% 0.014 75)); } .ds-sheet-close { display: grid; place-items: center; width: 1.75rem; height: 1.75rem; border-radius: 0.375rem; border: none; background: transparent; color: var(--color-muted, oklch(50% 0.014 75)); cursor: pointer; } .ds-sheet-close:hover { color: var(--color-ink, oklch(24% 0.014 75)); } .ds-sheet-close svg { width: 0.75rem; height: 0.75rem; } .ds-sheet-body { padding: 1rem; font-size: 0.875rem; color: var(--color-muted, oklch(50% 0.014 75)); } @media (min-width: 640px) { .ds-sheet-backdrop { align-items: center; padding: 1rem; } .ds-sheet { max-width: 32rem; border-radius: 0.75rem; } }"
+    },
+    {
+      "name": "Nav Item",
+      "kind": "nav",
+      "refersTo": "nav-item",
+      "description": "Sidebar navigation link. Active item gets the Signal-colored icon + label; the only recurring non-action use of amber.",
+      "html": "<a class=\"ds-nav-item ds-nav-item--active\" href=\"#\"><svg class=\"ds-nav-icon\" viewBox=\"0 0 20 20\" fill=\"none\" aria-hidden=\"true\"><rect x=\"3\" y=\"3\" width=\"14\" height=\"14\" rx=\"2\" stroke=\"currentColor\" stroke-width=\"1.5\"/></svg><span>Products</span></a>",
+      "css": ".ds-nav-item { display: flex; align-items: center; gap: 0.625rem; padding: 0.5rem 0.75rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 500; color: var(--color-muted, oklch(50% 0.014 75)); text-decoration: none; transition: background 0.15s ease-out, color 0.15s ease-out; } .ds-nav-item:hover { background: color-mix(in oklch, var(--color-line, oklch(90% 0.008 75)) 60%, transparent); color: var(--color-ink, oklch(24% 0.014 75)); } .ds-nav-item:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--color-counter, oklch(98% 0.006 75)), 0 0 0 4px var(--color-signal, oklch(72% 0.15 75)); } .ds-nav-item--active { color: var(--color-ink, oklch(24% 0.014 75)); } .ds-nav-item--active .ds-nav-icon { color: var(--color-signal, oklch(72% 0.15 75)); } .ds-nav-icon { width: 1.125rem; height: 1.125rem; flex-shrink: 0; } @media (prefers-reduced-motion: reduce) { .ds-nav-item { transition: none; } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Lit Workbench",
+    "overview": "A clean, brightly lit surface where every tool sits exactly where the hand reaches for it. The interface behaves like a well-organized parts counter: the operator is mid-transaction with a customer waiting, a scanner in one hand, and needs the right part number and price to surface in a fraction of a second. Nothing decorative competes for that attention. The screen is calm, high contrast, and dense where density buys speed.\n\nThe system commits to one signal color, a warm amber, and otherwise stays in near-neutral tones tinted slightly warm so the surface never reads as clinical gray. Amber is the single light on the workbench: it marks the one action that matters, the current selection, and where focus lives. Its scarcity is what makes it readable at a glance. Everything else is structure and type. A single quiet green (\"brand\") appears only in the \"keep\" wordmark — identity, never an interactive signal, so amber's exclusivity as the one actionable color holds.\n\nThis system explicitly rejects the clunky legacy ERP look (gray-on-gray, cramped 2010-era forms), the generic SaaS template (purple gradients, identical card grids, hero-metric dashboards), anything that reads as a toy or consumer app, and over-animated or flashy motion that would slow a high-volume counter. It is closer to a well-built terminal or Linear than to a marketing site. The implementation confirms the seed direction and adds one real refinement: even elevation stays warm — floating shadows are tinted with Ink, not generic black.",
+    "keyCharacteristics": [
+      "Light, high-contrast surface tuned for bright retail-counter lighting.",
+      "One amber signal accent, on under 10% of any screen.",
+      "Warm-tinted neutrals, never pure #fff or #000 — including shadows.",
+      "System sans with tabular numerals for prices, quantities, and SKUs.",
+      "Dense but legible; hierarchy stays obvious. Display scale is reserved for the one number that matters: the sale total.",
+      "Two responsive tiers only (sm 640px, lg 1024px): stacked forms below sm, two-pane list/detail and the persistent sidebar from lg up.",
+      "Responsive, state-only motion; no choreography. prefers-reduced-motion is honored everywhere."
+    ],
+    "rules": [
+      { "name": "The One Signal Rule", "body": "Amber appears on at most one primary thing per view: the action that completes the task, the row that is selected, or the field that has focus. If two amber things compete on a screen, one is wrong.", "section": "colors" },
+      { "name": "The No Pure Extremes Rule", "body": "Never #fff, never #000. Every neutral is tinted toward the amber hue (chroma 0.006 to 0.014). A pure-gray surface reads as legacy ERP.", "section": "colors" },
+      { "name": "The Tinted Shadow Rule", "body": "Shadows are colored with Ink, not a generic black (shadow-ink/5, shadow-xl on the warm Counter surface). Elevation stays warm even when it lifts off the page.", "section": "colors" },
+      { "name": "The Tabular Numerals Rule", "body": "Every number that represents money, quantity, or an identifier uses tabular figures. Columns of prices and counts must align to the digit. Proportional digits in a price column are a defect.", "section": "typography" },
+      { "name": "The One Display Rule", "body": "Display scale (1.875rem/600) is reserved for the single most important number on a screen — today, only the POS total. A second Display-scale element on the same screen is a defect, not emphasis.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Surfaces are flat at rest. Separation comes from tonal neutral layers and hairline borders. A shadow only appears on something that genuinely floats above the page — a popover, a dialog, a fixed hint — never as decoration on a resting card or table row.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep Signal Amber on under 10% of any screen, the primary action, current selection, and focus only. Its scarcity is the point.",
+      "Do tint every neutral toward the amber hue; use a warm off-white surface and a warm near-black ink — including shadows (Ink-tinted, never generic black).",
+      "Do enforce tabular numerals on every price, quantity, and SKU.",
+      "Do make every core action fully operable by keyboard and scanner, with a visible focus ring at all times and predictable focus so scanned input never lands in the wrong field.",
+      "Do keep motion responsive and state-only (150–300ms), and respect prefers-reduced-motion on every transition, skeleton, and progress fill.",
+      "Do stay flat by default; separate surfaces with tonal neutral layers and hairline borders; reserve shadows for things that genuinely float (dropdown, dialog, fixed hint).",
+      "Do reserve Display-scale type (1.875rem) for the one number that matters on a screen — don't promote ordinary headings to it."
+    ],
+    "donts": [
+      "Don't ship the clunky legacy ERP look: no gray-on-gray, no cramped 2010-era forms, no pure-gray surfaces, no SAP/old-POS-terminal aesthetic.",
+      "Don't fall into the generic SaaS template: no purple gradients, no identical icon-heading-text card grids, no hero-metric dashboard, no AI-slop defaults.",
+      "Don't let it read as a toy or consumer app; this handles money and inventory and must stay businesslike.",
+      "Don't over-animate; no choreographed entrances, no decorative motion, no bounce or elastic easing. Motion that slows the counter is a defect.",
+      "Don't use #fff or #000 anywhere, including in shadows (no generic rgba(0,0,0,...)).",
+      "Don't use a colored side-stripe border (border-left/border-right over 1px) as an accent, gradient text, or decorative glassmorphism.",
+      "Don't use proportional digits in any column of prices or counts.",
+      "Don't reach for a full-page or table-wide spinner; use skeletons shaped like the content instead. A small inline spinner is only acceptable for a short, localized load already inside an open panel."
+    ]
+  }
+}
