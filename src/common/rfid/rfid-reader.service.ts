@@ -1,7 +1,7 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { Observable, Subject, filter, map } from 'rxjs';
 
-import type { ReadMode, ReaderReport, SweepPlan } from './h103-protocol';
+import type { OutputMode, ReadMode, ReaderReport, SweepPlan } from './h103-protocol';
 import type { ReaderError, ReaderErrorKind, WireEntry } from './h103-transport';
 
 type ProtocolModule = typeof import('./h103-protocol');
@@ -34,17 +34,20 @@ export interface PowerPreset {
 export type PowerPresetId = 'near' | 'shelf' | 'room';
 
 export const POWER_PRESETS: readonly PowerPreset[] = [
-  { id: 'near', label: 'At the antenna', hint: 'Only a tag you are holding', dbm: 5 },
-  { id: 'shelf', label: 'Arm’s length', hint: 'One shelf or bin at a time', dbm: 16 },
-  { id: 'room', label: 'Full range', hint: 'Sweep a whole aisle', dbm: 26 },
+  { id: 'near', label: 'At the antenna', hint: 'Only a tag you are holding', dbm: 10 },
+  { id: 'shelf', label: 'Arm’s length', hint: 'One shelf or bin at a time', dbm: 22 },
+  { id: 'room', label: 'Full range', hint: 'Sweep a whole aisle', dbm: 33 },
 ];
 
 /**
- * Tags weaker than this are ignored while near-field capture is on. At the "At the antenna" power
- * preset a tag in the hand reads around -35 dBm and a neighbouring shelf around -65, so the gate
- * sits between them with room to spare.
+ * Tags weaker than this are ignored while near-field capture is on.
+ *
+ * Deliberately permissive. RSSI varies hugely with tag, antenna, and orientation, and this number
+ * has not been calibrated against real hardware — a gate set too tight silently drops every read
+ * and looks exactly like a broken reader. Range limiting is done physically by the power preset,
+ * which is reliable; this is only a backstop, and it is opt-in rather than automatic.
  */
-const NEAR_FIELD_RSSI_FLOOR = -55;
+const NEAR_FIELD_RSSI_FLOOR = -65;
 
 /** Remembered so a reader paired earlier reconnects on load without another chooser prompt. */
 const DEVICE_STORAGE_KEY = 'aw:rfid-device';
@@ -81,6 +84,12 @@ export class RfidReaderService {
   /** Charge percentage, or null before the first reading. */
   readonly battery = signal<number | null>(null);
   readonly readMode = signal<ReadMode>('rfid');
+  /**
+   * What the reader says it does with captured data, read back from the device after connect.
+   * `hid` means it is acting as a Bluetooth keyboard and this channel will never see a tag.
+   * Null until the reader answers.
+   */
+  readonly outputMode = signal<OutputMode | null>(null);
   readonly powerDbm = signal<number>(POWER_PRESETS[2].dbm);
 
   /** A sweep is running: started from the app, or by the reader's own trigger. */
@@ -288,7 +297,10 @@ export class RfidReaderService {
   async prepareFor(task: 'commission' | 'audit'): Promise<void> {
     const near = task === 'commission';
     this.beginSession();
-    this.setNearFieldOnly(near);
+    // Range comes from the power preset, not from the RSSI gate: cutting power physically stops
+    // distant tags from answering at all, whereas the gate throws away reads the radio did make.
+    // Leaving the gate off by default means a mis-set threshold can never look like dead hardware.
+    this.setNearFieldOnly(false);
     await this.setReadMode('rfid');
     await this.applyPreset(near ? 'near' : 'room');
   }
@@ -296,6 +308,27 @@ export class RfidReaderService {
   async refreshBattery(): Promise<void> {
     if (!this.connected()) return;
     const protocol = await this.loadProtocol();
+    await this.send(protocol.getBattery());
+  }
+
+  /**
+   * Re-push the whole configuration and read it back. The reader keeps its settings across power
+   * cycles, so anything that left it in Bluetooth-keyboard mode or on the barcode front end
+   * persists until something puts it back — this is that something, without making the operator
+   * open the vendor's Android app.
+   */
+  async reapplySettings(): Promise<void> {
+    if (!this.connected()) return;
+    const protocol = await this.loadProtocol();
+
+    await this.stopSweep();
+    await this.send(protocol.setOutputMode('transparent'));
+    await this.send(protocol.setReadMode(this.readMode()));
+    await sleep(MODE_SETTLE_MS);
+
+    await this.send(protocol.setPower(this.powerDbm()));
+    await this.send(protocol.getOutputMode());
+    await this.send(protocol.getReadMode());
     await this.send(protocol.getBattery());
   }
 
@@ -331,10 +364,27 @@ export class RfidReaderService {
     this.remember(transport.deviceId, name);
 
     const protocol = await this.loadProtocol();
+
+    // Order and timing both matter here.
+    //
+    // 1. Transparent output first: in Bluetooth-keyboard (HID) mode the reader types its reads as
+    //    keystrokes and sends nothing over GATT.
+    // 2. RFID front end, then WAIT. The manual is explicit that a read-mode switch restarts the
+    //    module and needs ~1s "to completely start". Commands sent inside that window are lost —
+    //    which previously swallowed the power setting and left the radio at its default.
+    // 3. Only then set power, which the manual requires before any tag operation.
     await this.send(protocol.setOutputMode('transparent'));
     await this.send(protocol.setReadMode('rfid'));
     this.readMode.set('rfid');
+    await sleep(MODE_SETTLE_MS);
+
     await this.send(protocol.setPower(this.powerDbm()));
+
+    // Read back what the module actually thinks it is set to. Answers arrive as `outputMode` /
+    // `readMode` reports and land in the diagnostics panel, so a reader that silently ignored the
+    // configuration above is visible instead of merely suspected.
+    await this.send(protocol.getOutputMode());
+    await this.send(protocol.getReadMode());
     await this.send(protocol.getBattery());
 
     this.startBatteryPolling();
@@ -391,8 +441,13 @@ export class RfidReaderService {
         this.readMode.set(report.mode);
         return;
 
-      case 'idle':
       case 'outputMode':
+        // `hid` here is the smoking gun for "connects fine, never reports a tag": the reader is
+        // typing its reads as Bluetooth keystrokes instead of sending them over this channel.
+        this.outputMode.set(report.mode);
+        return;
+
+      case 'idle':
       case 'other':
         return;
     }
@@ -419,6 +474,7 @@ export class RfidReaderService {
     this.status.set('idle');
     this.deviceName.set(null);
     this.battery.set(null);
+    this.outputMode.set(null);
     this.sweeping.set(false);
     this.triggerHeld.set(false);
     this.appDrivenSweep = false;

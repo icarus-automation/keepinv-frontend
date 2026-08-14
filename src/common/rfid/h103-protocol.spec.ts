@@ -1,8 +1,11 @@
 import {
   FrameReader,
   crc16,
+  describeFrame,
   getBattery,
   getDeviceInfo,
+  getOutputMode,
+  getReadMode,
   interpretFrame,
   normalizeTag,
   setPower,
@@ -78,11 +81,20 @@ describe('command frames', () => {
     expect(hex(setOutputMode('transparent'))).toBe('CF FF 00 88 02 01 01 A3 15');
   });
 
-  it('builds power frames and clamps to the module range', () => {
+  it('builds power frames and clamps to the H103 range of 1–33 dBm', () => {
     expect(hex(setPower(26))).toBe('CF FF 00 53 02 1A 00 FB C8');
     expect(hex(setPower(5))).toBe('CF FF 00 53 02 05 00 ED 91');
-    expect(hex(setPower(99))).toBe(hex(setPower(26)));
-    expect(hex(setPower(-4))).toBe(hex(setPower(0)));
+    expect(hex(setPower(33))).toBe('CF FF 00 53 02 21 00 A9 C2');
+    expect(hex(setPower(99))).toBe(hex(setPower(33)));
+    // The floor is 1, not 0: the module rejects a zero power with a parameter error, which would
+    // silently leave the radio wherever it was.
+    expect(hex(setPower(0))).toBe('CF FF 00 53 02 01 00 8A F1');
+    expect(hex(setPower(-4))).toBe(hex(setPower(1)));
+  });
+
+  it('builds the mode read-back queries', () => {
+    expect(hex(getOutputMode())).toBe('CF FF 00 88 01 02 37 34');
+    expect(hex(getReadMode())).toBe('CF FF 00 8E 01 02 E1 ED');
   });
 
   it('builds the zero-payload queries', () => {
@@ -223,6 +235,40 @@ describe('interpretFrame', () => {
 
   it('surfaces an unmodelled command rather than guessing', () => {
     expect(report('CF 00 00 72 02 00 01')).toEqual({ kind: 'other', cmd: 0x0072, status: 0x00 });
+  });
+});
+
+describe('describeFrame', () => {
+  it('reads the frames seen on a real device during the first hardware session', () => {
+    // Exactly what the diagnostics log showed while the reader swept and found nothing.
+    expect(describeFrame(bytes('CF 00 00 53 01 00 47 D5'), 'in')).toBe('SET_POWER ok');
+    expect(describeFrame(bytes('CF 00 00 01 01 12 42 1D'), 'in')).toBe('INVENTORY idle — no tags');
+    expect(describeFrame(bytes('CF FF 00 01 05 00 00 00 00 00 F5 B5'), 'out')).toBe(
+      'START sweep (continuous)',
+    );
+  });
+
+  it('names a tag read and its signal strength', () => {
+    expect(
+      describeFrame(
+        withCrc('CF 00 00 01 12 00 FE C0 01 00 0C E2 80 11 60 60 00 02 09 4C 4C 8B 1A'),
+        'in',
+      ),
+    ).toBe('TAG E2801160600002094C4C8B1A  -32 dBm');
+  });
+
+  it('calls out the output mode in both directions', () => {
+    expect(describeFrame(bytes('CF FF 00 88 02 01 01 A3 15'), 'out')).toBe(
+      'SET OUTPUT_MODE transparent',
+    );
+    expect(describeFrame(withCrc('CF 00 00 88 02 00 00'), 'in')).toBe('OUTPUT_MODE = HID');
+    expect(describeFrame(withCrc('CF 00 00 88 02 00 01'), 'in')).toBe('OUTPUT_MODE = transparent');
+  });
+
+  it('names power, trigger, and battery frames', () => {
+    expect(describeFrame(bytes('CF FF 00 53 02 21 00 A9 C2'), 'out')).toBe('SET_POWER 33 dBm');
+    expect(describeFrame(withCrc('CF 00 00 89 02 00 01'), 'in')).toBe('TRIGGER pressed');
+    expect(describeFrame(withCrc('CF 00 00 83 02 00 54'), 'in')).toBe('BATTERY 84%');
   });
 });
 

@@ -4,6 +4,7 @@ import { PopoverModule } from 'primeng/popover';
 import { SliderModule } from 'primeng/slider';
 import { FormsModule } from '@angular/forms';
 
+import { MAX_POWER_DBM, MIN_POWER_DBM } from './h103-protocol';
 import { POWER_PRESETS, PowerPresetId, RfidReaderService } from './rfid-reader.service';
 
 /** How the chip reads at a glance. Ordered by urgency: a fault outranks activity. */
@@ -29,6 +30,8 @@ type ChipTone = 'fault' | 'live' | 'ready' | 'busy' | 'off';
 export class ReaderChip {
   protected readonly reader = inject(RfidReaderService);
   protected readonly presets = POWER_PRESETS;
+  protected readonly minPower = MIN_POWER_DBM;
+  protected readonly maxPower = MAX_POWER_DBM;
 
   /** The diagnostics disclosure is closed until someone is actually troubleshooting. */
   protected readonly showDiagnostics = signal(false);
@@ -132,6 +135,10 @@ export class ReaderChip {
 
   protected setMode(mode: 'rfid' | 'barcode'): void {
     void this.reader.setReadMode(mode);
+  }
+
+  protected reapply(): void {
+    void this.reader.reapplySettings();
   }
 
   protected toggleDiagnostics(): void {

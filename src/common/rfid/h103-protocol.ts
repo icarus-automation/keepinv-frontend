@@ -60,9 +60,15 @@ export type OutputMode = 'hid' | 'transparent';
 const READ_MODE_BYTE: Record<ReadMode, number> = { rfid: 0x00, barcode: 0x01 };
 const OUTPUT_MODE_BYTE: Record<OutputMode, number> = { hid: 0x00, transparent: 0x01 };
 
-/** Radio power bounds in dBm. The module clamps anything above 26. */
-export const MIN_POWER_DBM = 0;
-export const MAX_POWER_DBM = 26;
+/**
+ * Radio power bounds in dBm, per the manual's RFM_SET_PWR table: H100 is [1,20], H102 is [1,26],
+ * and **H103 is [1,33]**. Note the floor is 1, not 0 — the module answers `0x01` (parameter error)
+ * to a zero power, which silently leaves the radio at whatever it had.
+ *
+ * The vendor SDK's javadoc says [0,26]; that documents the H102 and is wrong for this reader.
+ */
+export const MIN_POWER_DBM = 1;
+export const MAX_POWER_DBM = 33;
 
 // --- Building commands ---------------------------------------------------------------------
 
@@ -347,6 +353,80 @@ function decodeBarcode(payload: Uint8Array): string {
 
 function signed16(value: number): number {
   return value >= 0x8000 ? value - 0x10000 : value;
+}
+
+/** Command codes rendered by name in the diagnostics log. */
+const CMD_NAMES: Record<number, string> = {
+  [Cmd.INVENTORY]: 'INVENTORY',
+  [Cmd.STOP_INVENTORY]: 'STOP',
+  [Cmd.MODULE_INIT]: 'MODULE_INIT',
+  [Cmd.SET_POWER]: 'SET_POWER',
+  [Cmd.GET_DEVICE_INFO]: 'DEVICE_INFO',
+  [Cmd.GET_BATTERY]: 'BATTERY',
+  [Cmd.OUTPUT_MODE]: 'OUTPUT_MODE',
+  [Cmd.KEY_STATE]: 'TRIGGER',
+  [Cmd.READ_MODE]: 'READ_MODE',
+};
+
+const STATUS_NAMES: Record<number, string> = {
+  [Status.OK]: 'ok',
+  [Status.BAD_PARAM]: 'BAD PARAM',
+  [Status.MODULE_ERROR]: 'MODULE ERROR',
+  [Status.INVENTORY_IDLE]: 'idle — no tags',
+};
+
+/**
+ * A short human reading of one frame, for the diagnostics log. Raw hex is the ground truth but is
+ * unreadable at a glance; this turns "is the reader doing what I asked?" into something the person
+ * holding the device can answer without decoding bytes by hand.
+ */
+export function describeFrame(frame: Uint8Array, direction: 'out' | 'in'): string {
+  if (frame.length < HEADER_BYTES) return 'malformed';
+
+  const cmd = (frame[2] << 8) | frame[3];
+  const name = CMD_NAMES[cmd] ?? `cmd 0x${cmd.toString(16).padStart(4, '0')}`;
+  const length = frame[4];
+
+  if (direction === 'out') {
+    if (cmd === Cmd.INVENTORY) {
+      const invType = frame[5];
+      const param = (frame[6] << 24) | (frame[7] << 16) | (frame[8] << 8) | frame[9];
+      if (invType === 0x00) {
+        return param === 0 ? 'START sweep (continuous)' : `START sweep (${param}s)`;
+      }
+      return `START sweep (${param} rounds)`;
+    }
+    if (cmd === Cmd.SET_POWER) return `SET_POWER ${frame[5]} dBm`;
+    if (cmd === Cmd.READ_MODE) {
+      return length > 1 ? `SET READ_MODE ${frame[6] === 0x01 ? 'barcode' : 'rfid'}` : 'GET READ_MODE';
+    }
+    if (cmd === Cmd.OUTPUT_MODE) {
+      return length > 1
+        ? `SET OUTPUT_MODE ${frame[6] === 0x01 ? 'transparent' : 'HID'}`
+        : 'GET OUTPUT_MODE';
+    }
+    return name;
+  }
+
+  // Responses carry a STATUS byte; a zero-length frame is a bare acknowledgement.
+  const status = length > 0 ? frame[HEADER_BYTES] : Status.OK;
+  const statusName = STATUS_NAMES[status] ?? `status 0x${status.toString(16).padStart(2, '0')}`;
+
+  if (cmd === Cmd.INVENTORY && status === Status.OK && length >= 6) {
+    const report = interpretFrame(toResponseFrame(frame));
+    if (report.kind === 'tag') return `TAG ${report.epc}  ${report.rssi} dBm`;
+    if (report.kind === 'barcode') return `BARCODE ${report.value}`;
+  }
+  if (cmd === Cmd.KEY_STATE) return `TRIGGER ${frame[HEADER_BYTES + 1] === 0x01 ? 'pressed' : 'released'}`;
+  if (cmd === Cmd.GET_BATTERY && status === Status.OK) return `BATTERY ${frame[HEADER_BYTES + 1]}%`;
+  if (cmd === Cmd.READ_MODE && length > 1) {
+    return `READ_MODE = ${frame[HEADER_BYTES + 1] === 0x01 ? 'barcode' : 'rfid'}`;
+  }
+  if (cmd === Cmd.OUTPUT_MODE && length > 1) {
+    return `OUTPUT_MODE = ${frame[HEADER_BYTES + 1] === 0x01 ? 'transparent' : 'HID'}`;
+  }
+
+  return `${name} ${statusName}`;
 }
 
 /**

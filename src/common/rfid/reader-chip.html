@@ -217,14 +217,26 @@
               <p-slider
                 inputId="reader-power"
                 [(ngModel)]="powerValue"
-                [min]="0"
-                [max]="26"
+                [min]="minPower"
+                [max]="maxPower"
                 [step]="1"
                 styleClass="mt-2 w-full"
               />
             }
 
             <dl class="mt-3 grid grid-cols-2 gap-x-3 gap-y-1 text-[0.6875rem]">
+              <!--
+                Read back from the device, not assumed. `HID` means the reader is typing its reads
+                as Bluetooth keystrokes and this channel will never see a tag — the single most
+                likely cause of "connects fine, reads nothing".
+              -->
+              <dt class="text-muted">Output</dt>
+              <dd
+                class="text-right"
+                [class]="reader.outputMode() === 'hid' ? 'font-semibold text-danger' : 'text-ink'"
+              >
+                {{ reader.outputMode() === null ? '—' : reader.outputMode() === 'hid' ? 'HID (wrong)' : 'Transparent' }}
+              </dd>
               <dt class="text-muted">Tags this session</dt>
               <dd class="text-right tabular-nums text-ink">{{ reader.tagCount() }}</dd>
               <!--
@@ -238,18 +250,41 @@
               <dd class="text-right text-ink">{{ reader.triggerHeld() ? 'Held' : 'Released' }}</dd>
             </dl>
 
+            @if (reader.outputMode() === 'hid') {
+              <p role="alert" class="mt-2 rounded-md bg-danger/10 px-2.5 py-2 text-[0.6875rem] leading-relaxed text-danger">
+                The reader is in Bluetooth-keyboard mode, so it types tags instead of sending them
+                here. Press <span class="font-semibold">Re-apply settings</span> below.
+              </p>
+            }
+
+            <div class="mt-2 flex justify-end">
+              <p-button
+                type="button"
+                label="Re-apply settings"
+                icon="pi pi-refresh"
+                [outlined]="true"
+                size="small"
+                [disabled]="!reader.connected()"
+                (onClick)="reapply()"
+                styleClass="font-medium"
+              />
+            </div>
+
             @if (reader.wireLog().length) {
               <div class="mt-2 max-h-40 overflow-y-auto rounded-md bg-panel p-2">
                 <ul class="space-y-0.5">
                   @for (entry of reader.wireLog(); track entry.at + entry.hex) {
-                    <li class="flex gap-2 font-mono text-[0.625rem] leading-relaxed">
+                    <li class="flex gap-2 text-[0.625rem] leading-relaxed">
                       <span
-                        class="shrink-0"
+                        class="shrink-0 font-mono"
                         [class]="entry.direction === 'out' ? 'text-muted' : 'text-success'"
                       >
                         {{ entry.direction === 'out' ? '»' : '«' }}
                       </span>
-                      <span class="min-w-0 break-all text-ink">{{ entry.hex }}</span>
+                      <span class="min-w-0">
+                        <span class="break-all font-medium text-ink">{{ entry.label }}</span>
+                        <span class="ml-1 break-all font-mono text-muted">{{ entry.hex }}</span>
+                      </span>
                     </li>
                   }
                 </ul>

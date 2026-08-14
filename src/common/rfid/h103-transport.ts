@@ -3,6 +3,7 @@ import {
   FrameReader,
   ReaderReport,
   ResponseFrame,
+  describeFrame,
   interpretFrame,
   toHex,
 } from './h103-protocol';
@@ -49,6 +50,8 @@ export interface WireEntry {
   readonly at: number;
   readonly direction: 'out' | 'in';
   readonly hex: string;
+  /** Short human reading of the frame, e.g. `TAG E28011… -32 dBm` or `SET_POWER 33 dBm`. */
+  readonly label: string;
 }
 
 export interface TransportHandlers {
@@ -244,7 +247,12 @@ export class H103Transport {
     }
 
     this.lastWriteAt = Date.now();
-    this.handlers?.onWire?.({ at: this.lastWriteAt, direction: 'out', hex: toHex(frame) });
+    this.handlers?.onWire?.({
+      at: this.lastWriteAt,
+      direction: 'out',
+      hex: toHex(frame),
+      label: describeFrame(frame, 'out'),
+    });
   }
 
   private readonly handleNotification = (event: Event): void => {
@@ -258,7 +266,12 @@ export class H103Transport {
   };
 
   private emit(frame: ResponseFrame): void {
-    this.handlers?.onWire?.({ at: Date.now(), direction: 'in', hex: toHex(frame.raw) });
+    this.handlers?.onWire?.({
+      at: Date.now(),
+      direction: 'in',
+      hex: toHex(frame.raw),
+      label: describeFrame(frame.raw, 'in'),
+    });
     this.handlers?.onReport(interpretFrame(frame));
   }
 
