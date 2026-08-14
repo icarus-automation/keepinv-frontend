@@ -1,7 +1,7 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { Observable, Subject, filter, map } from 'rxjs';
 
-import type { OutputMode, ReadMode, ReaderReport, SweepPlan } from './h103-protocol';
+import type { OutputMode, ParamsReport, ReadMode, ReaderReport, SweepPlan } from './h103-protocol';
 import type { ReaderError, ReaderErrorKind, WireEntry } from './h103-transport';
 
 type ProtocolModule = typeof import('./h103-protocol');
@@ -36,7 +36,7 @@ export type PowerPresetId = 'near' | 'shelf' | 'room';
 export const POWER_PRESETS: readonly PowerPreset[] = [
   { id: 'near', label: 'At the antenna', hint: 'Only a tag you are holding', dbm: 10 },
   { id: 'shelf', label: 'Arm’s length', hint: 'One shelf or bin at a time', dbm: 22 },
-  { id: 'room', label: 'Full range', hint: 'Sweep a whole aisle', dbm: 33 },
+  { id: 'room', label: 'Full range', hint: 'Sweep a whole aisle', dbm: 30 },
 ];
 
 /**
@@ -58,17 +58,15 @@ const MODE_SETTLE_MS = 1100;
 /** Breathing room after a stop, so the module drains its inventory before being reconfigured. */
 const STOP_SETTLE_MS = 250;
 
+/** Long enough for the module's parameter block to come back before it is modified and rewritten. */
+const PARAM_READ_MS = 400;
+
 /** Battery is polled on this cadence while connected; it moves slowly. */
 const BATTERY_POLL_MS = 120_000;
 
 /** Frames kept for the diagnostics panel. Enough to see a sweep, bounded so it cannot grow. */
 const WIRE_LOG_LIMIT = 60;
 
-/**
- * Antenna ports the module's power table covers. The H103 has one antenna, but the command still
- * expects the full table, and the SDK's own bean reads back an array.
- */
-const ANTENNA_PORTS = 8;
 
 /**
  * The app's single connection to a handheld RFID reader.
@@ -106,6 +104,8 @@ export class RfidReaderService {
   readonly antennaEnabled = signal<boolean | null>(null);
   /** Per-port power the module reports, which need not match what SET_POWER asked for. */
   readonly antennaPowers = signal<readonly number[]>([]);
+  /** The module's full configuration block, once it has answered GET_ALL_PARAM. */
+  readonly params = signal<ParamsReport | null>(null);
   readonly powerDbm = signal<number>(POWER_PRESETS[2].dbm);
 
   /** A sweep is running: started from the app, or by the reader's own trigger. */
@@ -147,6 +147,8 @@ export class RfidReaderService {
   private batteryTimer?: ReturnType<typeof setInterval>;
   /** Set while the app itself started a sweep, so a trigger release cannot cancel it. */
   private appDrivenSweep = false;
+  /** Power the module has actually been told, so redundant commands are never sent. */
+  private appliedPowerDbm: number | null = null;
 
   /**
    * Warm the lazy driver chunk ahead of the click (call on hover or focus). This keeps the later
@@ -281,9 +283,17 @@ export class RfidReaderService {
     const protocol = await this.loadProtocol();
     const clamped = Math.max(protocol.MIN_POWER_DBM, Math.min(protocol.MAX_POWER_DBM, Math.round(dbm)));
     this.powerDbm.set(clamped);
-    if (this.connected()) {
-      await this.send(protocol.setPower(clamped));
+    if (!this.connected()) {
+      return;
     }
+    // Never re-send a power the module already has. Belt-and-braces against the feedback loop that
+    // a two-way binding on this value once created: a redundant radio command is pure cost, and at
+    // volume it starves the module of the time it needs to actually inventory.
+    if (clamped === this.appliedPowerDbm) {
+      return;
+    }
+    this.appliedPowerDbm = clamped;
+    await this.send(protocol.setPower(clamped));
   }
 
   async applyPreset(id: PowerPresetId): Promise<void> {
@@ -344,14 +354,25 @@ export class RfidReaderService {
     await this.send(protocol.setReadMode(this.readMode()));
     await sleep(MODE_SETTLE_MS);
 
-    // Turn the antenna on explicitly and give every port the current power. Harmless when it was
-    // already on; the whole fix when it was not.
-    await this.send(protocol.setAntennaPower(true, new Array(ANTENNA_PORTS).fill(this.powerDbm())));
-    await this.send(protocol.setPower(this.powerDbm()));
+    // Read the module's own parameter block, switch the antenna on and set the power inside it,
+    // then write the whole thing back. Every other field is preserved exactly as reported, so this
+    // repairs the radio without disturbing region, Q, or session.
+    await this.send(protocol.getAllParams());
+    await sleep(PARAM_READ_MS);
 
-    await this.send(protocol.getOutputMode());
-    await this.send(protocol.getReadMode());
-    await this.send(protocol.getAntennaPower());
+    const current = this.params();
+    if (current) {
+      await this.send(
+        protocol.setAllParams(current.raw, {
+          antenna: current.antenna === 0 ? 0x01 : current.antenna,
+          powerDbm: this.powerDbm(),
+        }),
+      );
+      await sleep(MODE_SETTLE_MS);
+    }
+
+    this.appliedPowerDbm = null;
+    await this.setPower(this.powerDbm());
     await this.send(protocol.getAllParams());
     await this.send(protocol.getBattery());
   }
@@ -410,15 +431,14 @@ export class RfidReaderService {
     this.readMode.set('rfid');
     await sleep(MODE_SETTLE_MS);
 
-    await this.send(protocol.setPower(this.powerDbm()));
+    this.appliedPowerDbm = null;
+    await this.setPower(this.powerDbm());
 
-    // Read back what the module actually thinks it is set to. Answers land in the diagnostics
-    // panel, so a reader that silently ignored the configuration above is visible rather than
-    // merely suspected. The antenna read-back matters most: a disabled antenna runs an inventory
-    // perfectly happily and never detects a tag, which is indistinguishable from "no tags here".
-    await this.send(protocol.getOutputMode());
+    // Read the module's real configuration and, if the antenna is not selected or the power does
+    // not match, write the block back with those corrected. GET_ALL_PARAM is the only read this
+    // reader answers reliably — it rejects GET_OUTPUT_MODE with a module error and ignores the
+    // standalone antenna command entirely, so neither is worth sending.
     await this.send(protocol.getReadMode());
-    await this.send(protocol.getAntennaPower());
     await this.send(protocol.getAllParams());
     await this.send(protocol.getBattery());
 
@@ -487,6 +507,14 @@ export class RfidReaderService {
         this.antennaPowers.set(report.powers);
         return;
 
+      case 'params':
+        this.params.set(report);
+        // The module's own view of its antenna and power wins over anything a bare SET_POWER
+        // acknowledged: this is the block the radio actually runs on.
+        this.antennaEnabled.set(report.antenna !== 0);
+        this.antennaPowers.set([report.powerDbm]);
+        return;
+
       case 'idle':
       case 'other':
         return;
@@ -532,6 +560,8 @@ export class RfidReaderService {
     this.outputMode.set(null);
     this.antennaEnabled.set(null);
     this.antennaPowers.set([]);
+    this.params.set(null);
+    this.appliedPowerDbm = null;
     this.sweeping.set(false);
     this.triggerHeld.set(false);
     this.appDrivenSweep = false;

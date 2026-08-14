@@ -39,6 +39,7 @@ export const Cmd = {
    */
   ANT_POWER: 0x0063,
   GET_DEVICE_INFO: 0x0070,
+  SET_ALL_PARAM: 0x0071,
   GET_ALL_PARAM: 0x0072,
   GET_BATTERY: 0x0083,
   OUTPUT_MODE: 0x0088,
@@ -75,7 +76,13 @@ const OUTPUT_MODE_BYTE: Record<OutputMode, number> = { hid: 0x00, transparent: 0
  * The vendor SDK's javadoc says [0,26]; that documents the H102 and is wrong for this reader.
  */
 export const MIN_POWER_DBM = 1;
-export const MAX_POWER_DBM = 33;
+/**
+ * 30, not 33. RFM_SET_PWR's table allows the H103 up to 33, but RFM_SET_ALL_PARAM documents its
+ * `RfidPower` field as `[0, 30] dBm, others are invalid` — and that is the command that actually
+ * configures the module. A value the two paths disagree on gets rejected by one of them, so the
+ * ceiling is the lower of the two.
+ */
+export const MAX_POWER_DBM = 30;
 
 // --- Building commands ---------------------------------------------------------------------
 
@@ -189,9 +196,34 @@ export function setAntennaPower(enable: boolean, powers: readonly number[]): Uin
   return buildFrame(Cmd.ANT_POWER, [0x01, enable ? 0x01 : 0x00, ...clamped]);
 }
 
-/** Read every configurable parameter (region, Q, session, antenna, power). Raw, for diagnostics. */
+/** Read every configurable parameter: region, antenna, power, Q, session. */
 export function getAllParams(): Uint8Array {
   return buildFrame(Cmd.GET_ALL_PARAM);
+}
+
+/**
+ * Write back a parameter block with the antenna enabled and the power set, leaving every other
+ * field exactly as the module reported it.
+ *
+ * This is the vendor SDK's own pattern — read the block, modify, write it back — and on the H103 it
+ * is the only path that actually configures the radio: the standalone antenna command (`0x0063`)
+ * goes unanswered, and a bare `SET_POWER` does not touch the antenna selection at all.
+ */
+export function setAllParams(
+  block: Uint8Array,
+  changes: { readonly antenna?: number; readonly powerDbm?: number },
+): Uint8Array {
+  const next = block.slice(0, PARAM_BLOCK_BYTES);
+  if (changes.antenna !== undefined) {
+    next[PARAM.ANTENNA] = changes.antenna & 0xff;
+  }
+  if (changes.powerDbm !== undefined) {
+    next[PARAM.POWER] = Math.max(
+      MIN_POWER_DBM,
+      Math.min(MAX_POWER_DBM, Math.round(changes.powerDbm)),
+    );
+  }
+  return buildFrame(Cmd.SET_ALL_PARAM, Array.from(next));
 }
 
 export function getBattery(): Uint8Array {
@@ -267,12 +299,50 @@ export interface OutputModeReport {
 /**
  * The antenna's enable flag and power table, read back from the module. `enabled: false` is a
  * complete explanation for "inventory runs, finds nothing".
+ *
+ * Note: the H103 does not answer command `0x0063` at all — its antenna lives in {@link ParamsReport}
+ * instead. Kept because sibling readers in the range do support it.
  */
 export interface AntennaReport {
   readonly kind: 'antenna';
   readonly enabled: boolean;
   /** dBm per antenna port. */
   readonly powers: readonly number[];
+}
+
+/** Frequency bands the module can be set to, by REGION byte. */
+export const REGION_NAMES: Record<number, string> = {
+  0x00: 'Custom',
+  0x01: 'US 902.75–927.25',
+  0x02: 'Korea 917.1–923.5',
+  0x03: 'EU 865.1–868.1',
+  0x04: 'Japan 952.2–953.6',
+  0x05: 'Malaysia 919.5–922.5',
+  0x06: 'EU3 865.7–867.5',
+  0x07: 'China 1 840.125–844.875',
+  0x08: 'China 2 920.125–924.875',
+};
+
+/**
+ * The module's whole configuration, read back via `GET_ALL_PARAM`. This is the authoritative view
+ * of what the radio is actually doing — `antenna` and `powerDbm` here are what the module will use,
+ * regardless of what a bare `SET_POWER` reported.
+ */
+export interface ParamsReport {
+  readonly kind: 'params';
+  /** 0x00 = ISO 18000-6C. Anything else means the module is not speaking the tags' protocol. */
+  readonly rfidProtocol: number;
+  /** Bitmask; bit 0 = antenna 1. `0` means no antenna is selected and nothing will ever be read. */
+  readonly antenna: number;
+  readonly region: number;
+  /** The module's own RF power, which need not match what SET_POWER asked for. */
+  readonly powerDbm: number;
+  readonly inquiryArea: number;
+  readonly qValue: number;
+  /** Session S0–S3. A high session keeps a counted tag quiet for longer. */
+  readonly session: number;
+  /** The full 25-byte parameter block, for writing back a modified copy. */
+  readonly raw: Uint8Array;
 }
 
 /** A command the reader rejected, or a frame this driver does not model. */
@@ -291,7 +361,23 @@ export type ReaderReport =
   | ReadModeReport
   | OutputModeReport
   | AntennaReport
+  | ParamsReport
   | UnhandledReport;
+
+/** Byte offsets within the 25-byte parameter block (see RFM_SET_ALL_PARAM). */
+const PARAM = {
+  RFID_PROTOCOL: 1,
+  ANTENNA: 6,
+  /** RfidFreq is 8 bytes: REGION(1) STRATFREI(2) STRATFRED(2) STEPFRE(2) CN(1). */
+  REGION: 7,
+  POWER: 15,
+  INQUIRY_AREA: 16,
+  Q_VALUE: 17,
+  SESSION: 18,
+} as const;
+
+/** Length of the parameter block carried by SET/GET_ALL_PARAM. */
+export const PARAM_BLOCK_BYTES = 25;
 
 /** Barcode payloads arrive wrapped in STX … ETX CR. Tag EPCs are raw bytes. */
 const STX = 0x02;
@@ -331,6 +417,24 @@ export function interpretFrame(frame: ResponseFrame): ReaderReport {
       return frame.data.length > 0
         ? { kind: 'outputMode', mode: frame.data[0] === 0x01 ? 'transparent' : 'hid' }
         : { kind: 'other', cmd: frame.cmd, status: frame.status };
+
+    case Cmd.GET_ALL_PARAM: {
+      if (frame.status !== Status.OK || frame.data.length < PARAM_BLOCK_BYTES) {
+        return { kind: 'other', cmd: frame.cmd, status: frame.status };
+      }
+      const block = frame.data.subarray(0, PARAM_BLOCK_BYTES);
+      return {
+        kind: 'params',
+        rfidProtocol: block[PARAM.RFID_PROTOCOL],
+        antenna: block[PARAM.ANTENNA],
+        region: block[PARAM.REGION],
+        powerDbm: block[PARAM.POWER],
+        inquiryArea: block[PARAM.INQUIRY_AREA],
+        qValue: block[PARAM.Q_VALUE],
+        session: block[PARAM.SESSION],
+        raw: block.slice(),
+      };
+    }
 
     case Cmd.ANT_POWER: {
       // data = [operation, enable, ...powers]. Operation 0x01 is a bare set-acknowledgement and
@@ -421,6 +525,7 @@ const CMD_NAMES: Record<number, string> = {
   [Cmd.READ_MODE]: 'READ_MODE',
   [Cmd.ANT_POWER]: 'ANTENNA',
   [Cmd.GET_ALL_PARAM]: 'ALL_PARAMS',
+  [Cmd.SET_ALL_PARAM]: 'SET_ALL_PARAMS',
 };
 
 const STATUS_NAMES: Record<number, string> = {
@@ -487,6 +592,14 @@ export function describeFrame(frame: Uint8Array, direction: 'out' | 'in'): strin
     const report = interpretFrame(toResponseFrame(frame));
     if (report.kind === 'antenna') {
       return `ANTENNA ${report.enabled ? 'ON' : 'OFF'} ${report.powers.join('/')} dBm`;
+    }
+  }
+  if (cmd === Cmd.GET_ALL_PARAM) {
+    const report = interpretFrame(toResponseFrame(frame));
+    if (report.kind === 'params') {
+      return `PARAMS ant=0x${report.antenna.toString(16).padStart(2, '0')} ${report.powerDbm}dBm ${
+        REGION_NAMES[report.region] ?? `region 0x${report.region.toString(16)}`
+      } Q${report.qValue} S${report.session}`;
     }
   }
 

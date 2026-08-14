@@ -84,11 +84,10 @@ describe('command frames', () => {
     expect(hex(setOutputMode('transparent'))).toBe('CF FF 00 88 02 01 01 A3 15');
   });
 
-  it('builds power frames and clamps to the H103 range of 1–33 dBm', () => {
+  it('builds power frames and clamps to the 1–30 dBm both commands accept', () => {
     expect(hex(setPower(26))).toBe('CF FF 00 53 02 1A 00 FB C8');
     expect(hex(setPower(5))).toBe('CF FF 00 53 02 05 00 ED 91');
-    expect(hex(setPower(33))).toBe('CF FF 00 53 02 21 00 A9 C2');
-    expect(hex(setPower(99))).toBe(hex(setPower(33)));
+    expect(hex(setPower(99))).toBe(hex(setPower(30)));
     // The floor is 1, not 0: the module rejects a zero power with a parameter error, which would
     // silently leave the radio wherever it was.
     expect(hex(setPower(0))).toBe('CF FF 00 53 02 01 00 8A F1');
@@ -103,8 +102,9 @@ describe('command frames', () => {
   it('builds the antenna and all-parameter queries', () => {
     expect(hex(getAntennaPower())).toBe('CF FF 00 63 01 02 17 33');
     expect(hex(getAllParams())).toBe('CF FF 00 72 00 17 A5');
-    expect(hex(setAntennaPower(true, new Array(8).fill(33)))).toBe(
-      'CF FF 00 63 0A 01 01 21 21 21 21 21 21 21 21 83 B9',
+    // Not sent to the H103 — it never answers 0x0063 — but sibling readers in the range use it.
+    expect(hex(setAntennaPower(true, new Array(8).fill(30)))).toBe(
+      'CF FF 00 63 0A 01 01 1E 1E 1E 1E 1E 1E 1E 1E 9A 35',
     );
   });
 
@@ -284,6 +284,29 @@ describe('describeFrame', () => {
     expect(describeFrame(withCrc('CF 00 00 63 05 00 02 01 21 21'), 'in')).toBe(
       'ANTENNA ON 33/33 dBm',
     );
+  });
+
+  it('reads the module parameter block, which is what the radio actually runs on', () => {
+    // Ant=0x01, region 0x08 (China 2), power 0x1E = 30 dBm, Q=4, Session=0.
+    expect(
+      describeFrame(
+        bytes(
+          'CF 00 00 72 1A 00 00 00 00 80 08 00 01 08 03 98 00 7D 00 FA 13 1E 01 04 00 00 00 00 00 00 00 06 8A',
+        ),
+        'in',
+      ),
+    ).toBe('PARAMS ant=0x01 30dBm China 2 920.125–924.875 Q4 S0');
+  });
+
+  it('flags a parameter block with no antenna selected', () => {
+    expect(
+      describeFrame(
+        bytes(
+          'CF 00 00 72 1A 00 00 00 00 80 08 00 00 08 03 98 00 7D 00 FA 13 1E 01 04 00 00 00 00 00 00 00 95 C3',
+        ),
+        'in',
+      ),
+    ).toContain('ant=0x00');
   });
 
   it('names power, trigger, and battery frames', () => {

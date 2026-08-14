@@ -4,7 +4,7 @@ import { PopoverModule } from 'primeng/popover';
 import { SliderModule } from 'primeng/slider';
 import { FormsModule } from '@angular/forms';
 
-import { MAX_POWER_DBM, MIN_POWER_DBM } from './h103-protocol';
+import { MAX_POWER_DBM, MIN_POWER_DBM, REGION_NAMES } from './h103-protocol';
 import { POWER_PRESETS, PowerPresetId, RfidReaderService } from './rfid-reader.service';
 
 /** How the chip reads at a glance. Ordered by urgency: a fault outranks activity. */
@@ -105,12 +105,17 @@ export class ReaderChip {
 
   protected readonly batteryLow = computed(() => (this.reader.battery() ?? 100) <= 20);
 
-  /** Fine power control, bound to the slider in diagnostics. */
-  protected get powerValue(): number {
-    return this.reader.powerDbm();
-  }
-  protected set powerValue(dbm: number) {
-    void this.reader.setPower(dbm);
+  /**
+   * Apply a hand-tuned power, once, when the operator lets go of the slider.
+   *
+   * Deliberately not a two-way `ngModel` setter: that fires on change detection, and since every
+   * reader frame writes a signal this template reads, it looped — each write provoking a reply
+   * that provoked the next write.
+   */
+  protected applyPower(event: { value?: number }): void {
+    if (typeof event.value === 'number') {
+      void this.reader.setPower(event.value);
+    }
   }
 
   protected connect(): void {
@@ -135,6 +140,11 @@ export class ReaderChip {
 
   protected setMode(mode: 'rfid' | 'barcode'): void {
     void this.reader.setReadMode(mode);
+  }
+
+  /** Frequency band name, or the raw byte when the module reports one we do not have a name for. */
+  protected regionName(region: number): string {
+    return REGION_NAMES[region] ?? `0x${region.toString(16).padStart(2, '0')}`;
   }
 
   protected reapply(): void {

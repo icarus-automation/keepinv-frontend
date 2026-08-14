@@ -214,9 +214,16 @@
                 <span>Power</span>
                 <span class="tabular-nums text-ink">{{ reader.powerDbm() }} dBm</span>
               </label>
+              <!--
+                One-way value, side effect only on slide end. A two-way binding here was a
+                feedback loop: the setter wrote a BLE frame, whose reply updated the wire log,
+                whose signal write ran change detection, which wrote the value again. It buried
+                the module under hundreds of SET_POWER commands a second.
+              -->
               <p-slider
                 inputId="reader-power"
-                [(ngModel)]="powerValue"
+                [ngModel]="reader.powerDbm()"
+                (onSlideEnd)="applyPower($event)"
                 [min]="minPower"
                 [max]="maxPower"
                 [step]="1"
@@ -226,30 +233,32 @@
 
             <dl class="mt-3 grid grid-cols-2 gap-x-3 gap-y-1 text-[0.6875rem]">
               <!--
-                Read back from the device, not assumed. `HID` means the reader is typing its reads
-                as Bluetooth keystrokes and this channel will never see a tag — the single most
-                likely cause of "connects fine, reads nothing".
+                Straight from the module's own parameter block — the configuration the radio
+                actually runs on, which a bare SET_POWER acknowledgement does not prove.
               -->
-              <dt class="text-muted">Output</dt>
-              <dd
-                class="text-right"
-                [class]="reader.outputMode() === 'hid' ? 'font-semibold text-danger' : 'text-ink'"
-              >
-                {{ reader.outputMode() === null ? '—' : reader.outputMode() === 'hid' ? 'HID (wrong)' : 'Transparent' }}
-              </dd>
-              <!-- A switched-off antenna sweeps happily and detects nothing. Read back, not assumed. -->
-              <dt class="text-muted">Antenna</dt>
-              <dd
-                class="text-right"
-                [class]="reader.antennaEnabled() === false ? 'font-semibold text-danger' : 'text-ink'"
-              >
-                {{
-                  reader.antennaEnabled() === null
-                    ? '—'
-                    : (reader.antennaEnabled() ? 'On' : 'OFF') +
-                      (reader.antennaPowers().length ? ' · ' + reader.antennaPowers()[0] + ' dBm' : '')
-                }}
-              </dd>
+              @if (reader.params(); as params) {
+                <dt class="text-muted">Antenna</dt>
+                <dd
+                  class="text-right"
+                  [class]="params.antenna === 0 ? 'font-semibold text-danger' : 'text-ink'"
+                >
+                  {{ params.antenna === 0 ? 'NONE SELECTED' : 'On · ' + params.powerDbm + ' dBm' }}
+                </dd>
+                <dt class="text-muted">Protocol</dt>
+                <dd
+                  class="text-right"
+                  [class]="params.rfidProtocol === 0 ? 'text-ink' : 'font-semibold text-danger'"
+                >
+                  {{ params.rfidProtocol === 0 ? 'ISO 18000-6C' : 'wrong (0x' + params.rfidProtocol.toString(16) + ')' }}
+                </dd>
+                <dt class="text-muted">Band</dt>
+                <dd class="text-right text-ink">{{ regionName(params.region) }}</dd>
+                <dt class="text-muted">Q · Session</dt>
+                <dd class="text-right tabular-nums text-ink">Q{{ params.qValue }} · S{{ params.session }}</dd>
+              } @else {
+                <dt class="text-muted">Module config</dt>
+                <dd class="text-right text-ink">—</dd>
+              }
               <dt class="text-muted">Tags this session</dt>
               <dd class="text-right tabular-nums text-ink">{{ reader.tagCount() }}</dd>
               <!--
@@ -263,15 +272,9 @@
               <dd class="text-right text-ink">{{ reader.triggerHeld() ? 'Held' : 'Released' }}</dd>
             </dl>
 
-            @if (reader.outputMode() === 'hid') {
+            @if (reader.params()?.antenna === 0) {
               <p role="alert" class="mt-2 rounded-md bg-danger/10 px-2.5 py-2 text-[0.6875rem] leading-relaxed text-danger">
-                The reader is in Bluetooth-keyboard mode, so it types tags instead of sending them
-                here. Press <span class="font-semibold">Re-apply settings</span> below.
-              </p>
-            }
-            @if (reader.antennaEnabled() === false) {
-              <p role="alert" class="mt-2 rounded-md bg-danger/10 px-2.5 py-2 text-[0.6875rem] leading-relaxed text-danger">
-                The antenna is switched off, so the reader sweeps but detects nothing. Press
+                No antenna is selected, so the reader sweeps but detects nothing. Press
                 <span class="font-semibold">Re-apply settings</span> below.
               </p>
             }
