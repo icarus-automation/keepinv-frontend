@@ -30,6 +30,7 @@ const CRC_POLYNOMIAL = 0x8408;
 export const Cmd = {
   INVENTORY: 0x0001,
   STOP_INVENTORY: 0x0002,
+  SELECT_MASK: 0x0007,
   MODULE_INIT: 0x0050,
   SET_POWER: 0x0053,
   /**
@@ -178,6 +179,27 @@ export function getOutputMode(): Uint8Array {
 export function setPower(dbm: number): Uint8Array {
   const clamped = Math.max(MIN_POWER_DBM, Math.min(MAX_POWER_DBM, Math.round(dbm)));
   return buildFrame(Cmd.SET_POWER, [clamped, 0x00]);
+}
+
+/**
+ * Bring the RF front end up from the module's stored parameters, stopping everything else first.
+ * The vendor's own demo issues this after connecting; without it the module will answer
+ * configuration commands and run an inventory while its radio is never actually started.
+ */
+export function moduleInit(): Uint8Array {
+  return buildFrame(Cmd.MODULE_INIT);
+}
+
+/**
+ * Clear any tag-selection mask, so an inventory reports every tag rather than only those matching
+ * a previously-set EPC pattern.
+ *
+ * A mask persists in the module across sessions and power cycles. One left behind by another app's
+ * "find this tag" screen filters every subsequent inventory down to nothing — indistinguishable
+ * from an empty shelf. Pointer 0x0000 and length 0 bits is the documented "match everything" form.
+ */
+export function clearSelectMask(): Uint8Array {
+  return buildFrame(Cmd.SELECT_MASK, [0x00, 0x00, 0x00]);
 }
 
 /** Read the antenna enable flag and per-antenna power table. */
@@ -523,6 +545,7 @@ const CMD_NAMES: Record<number, string> = {
   [Cmd.OUTPUT_MODE]: 'OUTPUT_MODE',
   [Cmd.KEY_STATE]: 'TRIGGER',
   [Cmd.READ_MODE]: 'READ_MODE',
+  [Cmd.SELECT_MASK]: 'SELECT_MASK',
   [Cmd.ANT_POWER]: 'ANTENNA',
   [Cmd.GET_ALL_PARAM]: 'ALL_PARAMS',
   [Cmd.SET_ALL_PARAM]: 'SET_ALL_PARAMS',

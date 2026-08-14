@@ -1,7 +1,9 @@
 import {
   FrameReader,
+  clearSelectMask,
   crc16,
   describeFrame,
+  moduleInit,
   getAllParams,
   getAntennaPower,
   getBattery,
@@ -97,6 +99,12 @@ describe('command frames', () => {
   it('builds the mode read-back queries', () => {
     expect(hex(getOutputMode())).toBe('CF FF 00 88 01 02 37 34');
     expect(hex(getReadMode())).toBe('CF FF 00 8E 01 02 E1 ED');
+  });
+
+  it('builds the module init and the mask-clearing frame', () => {
+    expect(hex(moduleInit())).toBe('CF FF 00 50 00 07 26');
+    // Pointer 0x0000, length 0 bits, no mask: the documented "match every tag" form.
+    expect(hex(clearSelectMask())).toBe('CF FF 00 07 03 00 00 00 F8 99');
   });
 
   it('builds the antenna and all-parameter queries', () => {

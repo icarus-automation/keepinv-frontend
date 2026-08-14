@@ -58,8 +58,8 @@ const MODE_SETTLE_MS = 1100;
 /** Breathing room after a stop, so the module drains its inventory before being reconfigured. */
 const STOP_SETTLE_MS = 250;
 
-/** Long enough for the module's parameter block to come back before it is modified and rewritten. */
-const PARAM_READ_MS = 400;
+/** The vendor's demo waits this long after enabling notifications before its first command. */
+const CONNECT_SETTLE_MS = 150;
 
 /** Battery is polled on this cadence while connected; it moves slowly. */
 const BATTERY_POLL_MS = 120_000;
@@ -286,6 +286,12 @@ export class RfidReaderService {
     if (!this.connected()) {
       return;
     }
+    // Never reconfigure mid-sweep. The vendor app refuses the same thing outright, and commands
+    // that arrive during an inventory are the likeliest explanation for a module that acknowledges
+    // everything and reads nothing.
+    if (this.sweeping()) {
+      return;
+    }
     // Never re-send a power the module already has. Belt-and-braces against the feedback loop that
     // a two-way binding on this value once created: a redundant radio command is pure cost, and at
     // volume it starves the module of the time it needs to actually inventory.
@@ -320,15 +326,16 @@ export class RfidReaderService {
    * This also starts a fresh capture session, so tags read during the previous count or batch are
    * offered again to this one.
    */
-  async prepareFor(task: 'commission' | 'audit'): Promise<void> {
-    const near = task === 'commission';
+  async prepareFor(_task: 'commission' | 'audit'): Promise<void> {
+    // Starts a fresh capture session and nothing else.
+    //
+    // This used to set read mode and power on entering a session. It no longer touches the radio
+    // at all: writing configuration the module did not ask for is what stopped it reading, and the
+    // vendor app never does it either. Power stays where the module has it, adjustable by hand
+    // from the reader chip. Once reading is confirmed working on hardware, per-task power can come
+    // back — as an explicit, stop-the-sweep-first step rather than a silent one.
     this.beginSession();
-    // Range comes from the power preset, not from the RSSI gate: cutting power physically stops
-    // distant tags from answering at all, whereas the gate throws away reads the radio did make.
-    // Leaving the gate off by default means a mis-set threshold can never look like dead hardware.
     this.setNearFieldOnly(false);
-    await this.setReadMode('rfid');
-    await this.applyPreset(near ? 'near' : 'room');
   }
 
   async refreshBattery(): Promise<void> {
@@ -347,32 +354,26 @@ export class RfidReaderService {
     if (!this.connected()) return;
     const protocol = await this.loadProtocol();
 
+    // Stop first, always. The vendor app blocks its own configuration screens while an inventory
+    // is running ("please stop inventory first"), and the module does appear to drop or mishandle
+    // commands that arrive mid-sweep.
     await this.stopSweep();
     await sleep(STOP_SETTLE_MS);
 
-    await this.send(protocol.setOutputMode('transparent'));
-    await this.send(protocol.setReadMode(this.readMode()));
+    // Re-derive the radio from the module's own stored parameters. This is the documented reset
+    // path and does not impose any settings of ours.
+    await this.send(protocol.moduleInit());
     await sleep(MODE_SETTLE_MS);
 
-    // Read the module's own parameter block, switch the antenna on and set the power inside it,
-    // then write the whole thing back. Every other field is preserved exactly as reported, so this
-    // repairs the radio without disturbing region, Q, or session.
-    await this.send(protocol.getAllParams());
-    await sleep(PARAM_READ_MS);
+    // Drop a tag-selection mask left behind by another app; one survives power cycles and filters
+    // every inventory down to the tags it matches, often none.
+    await this.send(protocol.clearSelectMask());
 
-    const current = this.params();
-    if (current) {
-      await this.send(
-        protocol.setAllParams(current.raw, {
-          antenna: current.antenna === 0 ? 0x01 : current.antenna,
-          powerDbm: this.powerDbm(),
-        }),
-      );
-      await sleep(MODE_SETTLE_MS);
-    }
+    // Put the front end back on the radio, in case a barcode session left it on the scan engine.
+    await this.send(protocol.setReadMode('rfid'));
+    this.readMode.set('rfid');
+    await sleep(MODE_SETTLE_MS);
 
-    this.appliedPowerDbm = null;
-    await this.setPower(this.powerDbm());
     await this.send(protocol.getAllParams());
     await this.send(protocol.getBattery());
   }
@@ -410,35 +411,24 @@ export class RfidReaderService {
 
     const protocol = await this.loadProtocol();
 
-    // Order and timing both matter here.
+    // Deliberately minimal, and it matches the vendor's own demo app almost exactly: enable
+    // notifications, pause, read device info, then leave the module alone.
     //
-    // 0. STOP first. The module keeps running whatever inventory it was left in — across app
-    //    reloads and reconnects — and a busy module ignores configuration commands while flooding
-    //    the link with "idle" reports. That is what made a read-back of the output mode go
-    //    unanswered: the query was never processed, not answered wrongly.
-    // 1. Transparent output: in Bluetooth-keyboard (HID) mode the reader types its reads as
-    //    keystrokes and sends nothing over GATT.
-    // 2. RFID front end, then WAIT. The manual is explicit that a read-mode switch restarts the
-    //    module and needs ~1s "to completely start". Commands sent inside that window are lost —
-    //    which previously swallowed the power setting and left the radio at its default.
-    // 3. Only then set power, which the manual requires before any tag operation.
+    // An earlier version configured everything here — output mode, read mode, power, the whole
+    // parameter block — and the reader answered every one of those commands with "ok" and then
+    // inventoried nothing, forever. The working app writes none of them: the module already holds
+    // valid settings in flash, and reconfiguring it on every connect is what broke the radio.
+    //
+    // Configuration now happens only where the vendor puts it: behind an explicit action, with the
+    // inventory stopped first. See `reapplySettings`.
     await this.send(protocol.stopInventory());
-    await sleep(STOP_SETTLE_MS);
     this.sweeping.set(false);
+    await sleep(CONNECT_SETTLE_MS);
 
-    await this.send(protocol.setOutputMode('transparent'));
-    await this.send(protocol.setReadMode('rfid'));
-    this.readMode.set('rfid');
-    await sleep(MODE_SETTLE_MS);
+    await this.send(protocol.getDeviceInfo());
 
-    this.appliedPowerDbm = null;
-    await this.setPower(this.powerDbm());
-
-    // Read the module's real configuration and, if the antenna is not selected or the power does
-    // not match, write the block back with those corrected. GET_ALL_PARAM is the only read this
-    // reader answers reliably — it rejects GET_OUTPUT_MODE with a module error and ignores the
-    // standalone antenna command entirely, so neither is worth sending.
-    await this.send(protocol.getReadMode());
+    // Read-only, for the diagnostics panel. Safe here because nothing is inventorying yet — the
+    // vendor app refuses this same query while a sweep is running.
     await this.send(protocol.getAllParams());
     await this.send(protocol.getBattery());
 
