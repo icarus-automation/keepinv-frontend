@@ -160,18 +160,26 @@ chip's panel. Tenants without an H103 keep using their existing scanner — that
 
 ## Gotchas worth knowing before you test
 
-**Output mode is the failure. Confirmed on hardware, not theorised.**
+**Output mode is the failure, and this app must never touch it.**
 
 The reader stores its output mode in flash, across power cycles and across apps. Left in
 Bluetooth-keyboard (**HID**) mode it connects perfectly, acknowledges every command, runs an
 inventory, and reports `INVENTORY idle — no tags` forever — because it is typing the tags it reads
 to a phantom keyboard instead of sending them over GATT. There is no error anywhere. The vendor
-app's Settings screen shows this as `Output Mode: HID`, and its **Restore** button is what clears
-it.
+app's Settings screen shows this as `Output Mode: HID`; its **Restore** button clears it.
 
-The app now sends `setOutputMode('transparent')` on every connect and reads the mode back, so an
-operator never has to know any of this. If the diagnostics panel ever shows a red **Output: HID
-(wrong)**, press **Re-apply settings**.
+> **Command 0x0088 is not implemented, on purpose.** The manual and the vendor SDK both document
+> `0x00 = HID`, `0x01 = transparent`. On the H103 that is wrong: sending the documented
+> "transparent" value **puts the reader into HID**. Verified twice against hardware — a reader
+> restored to Serial by hand worked until this app connected, then reported HID again, and pulling
+> the command out restored it. A test in `h103-protocol.spec.ts` fails if a builder for it
+> reappears.
+
+**Fixing a reader stuck in HID** (once per reader, by hand):
+CHAFON *UHF Reader* app → **Settings** → **Restore** → reconnect in keep inv.
+
+The module then keeps the correct mode indefinitely. The vendor's own app never writes this
+setting either.
 
 Two secondary traps in the same family, both handled on connect or by Re-apply:
 

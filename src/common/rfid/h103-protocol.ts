@@ -60,7 +60,6 @@ export type ReadMode = 'rfid' | 'barcode';
 export type OutputMode = 'hid' | 'transparent';
 
 const READ_MODE_BYTE: Record<ReadMode, number> = { rfid: 0x00, barcode: 0x01 };
-const OUTPUT_MODE_BYTE: Record<OutputMode, number> = { hid: 0x00, transparent: 0x01 };
 
 /**
  * Radio power bounds in dBm, per the manual's RFM_SET_PWR table: H100 is [1,20], H102 is [1,26],
@@ -153,17 +152,21 @@ export function getReadMode(): Uint8Array {
   return buildFrame(Cmd.READ_MODE, [0x02]);
 }
 
-/**
- * Choose where captured data goes. `transparent` is required for this driver: in `hid` the reader
- * types its reads as a Bluetooth keyboard and nothing arrives on the GATT channel.
+/*
+ * Output mode (command 0x0088) is deliberately NOT implemented.
+ *
+ * Both the manual and the vendor SDK document `0x00 = Bluetooth HID`, `0x01 = transparent`. On the
+ * H103 this is wrong: sending the documented "transparent" value puts the reader into HID, where
+ * it reads tags and types them to a phantom keyboard instead of sending them over this channel.
+ * Observed repeatably against hardware — a reader restored to Serial by hand stayed working until
+ * an app sent this command, then reported HID again.
+ *
+ * The module keeps a correct output mode in flash indefinitely, and the vendor's own app never
+ * writes it. So this driver does not manage the setting at all. An operator whose reader is stuck
+ * in HID fixes it once in the CHAFON UHF Reader app (Settings -> Restore); see docs/rfid-reader.md.
+ *
+ * Do not re-add these builders without hardware proof that the byte mapping is what the docs claim.
  */
-export function setOutputMode(mode: OutputMode): Uint8Array {
-  return buildFrame(Cmd.OUTPUT_MODE, [0x01, OUTPUT_MODE_BYTE[mode]]);
-}
-
-export function getOutputMode(): Uint8Array {
-  return buildFrame(Cmd.OUTPUT_MODE, [0x02]);
-}
 
 /**
  * Set radio output power in dBm. Low power is a precision tool, not a limitation: at the bottom of
@@ -505,11 +508,6 @@ export function describeFrame(frame: Uint8Array, direction: 'out' | 'in'): strin
     if (cmd === Cmd.SET_POWER) return `SET_POWER ${frame[5]} dBm`;
     if (cmd === Cmd.READ_MODE) {
       return length > 1 ? `SET READ_MODE ${frame[6] === 0x01 ? 'barcode' : 'rfid'}` : 'GET READ_MODE';
-    }
-    if (cmd === Cmd.OUTPUT_MODE) {
-      return length > 1
-        ? `SET OUTPUT_MODE ${frame[6] === 0x01 ? 'transparent' : 'HID'}`
-        : 'GET OUTPUT_MODE';
     }
     return name;
   }

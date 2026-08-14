@@ -236,24 +236,6 @@
                 Straight from the module's own parameter block — the configuration the radio
                 actually runs on, which a bare SET_POWER acknowledgement does not prove.
               -->
-              <!--
-                Output mode first: it is the one setting that strands a reader completely. The
-                reader keeps it in flash, so a unit left in Bluetooth-keyboard mode by another app
-                connects, accepts everything, and silently types its reads elsewhere.
-              -->
-              <dt class="text-muted">Output</dt>
-              <dd
-                class="text-right"
-                [class]="reader.outputMode() === 'hid' ? 'font-semibold text-danger' : 'text-ink'"
-              >
-                {{
-                  reader.outputMode() === null
-                    ? '—'
-                    : reader.outputMode() === 'hid'
-                      ? 'HID (wrong)'
-                      : 'Transparent'
-                }}
-              </dd>
               @if (reader.params(); as params) {
                 <dt class="text-muted">Antenna</dt>
                 <dd
@@ -290,12 +272,18 @@
               <dd class="text-right text-ink">{{ reader.triggerHeld() ? 'Held' : 'Released' }}</dd>
             </dl>
 
-            @if (reader.outputMode() === 'hid') {
-              <p role="alert" class="mt-2 rounded-md bg-danger/10 px-2.5 py-2 text-[0.6875rem] leading-relaxed text-danger">
-                The reader is in Bluetooth-keyboard mode, so it types tags instead of sending them
-                here. Press <span class="font-semibold">Re-apply settings</span> below.
-              </p>
-            } @else if (reader.params()?.antenna === 0) {
+            <!--
+              Static, not conditional. We cannot ask the reader for its output mode without risking
+              changing it (see the note on command 0x0088 in h103-protocol.ts), so the panel states
+              the one repair an operator may ever need rather than pretending to detect it.
+            -->
+            <p class="mt-2 rounded-md bg-panel px-2.5 py-2 text-[0.6875rem] leading-relaxed text-muted">
+              Connected but reading no tags? The reader is probably in HID output mode. Open the
+              CHAFON <span class="text-ink">UHF Reader</span> app → Settings → <span class="text-ink">Restore</span>,
+              then reconnect here. It only needs doing once per reader.
+            </p>
+
+            @if (reader.params()?.antenna === 0) {
               <p role="alert" class="mt-2 rounded-md bg-danger/10 px-2.5 py-2 text-[0.6875rem] leading-relaxed text-danger">
                 No antenna is selected, so the reader sweeps but detects nothing. Press
                 <span class="font-semibold">Re-apply settings</span> below.

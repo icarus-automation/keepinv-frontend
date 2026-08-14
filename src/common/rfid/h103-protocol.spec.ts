@@ -7,13 +7,11 @@ import {
   getAllParams,
   getBattery,
   getDeviceInfo,
-  getOutputMode,
   getReadMode,
   interpretFrame,
   normalizeTag,
   setPower,
   setReadMode,
-  setOutputMode,
   startInventory,
   stopInventory,
   toHex,
@@ -80,10 +78,6 @@ describe('command frames', () => {
     expect(hex(setReadMode('barcode'))).toBe('CF FF 00 8E 09 01 01 00 00 00 00 00 00 00 21 E2');
   });
 
-  it('builds the transparent output-mode switch', () => {
-    expect(hex(setOutputMode('transparent'))).toBe('CF FF 00 88 02 01 01 A3 15');
-  });
-
   it('builds power frames and clamps to the 1–30 dBm both commands accept', () => {
     expect(hex(setPower(26))).toBe('CF FF 00 53 02 1A 00 FB C8');
     expect(hex(setPower(5))).toBe('CF FF 00 53 02 05 00 ED 91');
@@ -94,8 +88,7 @@ describe('command frames', () => {
     expect(hex(setPower(-4))).toBe(hex(setPower(1)));
   });
 
-  it('builds the mode read-back queries', () => {
-    expect(hex(getOutputMode())).toBe('CF FF 00 88 01 02 37 34');
+  it('builds the read-mode read-back query', () => {
     expect(hex(getReadMode())).toBe('CF FF 00 8E 01 02 E1 ED');
   });
 
@@ -241,9 +234,6 @@ describe('interpretFrame', () => {
     });
   });
 
-  it('reads the current output mode', () => {
-    expect(report('CF 00 00 88 02 00 01')).toEqual({ kind: 'outputMode', mode: 'transparent' });
-  });
 
   it('surfaces an unmodelled command rather than guessing', () => {
     expect(report('CF 00 00 72 02 00 01')).toEqual({ kind: 'other', cmd: 0x0072, status: 0x00 });
@@ -267,14 +257,6 @@ describe('describeFrame', () => {
         'in',
       ),
     ).toBe('TAG E2801160600002094C4C8B1A  -32 dBm');
-  });
-
-  it('calls out the output mode in both directions', () => {
-    expect(describeFrame(bytes('CF FF 00 88 02 01 01 A3 15'), 'out')).toBe(
-      'SET OUTPUT_MODE transparent',
-    );
-    expect(describeFrame(withCrc('CF 00 00 88 02 00 00'), 'in')).toBe('OUTPUT_MODE = HID');
-    expect(describeFrame(withCrc('CF 00 00 88 02 00 01'), 'in')).toBe('OUTPUT_MODE = transparent');
   });
 
   it('reads the module parameter block, which is what the radio actually runs on', () => {
@@ -304,6 +286,18 @@ describe('describeFrame', () => {
     expect(describeFrame(bytes('CF FF 00 53 02 21 00 A9 C2'), 'out')).toBe('SET_POWER 33 dBm');
     expect(describeFrame(withCrc('CF 00 00 89 02 00 01'), 'in')).toBe('TRIGGER pressed');
     expect(describeFrame(withCrc('CF 00 00 83 02 00 54'), 'in')).toBe('BATTERY 84%');
+  });
+});
+
+describe('output mode (command 0x0088)', () => {
+  // This command is deliberately not implemented. Both the manual and the vendor SDK claim
+  // `0x01 = transparent`; on the H103 sending it puts the reader into HID, where it reads tags and
+  // sends none of them over BLE. It cost a working integration twice. If someone re-adds a builder
+  // for it, this fails and they have to come read why.
+  it('has no builder, because the documented byte mapping is wrong on this hardware', async () => {
+    const protocol: Record<string, unknown> = await import('./h103-protocol');
+    expect(protocol['setOutputMode']).toBeUndefined();
+    expect(protocol['getOutputMode']).toBeUndefined();
   });
 });
 

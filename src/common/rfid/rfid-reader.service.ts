@@ -377,10 +377,6 @@ export class RfidReaderService {
     // every inventory down to the tags it matches, often none.
     await this.send(protocol.clearSelectMask());
 
-    // Force transparent output again — the setting that actually strands a reader when wrong.
-    await this.send(protocol.setOutputMode('transparent'));
-    await this.send(protocol.getOutputMode());
-
     // Put the front end back on the radio, in case a barcode session left it on the scan engine.
     await this.send(protocol.setReadMode('rfid'));
     this.readMode.set('rfid');
@@ -439,18 +435,17 @@ export class RfidReaderService {
 
     await this.send(protocol.getDeviceInfo());
 
-    // The one setting we must impose, because it is the difference between working and silent.
+    // NOTHING here touches the output mode. Not a write, not even a read.
     //
-    // The reader remembers its output mode in flash, across power cycles and across apps. Left in
-    // Bluetooth-keyboard (HID) mode it connects, accepts every command, runs an inventory, and
-    // types the tags it reads to a phantom keyboard instead of sending them here — which looks
-    // exactly like a reader that finds nothing. This is the only reason the vendor app's "Restore"
-    // fixed it. Sending it on every connect means an operator never has to know that.
-    await this.send(protocol.setOutputMode('transparent'));
-    await this.send(protocol.getOutputMode());
-
-    // Read-only, for the diagnostics panel. Safe here because nothing is inventorying yet — the
-    // vendor app refuses this same query while a sweep is running.
+    // Command 0x0088 is documented by both the manual and the vendor SDK as `0x01 = transparent`,
+    // and on this hardware sending it puts the reader into HID — the one state in which it reads
+    // tags and sends none of them here. Observed repeatably: a reader restored to Serial by hand
+    // works until this app connects, then reports HID again. The documentation is wrong, or the
+    // H103 firmware differs from the family the manual covers.
+    //
+    // The module keeps a correct output mode in flash indefinitely, and the vendor's own app never
+    // sets it either. So the safe contract is: we do not manage this setting. See the runbook for
+    // how an operator fixes a reader that is genuinely stuck in HID.
     await this.send(protocol.getAllParams());
     await this.send(protocol.getBattery());
 
