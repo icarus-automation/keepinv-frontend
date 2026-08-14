@@ -55,11 +55,20 @@ const DEVICE_STORAGE_KEY = 'aw:rfid-device';
 /** The module needs about a second to restart its front end after a read-mode switch. */
 const MODE_SETTLE_MS = 1100;
 
+/** Breathing room after a stop, so the module drains its inventory before being reconfigured. */
+const STOP_SETTLE_MS = 250;
+
 /** Battery is polled on this cadence while connected; it moves slowly. */
 const BATTERY_POLL_MS = 120_000;
 
 /** Frames kept for the diagnostics panel. Enough to see a sweep, bounded so it cannot grow. */
 const WIRE_LOG_LIMIT = 60;
+
+/**
+ * Antenna ports the module's power table covers. The H103 has one antenna, but the command still
+ * expects the full table, and the SDK's own bean reads back an array.
+ */
+const ANTENNA_PORTS = 8;
 
 /**
  * The app's single connection to a handheld RFID reader.
@@ -90,6 +99,13 @@ export class RfidReaderService {
    * Null until the reader answers.
    */
   readonly outputMode = signal<OutputMode | null>(null);
+  /**
+   * Whether the module says its antenna is switched on, read back after connect. `false` fully
+   * explains an inventory that runs and reports nothing. Null until the reader answers.
+   */
+  readonly antennaEnabled = signal<boolean | null>(null);
+  /** Per-port power the module reports, which need not match what SET_POWER asked for. */
+  readonly antennaPowers = signal<readonly number[]>([]);
   readonly powerDbm = signal<number>(POWER_PRESETS[2].dbm);
 
   /** A sweep is running: started from the app, or by the reader's own trigger. */
@@ -322,13 +338,21 @@ export class RfidReaderService {
     const protocol = await this.loadProtocol();
 
     await this.stopSweep();
+    await sleep(STOP_SETTLE_MS);
+
     await this.send(protocol.setOutputMode('transparent'));
     await this.send(protocol.setReadMode(this.readMode()));
     await sleep(MODE_SETTLE_MS);
 
+    // Turn the antenna on explicitly and give every port the current power. Harmless when it was
+    // already on; the whole fix when it was not.
+    await this.send(protocol.setAntennaPower(true, new Array(ANTENNA_PORTS).fill(this.powerDbm())));
     await this.send(protocol.setPower(this.powerDbm()));
+
     await this.send(protocol.getOutputMode());
     await this.send(protocol.getReadMode());
+    await this.send(protocol.getAntennaPower());
+    await this.send(protocol.getAllParams());
     await this.send(protocol.getBattery());
   }
 
@@ -367,12 +391,20 @@ export class RfidReaderService {
 
     // Order and timing both matter here.
     //
-    // 1. Transparent output first: in Bluetooth-keyboard (HID) mode the reader types its reads as
+    // 0. STOP first. The module keeps running whatever inventory it was left in — across app
+    //    reloads and reconnects — and a busy module ignores configuration commands while flooding
+    //    the link with "idle" reports. That is what made a read-back of the output mode go
+    //    unanswered: the query was never processed, not answered wrongly.
+    // 1. Transparent output: in Bluetooth-keyboard (HID) mode the reader types its reads as
     //    keystrokes and sends nothing over GATT.
     // 2. RFID front end, then WAIT. The manual is explicit that a read-mode switch restarts the
     //    module and needs ~1s "to completely start". Commands sent inside that window are lost —
     //    which previously swallowed the power setting and left the radio at its default.
     // 3. Only then set power, which the manual requires before any tag operation.
+    await this.send(protocol.stopInventory());
+    await sleep(STOP_SETTLE_MS);
+    this.sweeping.set(false);
+
     await this.send(protocol.setOutputMode('transparent'));
     await this.send(protocol.setReadMode('rfid'));
     this.readMode.set('rfid');
@@ -380,11 +412,14 @@ export class RfidReaderService {
 
     await this.send(protocol.setPower(this.powerDbm()));
 
-    // Read back what the module actually thinks it is set to. Answers arrive as `outputMode` /
-    // `readMode` reports and land in the diagnostics panel, so a reader that silently ignored the
-    // configuration above is visible instead of merely suspected.
+    // Read back what the module actually thinks it is set to. Answers land in the diagnostics
+    // panel, so a reader that silently ignored the configuration above is visible rather than
+    // merely suspected. The antenna read-back matters most: a disabled antenna runs an inventory
+    // perfectly happily and never detects a tag, which is indistinguishable from "no tags here".
     await this.send(protocol.getOutputMode());
     await this.send(protocol.getReadMode());
+    await this.send(protocol.getAntennaPower());
+    await this.send(protocol.getAllParams());
     await this.send(protocol.getBattery());
 
     this.startBatteryPolling();
@@ -447,6 +482,11 @@ export class RfidReaderService {
         this.outputMode.set(report.mode);
         return;
 
+      case 'antenna':
+        this.antennaEnabled.set(report.enabled);
+        this.antennaPowers.set(report.powers);
+        return;
+
       case 'idle':
       case 'other':
         return;
@@ -464,8 +504,23 @@ export class RfidReaderService {
     }
   }
 
+  /**
+   * Append a frame, collapsing consecutive identical ones into a repeat count.
+   *
+   * A running inventory emits an "idle" report several times a second. Logged one line each, those
+   * flush the connect handshake out of a bounded buffer within seconds — which is exactly what hid
+   * the evidence during the first hardware session. Collapsing keeps the interesting frames
+   * visible however long a sweep runs.
+   */
   private logWire(entry: WireEntry): void {
-    this.wireLog.update((entries) => [...entries.slice(-(WIRE_LOG_LIMIT - 1)), entry]);
+    this.wireLog.update((entries) => {
+      const last = entries[entries.length - 1];
+      if (last && last.hex === entry.hex && last.direction === entry.direction) {
+        const collapsed = { ...last, at: entry.at, repeat: (last.repeat ?? 1) + 1 };
+        return [...entries.slice(0, -1), collapsed];
+      }
+      return [...entries.slice(-(WIRE_LOG_LIMIT - 1)), entry];
+    });
   }
 
   private markDisconnected(): void {
@@ -475,6 +530,8 @@ export class RfidReaderService {
     this.deviceName.set(null);
     this.battery.set(null);
     this.outputMode.set(null);
+    this.antennaEnabled.set(null);
+    this.antennaPowers.set([]);
     this.sweeping.set(false);
     this.triggerHeld.set(false);
     this.appDrivenSweep = false;

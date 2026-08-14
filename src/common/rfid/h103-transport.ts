@@ -52,6 +52,8 @@ export interface WireEntry {
   readonly hex: string;
   /** Short human reading of the frame, e.g. `TAG E28011… -32 dBm` or `SET_POWER 33 dBm`. */
   readonly label: string;
+  /** How many identical frames this line stands for. Absent means one. */
+  readonly repeat?: number;
 }
 
 export interface TransportHandlers {

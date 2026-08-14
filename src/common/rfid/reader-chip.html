@@ -237,6 +237,19 @@
               >
                 {{ reader.outputMode() === null ? '—' : reader.outputMode() === 'hid' ? 'HID (wrong)' : 'Transparent' }}
               </dd>
+              <!-- A switched-off antenna sweeps happily and detects nothing. Read back, not assumed. -->
+              <dt class="text-muted">Antenna</dt>
+              <dd
+                class="text-right"
+                [class]="reader.antennaEnabled() === false ? 'font-semibold text-danger' : 'text-ink'"
+              >
+                {{
+                  reader.antennaEnabled() === null
+                    ? '—'
+                    : (reader.antennaEnabled() ? 'On' : 'OFF') +
+                      (reader.antennaPowers().length ? ' · ' + reader.antennaPowers()[0] + ' dBm' : '')
+                }}
+              </dd>
               <dt class="text-muted">Tags this session</dt>
               <dd class="text-right tabular-nums text-ink">{{ reader.tagCount() }}</dd>
               <!--
@@ -254,6 +267,12 @@
               <p role="alert" class="mt-2 rounded-md bg-danger/10 px-2.5 py-2 text-[0.6875rem] leading-relaxed text-danger">
                 The reader is in Bluetooth-keyboard mode, so it types tags instead of sending them
                 here. Press <span class="font-semibold">Re-apply settings</span> below.
+              </p>
+            }
+            @if (reader.antennaEnabled() === false) {
+              <p role="alert" class="mt-2 rounded-md bg-danger/10 px-2.5 py-2 text-[0.6875rem] leading-relaxed text-danger">
+                The antenna is switched off, so the reader sweeps but detects nothing. Press
+                <span class="font-semibold">Re-apply settings</span> below.
               </p>
             }
 
@@ -283,6 +302,9 @@
                       </span>
                       <span class="min-w-0">
                         <span class="break-all font-medium text-ink">{{ entry.label }}</span>
+                        @if (entry.repeat) {
+                          <span class="ml-1 tabular-nums text-muted">×{{ entry.repeat }}</span>
+                        }
                         <span class="ml-1 break-all font-mono text-muted">{{ entry.hex }}</span>
                       </span>
                     </li>

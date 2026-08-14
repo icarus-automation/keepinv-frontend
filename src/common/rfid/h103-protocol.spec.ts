@@ -2,11 +2,14 @@ import {
   FrameReader,
   crc16,
   describeFrame,
+  getAllParams,
+  getAntennaPower,
   getBattery,
   getDeviceInfo,
   getOutputMode,
   getReadMode,
   interpretFrame,
+  setAntennaPower,
   normalizeTag,
   setPower,
   setReadMode,
@@ -95,6 +98,14 @@ describe('command frames', () => {
   it('builds the mode read-back queries', () => {
     expect(hex(getOutputMode())).toBe('CF FF 00 88 01 02 37 34');
     expect(hex(getReadMode())).toBe('CF FF 00 8E 01 02 E1 ED');
+  });
+
+  it('builds the antenna and all-parameter queries', () => {
+    expect(hex(getAntennaPower())).toBe('CF FF 00 63 01 02 17 33');
+    expect(hex(getAllParams())).toBe('CF FF 00 72 00 17 A5');
+    expect(hex(setAntennaPower(true, new Array(8).fill(33)))).toBe(
+      'CF FF 00 63 0A 01 01 21 21 21 21 21 21 21 21 83 B9',
+    );
   });
 
   it('builds the zero-payload queries', () => {
@@ -263,6 +274,16 @@ describe('describeFrame', () => {
     );
     expect(describeFrame(withCrc('CF 00 00 88 02 00 00'), 'in')).toBe('OUTPUT_MODE = HID');
     expect(describeFrame(withCrc('CF 00 00 88 02 00 01'), 'in')).toBe('OUTPUT_MODE = transparent');
+  });
+
+  it('reads the antenna enable flag and its power table', () => {
+    // data = [operation, enable, ...powers]; operation 0x02 is a read reply.
+    expect(describeFrame(withCrc('CF 00 00 63 05 00 02 00 21 21'), 'in')).toBe(
+      'ANTENNA OFF 33/33 dBm',
+    );
+    expect(describeFrame(withCrc('CF 00 00 63 05 00 02 01 21 21'), 'in')).toBe(
+      'ANTENNA ON 33/33 dBm',
+    );
   });
 
   it('names power, trigger, and battery frames', () => {

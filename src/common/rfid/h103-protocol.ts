@@ -32,7 +32,14 @@ export const Cmd = {
   STOP_INVENTORY: 0x0002,
   MODULE_INIT: 0x0050,
   SET_POWER: 0x0053,
+  /**
+   * Per-antenna enable + power. Undocumented in the manual's command list, but present in the
+   * vendor SDK — and distinct from SET_POWER: a module whose antenna is disabled here will run an
+   * inventory perfectly happily and never detect a tag.
+   */
+  ANT_POWER: 0x0063,
   GET_DEVICE_INFO: 0x0070,
+  GET_ALL_PARAM: 0x0072,
   GET_BATTERY: 0x0083,
   OUTPUT_MODE: 0x0088,
   KEY_STATE: 0x0089,
@@ -166,6 +173,27 @@ export function setPower(dbm: number): Uint8Array {
   return buildFrame(Cmd.SET_POWER, [clamped, 0x00]);
 }
 
+/** Read the antenna enable flag and per-antenna power table. */
+export function getAntennaPower(): Uint8Array {
+  return buildFrame(Cmd.ANT_POWER, [0x02]);
+}
+
+/**
+ * Enable the antenna(s) and set their power. `powers` is one dBm value per antenna port; the H103
+ * has a single antenna but the module still expects the full table.
+ */
+export function setAntennaPower(enable: boolean, powers: readonly number[]): Uint8Array {
+  const clamped = powers.map((dbm) =>
+    Math.max(MIN_POWER_DBM, Math.min(MAX_POWER_DBM, Math.round(dbm))),
+  );
+  return buildFrame(Cmd.ANT_POWER, [0x01, enable ? 0x01 : 0x00, ...clamped]);
+}
+
+/** Read every configurable parameter (region, Q, session, antenna, power). Raw, for diagnostics. */
+export function getAllParams(): Uint8Array {
+  return buildFrame(Cmd.GET_ALL_PARAM);
+}
+
 export function getBattery(): Uint8Array {
   return buildFrame(Cmd.GET_BATTERY);
 }
@@ -236,6 +264,17 @@ export interface OutputModeReport {
   readonly mode: OutputMode;
 }
 
+/**
+ * The antenna's enable flag and power table, read back from the module. `enabled: false` is a
+ * complete explanation for "inventory runs, finds nothing".
+ */
+export interface AntennaReport {
+  readonly kind: 'antenna';
+  readonly enabled: boolean;
+  /** dBm per antenna port. */
+  readonly powers: readonly number[];
+}
+
 /** A command the reader rejected, or a frame this driver does not model. */
 export interface UnhandledReport {
   readonly kind: 'other';
@@ -251,6 +290,7 @@ export type ReaderReport =
   | BatteryReport
   | ReadModeReport
   | OutputModeReport
+  | AntennaReport
   | UnhandledReport;
 
 /** Barcode payloads arrive wrapped in STX … ETX CR. Tag EPCs are raw bytes. */
@@ -291,6 +331,19 @@ export function interpretFrame(frame: ResponseFrame): ReaderReport {
       return frame.data.length > 0
         ? { kind: 'outputMode', mode: frame.data[0] === 0x01 ? 'transparent' : 'hid' }
         : { kind: 'other', cmd: frame.cmd, status: frame.status };
+
+    case Cmd.ANT_POWER: {
+      // data = [operation, enable, ...powers]. Operation 0x01 is a bare set-acknowledgement and
+      // carries nothing to read back.
+      if (frame.data.length < 2 || frame.data[0] === 0x01) {
+        return { kind: 'other', cmd: frame.cmd, status: frame.status };
+      }
+      return {
+        kind: 'antenna',
+        enabled: frame.data[1] !== 0x00,
+        powers: Array.from(frame.data.subarray(2)),
+      };
+    }
 
     default:
       return { kind: 'other', cmd: frame.cmd, status: frame.status };
@@ -366,6 +419,8 @@ const CMD_NAMES: Record<number, string> = {
   [Cmd.OUTPUT_MODE]: 'OUTPUT_MODE',
   [Cmd.KEY_STATE]: 'TRIGGER',
   [Cmd.READ_MODE]: 'READ_MODE',
+  [Cmd.ANT_POWER]: 'ANTENNA',
+  [Cmd.GET_ALL_PARAM]: 'ALL_PARAMS',
 };
 
 const STATUS_NAMES: Record<number, string> = {
@@ -405,6 +460,9 @@ export function describeFrame(frame: Uint8Array, direction: 'out' | 'in'): strin
         ? `SET OUTPUT_MODE ${frame[6] === 0x01 ? 'transparent' : 'HID'}`
         : 'GET OUTPUT_MODE';
     }
+    if (cmd === Cmd.ANT_POWER) {
+      return length > 1 ? `SET ANTENNA ${frame[6] === 0x01 ? 'on' : 'off'}` : 'GET ANTENNA';
+    }
     return name;
   }
 
@@ -424,6 +482,12 @@ export function describeFrame(frame: Uint8Array, direction: 'out' | 'in'): strin
   }
   if (cmd === Cmd.OUTPUT_MODE && length > 1) {
     return `OUTPUT_MODE = ${frame[HEADER_BYTES + 1] === 0x01 ? 'transparent' : 'HID'}`;
+  }
+  if (cmd === Cmd.ANT_POWER) {
+    const report = interpretFrame(toResponseFrame(frame));
+    if (report.kind === 'antenna') {
+      return `ANTENNA ${report.enabled ? 'ON' : 'OFF'} ${report.powers.join('/')} dBm`;
+    }
   }
 
   return `${name} ${statusName}`;
