@@ -53,6 +53,49 @@
         }
       </div>
 
+      <!--
+        Pair before walking to the shelf, not after. Shown only to tenants with a reader; the row
+        collapses to a single confirming line once it is connected.
+      -->
+      @if (readerAvailable()) {
+        <div class="mt-5 flex items-center gap-3 rounded-md border border-line px-3 py-2.5">
+          <span class="relative flex h-2 w-2 shrink-0" aria-hidden="true">
+            <span
+              class="relative inline-flex h-2 w-2 rounded-full"
+              [class]="reader.connected() ? 'bg-success' : 'bg-muted/50'"
+            ></span>
+          </span>
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-sm text-ink">
+              {{ reader.connected() ? reader.deviceName() : 'No reader connected' }}
+            </p>
+            <p class="mt-0.5 truncate text-xs text-muted">
+              {{
+                reader.connected()
+                  ? 'Ready to sweep. You can also scan tags one at a time.'
+                  : 'Scan tags one at a time, or connect a reader to sweep the shelf.'
+              }}
+            </p>
+          </div>
+          @if (!reader.connected()) {
+            <p-button
+              type="button"
+              [label]="reader.remembered() ? 'Reconnect' : 'Connect'"
+              icon="pi pi-link"
+              [outlined]="true"
+              size="small"
+              [loading]="reader.status() === 'connecting'"
+              (onClick)="connectReader()"
+              (onFocus)="reader.preload()"
+              styleClass="shrink-0 font-medium"
+            />
+          }
+        </div>
+        @if (reader.error(); as readerError) {
+          <p role="alert" class="mt-2 text-xs text-danger">{{ readerError }}</p>
+        }
+      }
+
       @if (setupError()) {
         <p class="mt-4 text-sm text-danger">{{ setupError() }}</p>
       }
@@ -197,6 +240,38 @@
               {{ batch.mode }} · <span class="tabular-nums">{{ batch.count }}</span>
             </span>
           }
+
+          <!--
+            The sweep control sits in the field itself, where the operator's eye already is. It is
+            ink-filled rather than amber: "Finish & save" is this view's one amber action, and a
+            second would break the scarcity that makes amber readable at a glance.
+          -->
+          @if (readerAvailable() && reader.connected()) {
+            <button
+              type="button"
+              (click)="toggleSweep()"
+              [disabled]="!listening()"
+              [attr.aria-pressed]="reader.sweeping()"
+              class="inline-flex h-10 shrink-0 items-center gap-2 rounded-md border px-3 text-sm font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter disabled:opacity-50 motion-reduce:transition-none"
+              [class]="
+                reader.sweeping()
+                  ? 'border-line bg-counter text-ink hover:bg-line/60'
+                  : 'border-ink bg-ink text-counter hover:bg-ink/90'
+              "
+            >
+              @if (reader.sweeping()) {
+                <span class="relative flex h-2 w-2" aria-hidden="true">
+                  <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-success/70 motion-reduce:hidden"></span>
+                  <span class="relative inline-flex h-2 w-2 rounded-full bg-success"></span>
+                </span>
+                Stop
+              } @else {
+                <i class="pi pi-wifi text-sm" aria-hidden="true"></i>
+                Sweep
+              }
+            </button>
+          }
+
           <button
             type="button"
             (click)="pastePop.toggle($event)"
@@ -225,21 +300,57 @@
           }
         </div>
 
-        @if (paused()) {
-          <span class="inline-flex items-center gap-1.5 text-xs font-medium text-muted">
-            <i class="pi pi-pause-circle text-xs" aria-hidden="true"></i>
-            Paused, scans ignored
-          </span>
-        } @else {
-          <span class="inline-flex items-center gap-1.5 text-xs font-medium text-ink">
-            <span class="relative flex h-2 w-2">
-              <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-signal/70 motion-reduce:hidden"></span>
-              <span class="relative inline-flex h-2 w-2 rounded-full bg-signal"></span>
+        <div class="flex items-center gap-3">
+          <!--
+            With a reader in the tenant's hands, the honest status is what the reader is doing.
+            Without one, the field is still listening for a wedge scanner exactly as before, so the
+            original indicator stays the fallback rather than being replaced.
+          -->
+          @if (readerAvailable() && !reader.connected() && !paused()) {
+            <button
+              type="button"
+              (click)="connectReader()"
+              (pointerenter)="reader.preload()"
+              [disabled]="reader.status() === 'connecting'"
+              class="inline-flex items-center gap-1.5 rounded-md px-1.5 py-1 text-xs font-medium text-muted outline-none transition-colors hover:text-ink focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter disabled:opacity-50 motion-reduce:transition-none"
+            >
+              <i
+                class="text-[0.7rem]"
+                [class]="reader.status() === 'connecting' ? 'pi pi-spin pi-spinner' : 'pi pi-link'"
+                aria-hidden="true"
+              ></i>
+              {{ reader.status() === 'connecting' ? 'Connecting…' : 'Connect reader' }}
+            </button>
+          }
+
+          @if (paused()) {
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium text-muted">
+              <i class="pi pi-pause-circle text-xs" aria-hidden="true"></i>
+              Paused, scans ignored
             </span>
-            Listening for scans
-          </span>
-        }
+          } @else if (reader.connected() && reader.sweeping()) {
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium text-ink">
+              <span class="relative flex h-2 w-2" aria-hidden="true">
+                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-success/70 motion-reduce:hidden"></span>
+                <span class="relative inline-flex h-2 w-2 rounded-full bg-success"></span>
+              </span>
+              Sweeping · <span class="tabular-nums">{{ reader.tagCount() }}</span> read
+            </span>
+          } @else {
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium text-ink">
+              <span class="relative flex h-2 w-2" aria-hidden="true">
+                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-signal/70 motion-reduce:hidden"></span>
+                <span class="relative inline-flex h-2 w-2 rounded-full bg-signal"></span>
+              </span>
+              Listening for scans
+            </span>
+          }
+        </div>
       </div>
+
+      @if (reader.error(); as readerError) {
+        <p role="alert" class="mt-2 text-xs text-danger">{{ readerError }}</p>
+      }
 
       @if (batchError()) {
         <p class="mt-2 text-sm text-danger">{{ batchError() }}</p>

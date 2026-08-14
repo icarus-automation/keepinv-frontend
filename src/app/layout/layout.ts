@@ -26,6 +26,8 @@ import { OrganizationService } from '../modules/organization/services/organizati
 import { orgMonogram, orgRoleLabel } from '../modules/organization/organization.util';
 import { EntitlementsService } from '../../common/entitlements/entitlements.service';
 import { ToolsService } from '../modules/tools/services/tools.service';
+import { ReaderChip } from '../../common/rfid/reader-chip';
+import { RfidReaderService } from '../../common/rfid/rfid-reader.service';
 
 interface NavItem {
   readonly label: string;
@@ -72,7 +74,7 @@ const NEW_SHORTCUTS: Record<string, { readonly path: string }> = {
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterOutlet, RouterLink, MenuModule, Tooltip],
+  imports: [RouterOutlet, RouterLink, MenuModule, Tooltip, ReaderChip],
   templateUrl: './layout.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -85,6 +87,7 @@ export class Layout {
   private readonly authService = inject(AuthService);
   private readonly organizationService = inject(OrganizationService);
   private readonly entitlements = inject(EntitlementsService);
+  private readonly reader = inject(RfidReaderService);
   private readonly tools = inject(ToolsService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -192,6 +195,13 @@ export class Layout {
 
   /** Header chrome. Tools hides entirely when the user's plan and role unlock none of them. */
   protected readonly showTools = this.tools.hasAny;
+
+  /**
+   * The reader chip appears only for tenants whose organization has a handheld reader configured.
+   * Everyone else gets no reader affordance at all — scanning still works for them on barcode,
+   * keyboard-wedge, and manual entry, so an unusable control would be pure noise at the counter.
+   */
+  protected readonly showReader = this.entitlements.hasRfidReader;
   protected readonly toolsActive = computed(() => this.startsWith('/tools'));
   protected readonly settingsActive = computed(() => this.startsWith('/settings'));
 
@@ -247,6 +257,14 @@ export class Layout {
   });
 
   constructor() {
+    // Re-attach to a reader this browser was already granted, with no chooser and no prompt, so a
+    // reload mid-shift does not cost the operator a pairing. A miss is silent by design.
+    afterNextRender(() => {
+      if (this.showReader()) {
+        void this.reader.reconnectSilently();
+      }
+    });
+
     afterNextRender(() => {
       const query = window.matchMedia('(min-width: 1024px)');
       const sync = () => {

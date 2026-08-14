@@ -137,6 +137,10 @@
       </div>
 
       <div class="flex shrink-0 items-center gap-1.5">
+        @if (showReader()) {
+          <app-reader-chip />
+          <span class="mx-1 h-6 w-px shrink-0 bg-line" aria-hidden="true"></span>
+        }
         @if (showTools()) {
           <a
             routerLink="/tools"

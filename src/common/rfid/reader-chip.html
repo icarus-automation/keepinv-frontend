@@ -1,0 +1,277 @@
+<button
+  type="button"
+  (click)="readerPanel.toggle($event)"
+  (pointerenter)="reader.preload()"
+  (focus)="reader.preload()"
+  aria-haspopup="dialog"
+  [attr.aria-expanded]="panelOpen()"
+  [attr.aria-label]="srLabel()"
+  class="inline-flex h-9 shrink-0 items-center gap-2 rounded-md border border-line px-2.5 outline-none transition-colors hover:bg-line/60 focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-panel motion-reduce:transition-none"
+>
+  <span class="relative flex h-2 w-2 shrink-0" aria-hidden="true">
+    @if (tone() === 'live') {
+      <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-success/70 motion-reduce:hidden"></span>
+    }
+    <span class="relative inline-flex h-2 w-2 rounded-full" [class]="dotClasses()"></span>
+  </span>
+
+  <span class="hidden text-xs font-medium tabular-nums sm:inline" [class]="labelClasses()">
+    {{ label() }}
+  </span>
+
+  <!-- `!== null`, not truthiness: a battery at 0% must still render, and 0 is falsy. -->
+  @if (batteryFill() !== null) {
+    <span
+      class="hidden items-center gap-1 sm:inline-flex"
+      [class]="batteryLow() ? 'text-danger' : 'text-muted'"
+      aria-hidden="true"
+    >
+      <svg width="18" height="10" viewBox="0 0 18 10" fill="none" class="shrink-0">
+        <rect x="0.5" y="0.5" width="14" height="9" rx="2" stroke="currentColor" />
+        <rect x="16" y="3" width="2" height="4" rx="1" fill="currentColor" />
+        <rect x="2" y="2" [attr.width]="11 * (batteryFill() ?? 0)" height="6" rx="1" fill="currentColor" />
+      </svg>
+      <span class="text-[0.6875rem] tabular-nums">{{ reader.battery() }}%</span>
+    </span>
+  }
+</button>
+
+<p-popover
+  #readerPanel
+  appendTo="body"
+  (onShow)="panelOpen.set(true)"
+  (onHide)="panelOpen.set(false)"
+>
+  <div class="w-80 max-w-[calc(100vw-2rem)]" role="dialog" aria-label="RFID reader">
+    <!-- Identity -->
+    <div class="flex items-start justify-between gap-3">
+      <div class="min-w-0">
+        <h2 class="text-sm font-semibold text-ink">
+          {{ reader.deviceName() ?? reader.remembered() ?? 'RFID reader' }}
+        </h2>
+        <p class="mt-0.5 text-xs" [class]="tone() === 'fault' ? 'text-danger' : 'text-muted'">
+          @switch (tone()) {
+            @case ('live') { Reading tags }
+            @case ('ready') { Connected and idle }
+            @case ('busy') { Connecting… }
+            @case ('fault') { {{ reader.error() }} }
+            @case ('off') {
+              @if (reader.remembered()) { Paired, not connected } @else { Not connected yet }
+            }
+          }
+        </p>
+      </div>
+      @if (reader.connected() && reader.battery() !== null) {
+        <span
+          class="shrink-0 text-xs font-medium tabular-nums"
+          [class]="batteryLow() ? 'text-danger' : 'text-muted'"
+        >
+          {{ reader.battery() }}%
+        </span>
+      }
+    </div>
+
+    @if (!reader.supported) {
+      <!-- Nothing here can work; say why once, plainly, instead of offering dead controls. -->
+      <p class="mt-3 rounded-md bg-panel px-3 py-2.5 text-xs leading-relaxed text-muted">
+        This browser can’t connect to Bluetooth devices. Open keep inv in Chrome or Edge over
+        https to use the reader. Barcode and manual entry work everywhere.
+      </p>
+    } @else {
+      <!-- Connection -->
+      <div class="mt-3 flex items-center gap-2">
+        @if (reader.connected()) {
+          <p-button
+            type="button"
+            label="Disconnect"
+            icon="pi pi-power-off"
+            [outlined]="true"
+            size="small"
+            (onClick)="disconnect()"
+            styleClass="flex-1 font-medium"
+          />
+        } @else {
+          <p-button
+            type="button"
+            [label]="reader.remembered() ? 'Reconnect' : 'Connect reader'"
+            icon="pi pi-link"
+            size="small"
+            [loading]="tone() === 'busy'"
+            (onClick)="connect()"
+            styleClass="flex-1 font-medium"
+          />
+        }
+        @if (reader.remembered()) {
+          <p-button
+            type="button"
+            label="Forget"
+            [text]="true"
+            size="small"
+            (onClick)="forget()"
+            styleClass="text-muted"
+          />
+        }
+      </div>
+
+      @if (reader.connected()) {
+        <!-- Read mode: the same handheld does tags or barcodes, one at a time -->
+        <div class="mt-4">
+          <p id="reader-mode-label" class="text-[0.6875rem] font-medium uppercase tracking-wide text-muted">
+            Reading
+          </p>
+          <div class="mt-1.5 inline-flex w-full rounded-md border border-line p-0.5" role="group" aria-labelledby="reader-mode-label">
+            <button
+              type="button"
+              (click)="setMode('rfid')"
+              [attr.aria-pressed]="reader.readMode() === 'rfid'"
+              class="flex-1 rounded-[0.25rem] px-2 py-1.5 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-1 focus-visible:ring-offset-counter motion-reduce:transition-none"
+              [class]="reader.readMode() === 'rfid' ? 'bg-ink text-counter' : 'text-muted hover:text-ink'"
+            >
+              RFID tags
+            </button>
+            <button
+              type="button"
+              (click)="setMode('barcode')"
+              [attr.aria-pressed]="reader.readMode() === 'barcode'"
+              class="flex-1 rounded-[0.25rem] px-2 py-1.5 text-xs font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-1 focus-visible:ring-offset-counter motion-reduce:transition-none"
+              [class]="reader.readMode() === 'barcode' ? 'bg-ink text-counter' : 'text-muted hover:text-ink'"
+            >
+              Barcodes
+            </button>
+          </div>
+        </div>
+
+        <!-- Range -->
+        <div class="mt-4">
+          <p id="reader-range-label" class="text-[0.6875rem] font-medium uppercase tracking-wide text-muted">
+            Range
+          </p>
+          <div class="mt-1.5 grid gap-1" role="group" aria-labelledby="reader-range-label">
+            @for (preset of presets; track preset.id) {
+              <button
+                type="button"
+                (click)="choosePreset(preset.id)"
+                [attr.aria-pressed]="reader.activePreset() === preset.id"
+                class="flex items-baseline justify-between gap-3 rounded-md border px-2.5 py-1.5 text-left outline-none transition-colors focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter motion-reduce:transition-none"
+                [class]="
+                  reader.activePreset() === preset.id
+                    ? 'border-ink bg-ink text-counter'
+                    : 'border-line text-ink hover:bg-line/60'
+                "
+              >
+                <span class="text-xs font-medium">{{ preset.label }}</span>
+                <span
+                  class="text-[0.6875rem]"
+                  [class]="reader.activePreset() === preset.id ? 'text-counter/70' : 'text-muted'"
+                >
+                  {{ preset.hint }}
+                </span>
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Near-field gate -->
+        <label
+          class="mt-3 flex cursor-pointer items-start gap-2.5 rounded-md px-1 py-1 text-xs text-ink has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-signal has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-counter"
+        >
+          <input
+            type="checkbox"
+            [checked]="reader.nearFieldOnly()"
+            (change)="toggleNearField()"
+            class="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[color:var(--color-signal)] outline-none"
+          />
+          <span>
+            Only tags at the antenna
+            <span class="mt-0.5 block text-[0.6875rem] text-muted">
+              Ignores weaker reads so a sweep can’t pick up the next shelf. On by default when
+              registering units.
+            </span>
+          </span>
+        </label>
+      }
+
+      <!-- Diagnostics -->
+      <div class="mt-3 border-t border-line pt-2.5">
+        <button
+          type="button"
+          (click)="toggleDiagnostics()"
+          [attr.aria-expanded]="showDiagnostics()"
+          class="flex w-full items-center justify-between gap-2 rounded-md px-1 py-1 text-[0.6875rem] font-medium text-muted outline-none transition-colors hover:text-ink focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter motion-reduce:transition-none"
+        >
+          <span>Diagnostics</span>
+          <i
+            class="pi text-[0.65rem]"
+            [class]="showDiagnostics() ? 'pi-chevron-up' : 'pi-chevron-down'"
+            aria-hidden="true"
+          ></i>
+        </button>
+
+        @if (showDiagnostics()) {
+          <div class="mt-2">
+            @if (reader.connected()) {
+              <label for="reader-power" class="flex items-baseline justify-between text-[0.6875rem] text-muted">
+                <span>Power</span>
+                <span class="tabular-nums text-ink">{{ reader.powerDbm() }} dBm</span>
+              </label>
+              <p-slider
+                inputId="reader-power"
+                [(ngModel)]="powerValue"
+                [min]="0"
+                [max]="26"
+                [step]="1"
+                styleClass="mt-2 w-full"
+              />
+            }
+
+            <dl class="mt-3 grid grid-cols-2 gap-x-3 gap-y-1 text-[0.6875rem]">
+              <dt class="text-muted">Tags this session</dt>
+              <dd class="text-right tabular-nums text-ink">{{ reader.tagCount() }}</dd>
+              <!--
+                "Resyncs", not "dropped frames": 0xCF can occur inside an EPC, so the reader
+                resynchronising is routine and does not by itself mean data was lost. A number that
+                climbs steadily during a sweep is the real signal.
+              -->
+              <dt class="text-muted">Frame resyncs</dt>
+              <dd class="text-right tabular-nums text-ink">{{ reader.corruptFrames() }}</dd>
+              <dt class="text-muted">Trigger</dt>
+              <dd class="text-right text-ink">{{ reader.triggerHeld() ? 'Held' : 'Released' }}</dd>
+            </dl>
+
+            @if (reader.wireLog().length) {
+              <div class="mt-2 max-h-40 overflow-y-auto rounded-md bg-panel p-2">
+                <ul class="space-y-0.5">
+                  @for (entry of reader.wireLog(); track entry.at + entry.hex) {
+                    <li class="flex gap-2 font-mono text-[0.625rem] leading-relaxed">
+                      <span
+                        class="shrink-0"
+                        [class]="entry.direction === 'out' ? 'text-muted' : 'text-success'"
+                      >
+                        {{ entry.direction === 'out' ? '»' : '«' }}
+                      </span>
+                      <span class="min-w-0 break-all text-ink">{{ entry.hex }}</span>
+                    </li>
+                  }
+                </ul>
+              </div>
+              <div class="mt-1.5 flex justify-end">
+                <p-button
+                  type="button"
+                  label="Clear log"
+                  [text]="true"
+                  size="small"
+                  (onClick)="reader.clearWireLog()"
+                  styleClass="text-muted"
+                />
+              </div>
+            } @else {
+              <p class="mt-2 rounded-md bg-panel px-2.5 py-2 text-[0.6875rem] text-muted">
+                Frames sent to and from the reader appear here. Pull the trigger to check the link.
+              </p>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</p-popover>

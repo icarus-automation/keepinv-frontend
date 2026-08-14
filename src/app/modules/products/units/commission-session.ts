@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Observable, finalize } from 'rxjs';
+import { Observable, Subject, catchError, debounceTime, finalize, of, switchMap } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
@@ -24,10 +24,13 @@ import { Popover, PopoverModule } from 'primeng/popover';
 import { LocationsService } from '../../locations/services/locations.service';
 import { SuppliersService } from '../../suppliers/services/suppliers.service';
 import { httpErrorMessage } from '../../../../common/http/http-error-message';
+import { EntitlementsService } from '../../../../common/entitlements/entitlements.service';
+import { RfidReaderService } from '../../../../common/rfid/rfid-reader.service';
 import { Product } from '../types/product.types';
 import {
   RegisterMovementType,
   RegisterProductUnitsResult,
+  TakenProductUnitTag,
 } from '../types/product-unit.types';
 import { ProductUnitsService } from '../services/product-units.service';
 import { StockMovementTypesService } from '../../stock-movement-types/services/stock-movement-types.service';
@@ -52,6 +55,8 @@ interface StagedRow {
   readonly icon: string;
   readonly value: string;
   readonly meta: string | null;
+  /** Why the catalog already owns this identifier, if it does. Blocks the commit until removed. */
+  readonly conflict: string | null;
 }
 
 interface NamedRecord {
@@ -67,6 +72,15 @@ interface ReasonChip {
 
 /** Hard cap from the backend: a single register accepts at most this many units. */
 const MAX_UNITS = 500;
+
+/**
+ * Say where a swept-up tag already lives, in the operator's terms. Naming the product and shelf is
+ * what turns "this failed" into "put that one back".
+ */
+function describeConflict(entry: TakenProductUnitTag): string {
+  const where = entry.locationName ? ` at ${entry.locationName}` : '';
+  return `Already registered to ${entry.productName}${where}`;
+}
 
 /**
  * The live RFID commissioning session for a serialized product. A focused takeover
@@ -95,7 +109,12 @@ export class CommissionSession {
   private readonly locationsService = inject(LocationsService);
   private readonly suppliersService = inject(SuppliersService);
   private readonly stockMovementTypesService = inject(StockMovementTypesService);
+  private readonly entitlements = inject(EntitlementsService);
+  protected readonly reader = inject(RfidReaderService);
   private readonly destroyRef = inject(DestroyRef);
+
+  /** The tenant owns a handheld reader, so this session offers to drive one. */
+  protected readonly readerAvailable = this.entitlements.hasRfidReader;
 
   readonly product = input.required<Product>();
 
@@ -136,6 +155,13 @@ export class CommissionSession {
   protected readonly commitError = signal<string | null>(null);
   /** The most recent tag rejected as an in-session duplicate, for a brief notice. */
   protected readonly duplicateNotice = signal<string | null>(null);
+  /**
+   * Identifiers the catalog already owns, keyed by scanned value. A sweep in a stockroom reads
+   * whatever is on the shelf, so this is the difference between pruning two rows and losing a
+   * fifty-unit batch to one conflict at commit time.
+   */
+  protected readonly conflicts = signal<ReadonlyMap<string, string>>(new Map());
+  protected readonly checkingConflicts = signal(false);
 
   // --- Per-row enrich editor (shared popover) ---
   protected readonly editKey = signal<string | null>(null);
@@ -151,8 +177,9 @@ export class CommissionSession {
   protected readonly maxUnits = MAX_UNITS;
 
   /** Flatten staged units for display: the anchor value, an icon, and any other identifiers. */
-  protected readonly stagedRows = computed<StagedRow[]>(() =>
-    this.staged().map((unit) => {
+  protected readonly stagedRows = computed<StagedRow[]>(() => {
+    const conflicts = this.conflicts();
+    return this.staged().map((unit) => {
       const parts: string[] = [];
       if (unit.rfidTag) {
         parts.push(`EPC ${unit.rfidTag}`);
@@ -163,13 +190,20 @@ export class CommissionSession {
       if (unit.assetTag) {
         parts.push(`Asset ${unit.assetTag}`);
       }
+      const identifiers = [unit.rfidTag, unit.serialNumber, unit.assetTag].filter(Boolean);
       return {
         key: unit.key,
         icon: 'pi pi-wifi',
         value: unit.rfidTag || unit.serialNumber || unit.assetTag,
         meta: parts.length > 1 ? parts.slice(1).join(' · ') : null,
+        conflict: identifiers.map((value) => conflicts.get(value)).find(Boolean) ?? null,
       };
-    }),
+    });
+  });
+
+  /** Rows the catalog already owns. The commit stays blocked until every one is pruned. */
+  protected readonly conflictCount = computed(
+    () => this.stagedRows().filter((row) => row.conflict !== null).length,
   );
 
   protected readonly listening = computed(
@@ -183,6 +217,8 @@ export class CommissionSession {
   private duplicateTimer: ReturnType<typeof setTimeout> | null = null;
   /** Monotonic source for stable staged-row keys, independent of the anchor identifier. */
   private keySeq = 0;
+  /** Debounces the catalog check so a fast sweep asks once, not once per tag. */
+  private readonly checkConflicts$ = new Subject<void>();
 
   constructor() {
     this.loadOptions();
@@ -203,6 +239,56 @@ export class CommissionSession {
         el.nativeElement.focus();
       }
     });
+
+    // Tags from the Bluetooth reader stage exactly like typed or wedged input. Barcodes are taken
+    // too: a shop that labels units with a printed serial can commission from those instead.
+    this.reader.captures
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((capture) => {
+        if (this.listening()) {
+          this.addToken(capture.value);
+        }
+      });
+
+    // Commissioning happens with the tag in your hand, so the reader wants its shortest range and
+    // the near-field gate on. Same `untracked` reasoning as the audit session: `prepareFor` both
+    // reads and writes the reader's mode and power, so a tracked effect would re-fire on its own
+    // writes and fight any manual change made from the reader chip.
+    effect(() => {
+      const ready = this.phase() === 'capturing' && this.reader.connected();
+      if (ready) {
+        untracked(() => void this.reader.prepareFor('commission'));
+      }
+    });
+
+    // One catalog check per burst, not per tag.
+    this.checkConflicts$
+      .pipe(
+        debounceTime(350),
+        switchMap(() => {
+          const values = this.stagedIdentifiers();
+          if (values.length === 0) {
+            this.conflicts.set(new Map());
+            return of([]);
+          }
+          this.checkingConflicts.set(true);
+          return this.service.lookupTags(values).pipe(
+            // A failed check must never block the operator: the server still rejects a genuine
+            // duplicate at commit, so this is an early warning, not the guard itself.
+            catchError(() => of([])),
+            finalize(() => this.checkingConflicts.set(false)),
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((taken) => {
+        this.conflicts.set(
+          new Map(taken.map((entry) => [entry.tag, describeConflict(entry)] as const)),
+        );
+      });
+
+    // Never leave the radio running once this pane is gone.
+    this.destroyRef.onDestroy(() => void this.reader.stopSweep());
   }
 
   // --- Setup actions ---
@@ -215,6 +301,7 @@ export class CommissionSession {
   }
 
   protected exitSetup(): void {
+    void this.reader.stopSweep();
     this.exited.emit();
   }
 
@@ -326,14 +413,39 @@ export class CommissionSession {
 
   protected removeStaged(key: string): void {
     this.staged.update((list) => list.filter((unit) => unit.key !== key));
+    this.checkConflicts$.next();
     this.refocus();
   }
 
   protected clearStaged(popover: Popover): void {
     popover.hide();
     this.staged.set([]);
+    this.conflicts.set(new Map());
     this.commitError.set(null);
     this.refocus();
+  }
+
+  /** Drop every row the catalog already owns, so a sweep that caught nearby stock recovers in one click. */
+  protected removeConflicts(): void {
+    const conflicting = new Set(
+      this.stagedRows().filter((row) => row.conflict !== null).map((row) => row.key),
+    );
+    if (conflicting.size === 0) {
+      return;
+    }
+    this.staged.update((list) => list.filter((unit) => !conflicting.has(unit.key)));
+    this.checkConflicts$.next();
+    this.refocus();
+  }
+
+  /** Start or stop the reader's sweep, then hand focus back to the capture field. */
+  protected toggleSweep(): void {
+    void this.reader.toggleSweep();
+    this.refocus();
+  }
+
+  protected connectReader(): void {
+    void this.reader.connect();
   }
 
   // --- Per-row enrich ---
@@ -369,6 +481,7 @@ export class CommissionSession {
     this.staged.update((list) =>
       list.map((staged) => (staged.key === key ? { ...staged, serialNumber, assetTag } : staged)),
     );
+    this.checkConflicts$.next();
     popover.hide();
     this.refocus();
   }
@@ -378,6 +491,14 @@ export class CommissionSession {
   protected register(): void {
     const locationId = this.locationId();
     if (!locationId || this.committing() || this.count() === 0 || this.overLimit()) {
+      return;
+    }
+    // The server enforces this too, but it rejects the whole batch with one 409. Stopping here
+    // keeps the operator's staged work intact and points at the rows to prune.
+    if (this.conflictCount() > 0) {
+      this.commitError.set(
+        `${this.conflictCount()} ${this.conflictCount() === 1 ? 'tag is' : 'tags are'} already registered. Remove them to continue.`,
+      );
       return;
     }
     // Resolve the chosen reason (Initial stock / Purchase) to the org's matching system movement
@@ -425,12 +546,15 @@ export class CommissionSession {
   /** Keep the setup (location, reason, supplier) and sweep another batch. */
   protected registerMore(): void {
     this.staged.set([]);
+    this.conflicts.set(new Map());
     this.commitError.set(null);
     this.result.set(null);
+    this.reader.beginSession();
     this.phase.set('capturing');
   }
 
   protected done(): void {
+    void this.reader.stopSweep();
     this.exited.emit();
   }
 
@@ -453,6 +577,14 @@ export class CommissionSession {
       },
       ...list,
     ]);
+    this.checkConflicts$.next();
+  }
+
+  /** Every identifier currently staged, for the catalog check. */
+  private stagedIdentifiers(): string[] {
+    return this.staged().flatMap((unit) =>
+      [unit.rfidTag, unit.serialNumber, unit.assetTag].filter((value): value is string => !!value),
+    );
   }
 
   private isStaged(value: string): boolean {
@@ -470,8 +602,10 @@ export class CommissionSession {
   }
 
   private resetSession(): void {
+    void this.reader.stopSweep();
     this.phase.set('setup');
     this.staged.set([]);
+    this.conflicts.set(new Map());
     this.result.set(null);
     this.commitError.set(null);
     this.capture.setValue('', { emitEvent: false });

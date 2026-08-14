@@ -10,6 +10,7 @@ import {
   input,
   output,
   signal,
+  untracked,
   viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -35,6 +36,8 @@ import { TextareaModule } from 'primeng/textarea';
 import { Popover, PopoverModule } from 'primeng/popover';
 
 import { httpErrorMessage } from '../../../../common/http/http-error-message';
+import { EntitlementsService } from '../../../../common/entitlements/entitlements.service';
+import { RfidReaderService } from '../../../../common/rfid/rfid-reader.service';
 import { LocationsService } from '../../locations/services/locations.service';
 import { InventoryAuditService } from '../services/inventory-audit.service';
 import { AuditOutcomeBadge } from '../shared/audit-outcome-badge';
@@ -63,6 +66,16 @@ interface PendingBatch {
   readonly rawInput?: string;
   readonly scanMode: InventoryAuditScanMode;
   readonly count: number;
+}
+
+/**
+ * One captured value on its way into a batch. A value that arrived over the Bluetooth reader knows
+ * exactly what produced it, so it carries its own mode; a value typed or wedged into the capture
+ * field does not, and falls back to the picker plus the burst heuristic.
+ */
+interface CaptureToken {
+  readonly value: string;
+  readonly mode: InventoryAuditScanMode | null;
 }
 
 interface ScanModeChip {
@@ -109,7 +122,12 @@ const RECENT_LIMIT = 12;
 export class AuditSession implements OnInit {
   private readonly service = inject(InventoryAuditService);
   private readonly locationsService = inject(LocationsService);
+  private readonly entitlements = inject(EntitlementsService);
+  protected readonly reader = inject(RfidReaderService);
   private readonly destroyRef = inject(DestroyRef);
+
+  /** The tenant owns a handheld reader, so this session offers to drive one. */
+  protected readonly readerAvailable = this.entitlements.hasRfidReader;
 
   /** An in-progress audit to resume. When set, the session skips setup and opens capture. */
   readonly initialReport = input<InventoryAuditReport | null>(null);
@@ -160,7 +178,7 @@ export class AuditSession implements OnInit {
 
   protected readonly pasteControl = new FormControl('', { nonNullable: true });
 
-  private readonly token$ = new Subject<string>();
+  private readonly token$ = new Subject<CaptureToken>();
   private readonly flushNow$ = new Subject<void>();
   private readonly batchQueue$ = new Subject<PendingBatch>();
 
@@ -302,6 +320,21 @@ export class AuditSession implements OnInit {
         this.batchError.set(null);
       });
 
+    // Tags and barcodes from the Bluetooth reader join the same buffer as typed and wedged input,
+    // so one batching, dedupe, and ingestion path serves every source. They carry their own mode:
+    // the reader knows whether its radio or its barcode engine produced the value.
+    this.reader.captures
+      .pipe(
+        filter(() => this.listening()),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((capture) =>
+        this.token$.next({
+          value: capture.value,
+          mode: capture.source === 'barcode' ? 'BARCODE' : 'RFID',
+        }),
+      );
+
     // Keep the scan field focused whenever the session is listening.
     effect(() => {
       const el = this.captureInput();
@@ -309,6 +342,24 @@ export class AuditSession implements OnInit {
         el.nativeElement.focus();
       }
     });
+
+    // An audit sweeps a whole location, so the reader wants full range and its radio (not the
+    // barcode engine) the moment capture opens. Best-effort: with no reader connected this is a
+    // no-op and the session behaves exactly as it always has.
+    //
+    // `untracked` is load-bearing: `prepareFor` reads the reader's mode and power on the way in and
+    // writes them on the way out. Tracked, this effect would re-fire on its own writes and, worse,
+    // slam the reader back to RFID the instant an operator switched it to barcode from the chip.
+    effect(() => {
+      const ready = this.phase() === 'capturing' && this.reader.connected();
+      if (ready) {
+        untracked(() => void this.reader.prepareFor('audit'));
+      }
+    });
+
+    // Never leave the radio inventorying behind us: it drains the battery and keeps reading tags
+    // into a session that is no longer accepting them.
+    this.destroyRef.onDestroy(() => void this.reader.stopSweep());
   }
 
   ngOnInit(): void {
@@ -390,6 +441,7 @@ export class AuditSession implements OnInit {
       return;
     }
     // Flush buffered scans, then leave once the queue drains so nothing is lost.
+    void this.reader.stopSweep();
     this.flushNow$.next();
     this.closing.set(true);
     this.settleAfterDrain();
@@ -408,8 +460,18 @@ export class AuditSession implements OnInit {
     const value = this.capture.value.trim();
     this.capture.setValue('');
     if (value) {
-      this.token$.next(value);
+      this.token$.next({ value, mode: null });
     }
+  }
+
+  /** Start or stop the reader's sweep. Focus goes straight back to the capture field. */
+  protected toggleSweep(): void {
+    void this.reader.toggleSweep();
+    this.refocus();
+  }
+
+  protected connectReader(): void {
+    void this.reader.connect();
   }
 
   protected onCaptureBlur(): void {
@@ -435,9 +497,13 @@ export class AuditSession implements OnInit {
 
   protected togglePause(): void {
     this.paused.update((value) => !value);
-    if (!this.paused()) {
-      queueMicrotask(() => this.captureInput()?.nativeElement.focus());
+    if (this.paused()) {
+      // Pausing means scans are ignored; leaving the radio running would waste battery and let
+      // the reader's own tag cache go stale against a count that is no longer accepting them.
+      void this.reader.stopSweep();
+      return;
     }
+    queueMicrotask(() => this.captureInput()?.nativeElement.focus());
   }
 
   protected submitPaste(popover: Popover): void {
@@ -459,6 +525,7 @@ export class AuditSession implements OnInit {
       return;
     }
     // Flush anything still buffered, then complete once the queue drains.
+    void this.reader.stopSweep();
     this.flushNow$.next();
     this.finishing.set(true);
     this.settleAfterDrain();
@@ -466,6 +533,7 @@ export class AuditSession implements OnInit {
 
   protected confirmCancel(popover: Popover): void {
     popover.hide();
+    void this.reader.stopSweep();
     const audit = this.report();
     if (!audit || this.cancelling()) {
       this.cancelled.emit();
@@ -481,18 +549,46 @@ export class AuditSession implements OnInit {
       });
   }
 
-  private enqueueScans(batch: string[]): void {
-    const tags = Array.from(new Set(batch.map((value) => value.trim()).filter(Boolean)));
-    if (tags.length === 0) {
+  private enqueueScans(batch: CaptureToken[]): void {
+    const seen = new Set<string>();
+    const tokens = batch
+      .map((token) => ({ ...token, value: token.value.trim() }))
+      .filter((token) => {
+        if (!token.value || seen.has(token.value)) {
+          return false;
+        }
+        seen.add(token.value);
+        return true;
+      });
+    if (tokens.length === 0) {
       return;
     }
-    // A multi-tag burst is an RFID sweep regardless of the picker, unless the
-    // operator is deliberately in manual mode.
-    const scanMode: InventoryAuditScanMode =
-      tags.length > 1 && this.mode() !== 'MANUAL' ? 'RFID' : this.mode();
+
+    const tags = tokens.map((token) => token.value);
+    const scanMode = this.resolveScanMode(tokens);
     this.lastBatch.set({ mode: scanMode, count: tags.length });
     this.pending.update((n) => n + tags.length);
     this.batchQueue$.next({ tags, scanMode, count: tags.length });
+  }
+
+  /**
+   * How a batch was captured. A value the reader produced already knows its own source, and that
+   * always wins. Everything else keeps the original rule: a multi-token burst is a sweep, an
+   * isolated token is whatever the picker says, and manual entry is never reclassified.
+   */
+  private resolveScanMode(tokens: CaptureToken[]): InventoryAuditScanMode {
+    const declared = new Set(
+      tokens.map((token) => token.mode).filter((mode): mode is InventoryAuditScanMode => mode !== null),
+    );
+    if (declared.size === 1) {
+      return [...declared][0];
+    }
+    // Sources mixed inside one quiet window (a wedge scan landing mid-sweep): a batch has one
+    // mode, and a sweep is the honest description of the larger part.
+    if (declared.size > 1) {
+      return 'RFID';
+    }
+    return tokens.length > 1 && this.mode() !== 'MANUAL' ? 'RFID' : this.mode();
   }
 
   /** Once all queued batches have settled, carry out whichever exit was requested. */

@@ -10,12 +10,14 @@ import {
 } from '../../../../common/responses/api.response';
 import {
   ChangeProductUnitStatusRequest,
+  LookupProductUnitTagsResult,
   ProductUnit,
   ProductUnitListQuery,
   ProductUnitStatusChangeResult,
   RegisterProductUnitsRequest,
   RegisterProductUnitsResult,
   RetireProductUnitRequest,
+  TakenProductUnitTag,
   UpdateProductUnitRequest,
   WriteProductUnitTagRequest,
 } from '../types/product-unit.types';
@@ -72,6 +74,17 @@ export class ProductUnitsService {
     return this.http
       .post<ApiResponse<RegisterProductUnitsResult>>(`${this.baseUrl}/register`, body)
       .pipe(map((response) => response.data));
+  }
+
+  /**
+   * Ask which of these scanned identifiers the catalog already owns. Read-only; used by the
+   * commissioning sweep so already-registered stock is flagged in the roster instead of failing
+   * the whole batch at register time.
+   */
+  lookupTags(tags: string[]): Observable<TakenProductUnitTag[]> {
+    return this.http
+      .post<ApiResponse<LookupProductUnitTagsResult>>(`${this.baseUrl}/lookup-tags`, { tags })
+      .pipe(map((response) => response.data.taken));
   }
 
   /** Edit a unit's identifiers and/or location. */

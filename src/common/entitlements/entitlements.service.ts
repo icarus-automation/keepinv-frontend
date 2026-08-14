@@ -7,15 +7,18 @@ import { ApiResponse } from '../responses/api.response';
 
 export type OrgPlan = 'BASIC' | 'PRO';
 export type PrinterType = 'NONE' | 'NIIMBOT';
+export type ReaderType = 'NONE' | 'CHAFON_H103';
 
 /**
  * Plan-driven capabilities, mirrored from the backend GET /entitlements response.
  * The plan selects MODULES: BASIC = Inventory only, PRO = POS + Inventory. RFID and barcode are on
- * both plans; label printing depends on the tenant's configured printer, not the plan.
+ * both plans; label printing and the handheld reader depend on the tenant's configured hardware,
+ * not the plan.
  */
 export interface Entitlements {
   plan: OrgPlan;
   printerType: PrinterType;
+  readerType: ReaderType;
   trialEndsAt: string | null;
   trialActive: boolean;
   trialExpired: boolean;
@@ -26,6 +29,12 @@ export interface Entitlements {
     rfid: boolean;
     labelPrinting: boolean;
     receiptScanning: boolean;
+    /**
+     * The tenant owns a handheld RFID reader, so the app offers to pair one over Bluetooth. False
+     * hides every reader affordance — it never disables scanning, which stays available on
+     * barcode, keyboard-wedge, and manual entry for everyone.
+     */
+    rfidReader: boolean;
   };
 }
 
@@ -37,11 +46,19 @@ export interface Entitlements {
 const FALLBACK: Entitlements = {
   plan: 'BASIC',
   printerType: 'NONE',
+  readerType: 'NONE',
   trialEndsAt: null,
   trialActive: false,
   trialExpired: false,
   locked: false,
-  features: { inventory: true, pos: false, rfid: true, labelPrinting: false, receiptScanning: false },
+  features: {
+    inventory: true,
+    pos: false,
+    rfid: true,
+    labelPrinting: false,
+    receiptScanning: false,
+    rfidReader: false,
+  },
 };
 
 /**
@@ -64,6 +81,9 @@ export class EntitlementsService {
   /** PRO-only receipt scanning; BASIC sees a locked row on /tools that opens the upgrade dialog. */
   readonly canScanReceipts = computed(() => this.state().features.receiptScanning);
   readonly canPrintLabels = computed(() => this.state().features.labelPrinting);
+  /** The tenant has a handheld RFID reader; gates every Bluetooth-reader affordance. */
+  readonly hasRfidReader = computed(() => this.state().features.rfidReader);
+  readonly readerType = computed(() => this.state().readerType);
   readonly locked = computed(() => this.state().locked);
   readonly trialActive = computed(() => this.state().trialActive);
   readonly trialEndsAt = computed(() => this.state().trialEndsAt);

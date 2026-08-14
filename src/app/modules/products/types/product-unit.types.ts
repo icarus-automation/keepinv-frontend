@@ -83,6 +83,26 @@ export interface WriteProductUnitTagRequest {
 }
 
 /**
+ * One scanned identifier the catalog already owns. Returned by the batch tag lookup so a
+ * commissioning sweep can flag stock it swept up by accident *before* the operator commits, rather
+ * than losing the whole batch to a single conflict at register time.
+ */
+export interface TakenProductUnitTag {
+  /** The scanned value exactly as submitted, so a staged row can be keyed off it. */
+  tag: string;
+  unitId: string;
+  field: 'rfidTag' | 'serialNumber' | 'assetTag';
+  productId: string;
+  productName: string;
+  locationName: string | null;
+  status: ProductUnitStatus;
+}
+
+export interface LookupProductUnitTagsResult {
+  taken: TakenProductUnitTag[];
+}
+
+/**
  * Change a unit's status. A location is required when moving *to* a stock-counted
  * status if the unit has none; sold/lost clear the location server-side.
  */
