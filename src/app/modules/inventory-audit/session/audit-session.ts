@@ -178,6 +178,14 @@ export class AuditSession implements OnInit {
 
   protected readonly pasteControl = new FormControl('', { nonNullable: true });
 
+  /**
+   * Whether the on-screen keyboard is wanted. The capture field must keep focus so scanner input
+   * always lands in it, but on a phone that focus alone raises the keyboard and buries half the
+   * count. `inputmode="none"` keeps the focus without the keyboard; this toggle brings it back for
+   * the occasional tag that has to be typed.
+   */
+  protected readonly manualEntry = signal(false);
+
   private readonly token$ = new Subject<CaptureToken>();
   private readonly flushNow$ = new Subject<void>();
   private readonly batchQueue$ = new Subject<PendingBatch>();
@@ -472,6 +480,20 @@ export class AuditSession implements OnInit {
 
   protected connectReader(): void {
     void this.reader.connect();
+  }
+
+  /**
+   * Show or hide the on-screen keyboard. The field is blurred and refocused because a browser only
+   * re-reads `inputmode` when an element gains focus — changing it in place does nothing.
+   */
+  protected toggleManualEntry(): void {
+    this.manualEntry.update((wanted) => !wanted);
+    const el = this.captureInput()?.nativeElement;
+    if (!el) {
+      return;
+    }
+    el.blur();
+    setTimeout(() => el.focus());
   }
 
   protected onCaptureBlur(): void {

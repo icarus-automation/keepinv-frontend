@@ -5,13 +5,11 @@ import {
   describeFrame,
   moduleInit,
   getAllParams,
-  getAntennaPower,
   getBattery,
   getDeviceInfo,
   getOutputMode,
   getReadMode,
   interpretFrame,
-  setAntennaPower,
   normalizeTag,
   setPower,
   setReadMode,
@@ -107,13 +105,8 @@ describe('command frames', () => {
     expect(hex(clearSelectMask())).toBe('CF FF 00 07 03 00 00 00 F8 99');
   });
 
-  it('builds the antenna and all-parameter queries', () => {
-    expect(hex(getAntennaPower())).toBe('CF FF 00 63 01 02 17 33');
+  it('builds the all-parameter query', () => {
     expect(hex(getAllParams())).toBe('CF FF 00 72 00 17 A5');
-    // Not sent to the H103 — it never answers 0x0063 — but sibling readers in the range use it.
-    expect(hex(setAntennaPower(true, new Array(8).fill(30)))).toBe(
-      'CF FF 00 63 0A 01 01 1E 1E 1E 1E 1E 1E 1E 1E 9A 35',
-    );
   });
 
   it('builds the zero-payload queries', () => {
@@ -284,16 +277,6 @@ describe('describeFrame', () => {
     expect(describeFrame(withCrc('CF 00 00 88 02 00 01'), 'in')).toBe('OUTPUT_MODE = transparent');
   });
 
-  it('reads the antenna enable flag and its power table', () => {
-    // data = [operation, enable, ...powers]; operation 0x02 is a read reply.
-    expect(describeFrame(withCrc('CF 00 00 63 05 00 02 00 21 21'), 'in')).toBe(
-      'ANTENNA OFF 33/33 dBm',
-    );
-    expect(describeFrame(withCrc('CF 00 00 63 05 00 02 01 21 21'), 'in')).toBe(
-      'ANTENNA ON 33/33 dBm',
-    );
-  });
-
   it('reads the module parameter block, which is what the radio actually runs on', () => {
     // Ant=0x01, region 0x08 (China 2), power 0x1E = 30 dBm, Q=4, Session=0.
     expect(
@@ -303,7 +286,7 @@ describe('describeFrame', () => {
         ),
         'in',
       ),
-    ).toBe('PARAMS ant=0x01 30dBm China 2 920.125–924.875 Q4 S0');
+    ).toBe('PARAMS ant=0x01 China 2 920.125–924.875 Q4 S0');
   });
 
   it('flags a parameter block with no antenna selected', () => {

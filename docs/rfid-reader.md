@@ -160,11 +160,28 @@ chip's panel. Tenants without an H103 keep using their existing scanner — that
 
 ## Gotchas worth knowing before you test
 
-**Output mode is the classic silent failure.** The reader can emit reads as a Bluetooth *keyboard*
-(HID) instead of over the GATT channel. In that state it connects perfectly and then never sends a
-single tag. The app forces transparent output on every connect, so this should not bite — but if
-you have previously paired the reader to this PC as a keyboard in Windows Bluetooth settings,
-**remove that pairing first**, or Chrome may not offer the device at all.
+**Output mode is the failure. Confirmed on hardware, not theorised.**
+
+The reader stores its output mode in flash, across power cycles and across apps. Left in
+Bluetooth-keyboard (**HID**) mode it connects perfectly, acknowledges every command, runs an
+inventory, and reports `INVENTORY idle — no tags` forever — because it is typing the tags it reads
+to a phantom keyboard instead of sending them over GATT. There is no error anywhere. The vendor
+app's Settings screen shows this as `Output Mode: HID`, and its **Restore** button is what clears
+it.
+
+The app now sends `setOutputMode('transparent')` on every connect and reads the mode back, so an
+operator never has to know any of this. If the diagnostics panel ever shows a red **Output: HID
+(wrong)**, press **Re-apply settings**.
+
+Two secondary traps in the same family, both handled on connect or by Re-apply:
+
+- A **select mask** (`0x0007`) left by another app's tag-search screen filters every inventory down
+  to matching tags — often none. It also survives power cycles.
+- A reader left on the **barcode front end** by a previous session reads no tags until the read
+  mode is switched back.
+
+If you have previously paired the reader to a PC as a Bluetooth *keyboard*, remove that pairing in
+the OS, or Chrome may not offer the device in its chooser at all.
 
 **Web Bluetooth needs Chrome or Edge over HTTPS.** Firefox and Safari have no support; neither does
 any browser on iOS. `localhost` counts as secure for development. The chip says so plainly rather
@@ -177,17 +194,33 @@ cannot have it.
 in and out, a dropped-frame counter, trigger state, and a fine dBm slider. Pull the trigger and
 watch the log — that is the fastest way to tell a link problem from a protocol problem.
 
-## What was not verified
+## Design rule learned the hard way: do not configure the module
 
-The protocol, framing, CRC, reassembly, dedupe, and near-field gate are covered by unit tests and
-verified against the vendor SDK's bytecode. **The integration has not been run against physical
-hardware** — no H103 was available to this build. The first real-device session should check, in
-this order:
+The reader ships correctly configured and keeps its settings in flash. The vendor's own demo app
+writes **nothing** on connect — it enables notifications, reads device info, and starts
+inventorying. Configuration lives behind an explicit settings screen that refuses to run at all
+while an inventory is active (*"please stop inventory first"*).
 
-1. The device appears in Chrome's chooser and connects.
-2. Frames appear in the diagnostics log in both directions.
-3. Pulling the trigger produces `trigger` then tag frames.
-4. Tags land in an audit session and resolve against the catalog.
-5. The barcode mode switch takes, and a scanned barcode arrives as text.
+An earlier version of this driver configured everything on connect: output mode, read mode, power,
+and the whole parameter block. The module acknowledged every command and then read nothing. Two
+rules came out of that, and both are load-bearing:
 
-If a step fails, the hex log plus the frame layout above is enough to tell exactly where.
+1. **Never write configuration while a sweep is running.** `setPower` refuses outright, and
+   `reapplySettings` stops the sweep first.
+2. **Never bind a control two-way to a setter that writes to the radio.** A `[(ngModel)]` power
+   slider produced a feedback loop — each write provoked a reply, whose signal update ran change
+   detection, which wrote again — burying the module under hundreds of commands a second. Bindings
+   that reach hardware are one-way plus an explicit commit event.
+
+The single exception is output mode, which must be forced on connect for the reason above.
+
+## Diagnostics
+
+The chip's collapsed **Diagnostics** section decodes every frame in both directions
+(`TAG E28011… -32 dBm`, `INVENTORY idle — no tags ×247`, `SET_POWER 30 dBm`), collapsing repeats so
+a running sweep cannot flush the connect handshake out of the buffer. It also shows the module's
+own reported state: output mode, antenna selection, RF protocol, frequency band, Q and session.
+
+Power is deliberately **not** shown from the parameter block: that byte reads `0x72` on this
+firmware while the vendor app reports 33 dBm for the same reader, and the fields either side of it
+decode correctly — so it is not dBm here, and printing it would be inventing a number.

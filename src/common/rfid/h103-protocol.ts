@@ -33,14 +33,7 @@ export const Cmd = {
   SELECT_MASK: 0x0007,
   MODULE_INIT: 0x0050,
   SET_POWER: 0x0053,
-  /**
-   * Per-antenna enable + power. Undocumented in the manual's command list, but present in the
-   * vendor SDK — and distinct from SET_POWER: a module whose antenna is disabled here will run an
-   * inventory perfectly happily and never detect a tag.
-   */
-  ANT_POWER: 0x0063,
   GET_DEVICE_INFO: 0x0070,
-  SET_ALL_PARAM: 0x0071,
   GET_ALL_PARAM: 0x0072,
   GET_BATTERY: 0x0083,
   OUTPUT_MODE: 0x0088,
@@ -202,50 +195,9 @@ export function clearSelectMask(): Uint8Array {
   return buildFrame(Cmd.SELECT_MASK, [0x00, 0x00, 0x00]);
 }
 
-/** Read the antenna enable flag and per-antenna power table. */
-export function getAntennaPower(): Uint8Array {
-  return buildFrame(Cmd.ANT_POWER, [0x02]);
-}
-
-/**
- * Enable the antenna(s) and set their power. `powers` is one dBm value per antenna port; the H103
- * has a single antenna but the module still expects the full table.
- */
-export function setAntennaPower(enable: boolean, powers: readonly number[]): Uint8Array {
-  const clamped = powers.map((dbm) =>
-    Math.max(MIN_POWER_DBM, Math.min(MAX_POWER_DBM, Math.round(dbm))),
-  );
-  return buildFrame(Cmd.ANT_POWER, [0x01, enable ? 0x01 : 0x00, ...clamped]);
-}
-
 /** Read every configurable parameter: region, antenna, power, Q, session. */
 export function getAllParams(): Uint8Array {
   return buildFrame(Cmd.GET_ALL_PARAM);
-}
-
-/**
- * Write back a parameter block with the antenna enabled and the power set, leaving every other
- * field exactly as the module reported it.
- *
- * This is the vendor SDK's own pattern — read the block, modify, write it back — and on the H103 it
- * is the only path that actually configures the radio: the standalone antenna command (`0x0063`)
- * goes unanswered, and a bare `SET_POWER` does not touch the antenna selection at all.
- */
-export function setAllParams(
-  block: Uint8Array,
-  changes: { readonly antenna?: number; readonly powerDbm?: number },
-): Uint8Array {
-  const next = block.slice(0, PARAM_BLOCK_BYTES);
-  if (changes.antenna !== undefined) {
-    next[PARAM.ANTENNA] = changes.antenna & 0xff;
-  }
-  if (changes.powerDbm !== undefined) {
-    next[PARAM.POWER] = Math.max(
-      MIN_POWER_DBM,
-      Math.min(MAX_POWER_DBM, Math.round(changes.powerDbm)),
-    );
-  }
-  return buildFrame(Cmd.SET_ALL_PARAM, Array.from(next));
 }
 
 export function getBattery(): Uint8Array {
@@ -318,20 +270,6 @@ export interface OutputModeReport {
   readonly mode: OutputMode;
 }
 
-/**
- * The antenna's enable flag and power table, read back from the module. `enabled: false` is a
- * complete explanation for "inventory runs, finds nothing".
- *
- * Note: the H103 does not answer command `0x0063` at all — its antenna lives in {@link ParamsReport}
- * instead. Kept because sibling readers in the range do support it.
- */
-export interface AntennaReport {
-  readonly kind: 'antenna';
-  readonly enabled: boolean;
-  /** dBm per antenna port. */
-  readonly powers: readonly number[];
-}
-
 /** Frequency bands the module can be set to, by REGION byte. */
 export const REGION_NAMES: Record<number, string> = {
   0x00: 'Custom',
@@ -347,8 +285,12 @@ export const REGION_NAMES: Record<number, string> = {
 
 /**
  * The module's whole configuration, read back via `GET_ALL_PARAM`. This is the authoritative view
- * of what the radio is actually doing — `antenna` and `powerDbm` here are what the module will use,
- * regardless of what a bare `SET_POWER` reported.
+ * of what the radio is actually doing.
+ *
+ * Power is deliberately absent. The block's `RfidPower` byte reads 0x72 on this firmware while the
+ * vendor's own app reports 33 dBm for the same reader — and since `qValue` and `session` either
+ * side of it decode correctly, the offset is right and the field simply is not dBm here. Showing
+ * it would be inventing a number.
  */
 export interface ParamsReport {
   readonly kind: 'params';
@@ -357,8 +299,6 @@ export interface ParamsReport {
   /** Bitmask; bit 0 = antenna 1. `0` means no antenna is selected and nothing will ever be read. */
   readonly antenna: number;
   readonly region: number;
-  /** The module's own RF power, which need not match what SET_POWER asked for. */
-  readonly powerDbm: number;
   readonly inquiryArea: number;
   readonly qValue: number;
   /** Session S0–S3. A high session keeps a counted tag quiet for longer. */
@@ -382,7 +322,6 @@ export type ReaderReport =
   | BatteryReport
   | ReadModeReport
   | OutputModeReport
-  | AntennaReport
   | ParamsReport
   | UnhandledReport;
 
@@ -392,7 +331,6 @@ const PARAM = {
   ANTENNA: 6,
   /** RfidFreq is 8 bytes: REGION(1) STRATFREI(2) STRATFRED(2) STEPFRE(2) CN(1). */
   REGION: 7,
-  POWER: 15,
   INQUIRY_AREA: 16,
   Q_VALUE: 17,
   SESSION: 18,
@@ -450,7 +388,6 @@ export function interpretFrame(frame: ResponseFrame): ReaderReport {
         rfidProtocol: block[PARAM.RFID_PROTOCOL],
         antenna: block[PARAM.ANTENNA],
         region: block[PARAM.REGION],
-        powerDbm: block[PARAM.POWER],
         inquiryArea: block[PARAM.INQUIRY_AREA],
         qValue: block[PARAM.Q_VALUE],
         session: block[PARAM.SESSION],
@@ -458,18 +395,6 @@ export function interpretFrame(frame: ResponseFrame): ReaderReport {
       };
     }
 
-    case Cmd.ANT_POWER: {
-      // data = [operation, enable, ...powers]. Operation 0x01 is a bare set-acknowledgement and
-      // carries nothing to read back.
-      if (frame.data.length < 2 || frame.data[0] === 0x01) {
-        return { kind: 'other', cmd: frame.cmd, status: frame.status };
-      }
-      return {
-        kind: 'antenna',
-        enabled: frame.data[1] !== 0x00,
-        powers: Array.from(frame.data.subarray(2)),
-      };
-    }
 
     default:
       return { kind: 'other', cmd: frame.cmd, status: frame.status };
@@ -546,9 +471,7 @@ const CMD_NAMES: Record<number, string> = {
   [Cmd.KEY_STATE]: 'TRIGGER',
   [Cmd.READ_MODE]: 'READ_MODE',
   [Cmd.SELECT_MASK]: 'SELECT_MASK',
-  [Cmd.ANT_POWER]: 'ANTENNA',
   [Cmd.GET_ALL_PARAM]: 'ALL_PARAMS',
-  [Cmd.SET_ALL_PARAM]: 'SET_ALL_PARAMS',
 };
 
 const STATUS_NAMES: Record<number, string> = {
@@ -588,9 +511,6 @@ export function describeFrame(frame: Uint8Array, direction: 'out' | 'in'): strin
         ? `SET OUTPUT_MODE ${frame[6] === 0x01 ? 'transparent' : 'HID'}`
         : 'GET OUTPUT_MODE';
     }
-    if (cmd === Cmd.ANT_POWER) {
-      return length > 1 ? `SET ANTENNA ${frame[6] === 0x01 ? 'on' : 'off'}` : 'GET ANTENNA';
-    }
     return name;
   }
 
@@ -611,16 +531,10 @@ export function describeFrame(frame: Uint8Array, direction: 'out' | 'in'): strin
   if (cmd === Cmd.OUTPUT_MODE && length > 1) {
     return `OUTPUT_MODE = ${frame[HEADER_BYTES + 1] === 0x01 ? 'transparent' : 'HID'}`;
   }
-  if (cmd === Cmd.ANT_POWER) {
-    const report = interpretFrame(toResponseFrame(frame));
-    if (report.kind === 'antenna') {
-      return `ANTENNA ${report.enabled ? 'ON' : 'OFF'} ${report.powers.join('/')} dBm`;
-    }
-  }
   if (cmd === Cmd.GET_ALL_PARAM) {
     const report = interpretFrame(toResponseFrame(frame));
     if (report.kind === 'params') {
-      return `PARAMS ant=0x${report.antenna.toString(16).padStart(2, '0')} ${report.powerDbm}dBm ${
+      return `PARAMS ant=0x${report.antenna.toString(16).padStart(2, '0')} ${
         REGION_NAMES[report.region] ?? `region 0x${report.region.toString(16)}`
       } Q${report.qValue} S${report.session}`;
     }

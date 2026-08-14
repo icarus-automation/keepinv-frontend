@@ -97,13 +97,6 @@ export class RfidReaderService {
    * Null until the reader answers.
    */
   readonly outputMode = signal<OutputMode | null>(null);
-  /**
-   * Whether the module says its antenna is switched on, read back after connect. `false` fully
-   * explains an inventory that runs and reports nothing. Null until the reader answers.
-   */
-  readonly antennaEnabled = signal<boolean | null>(null);
-  /** Per-port power the module reports, which need not match what SET_POWER asked for. */
-  readonly antennaPowers = signal<readonly number[]>([]);
   /** The module's full configuration block, once it has answered GET_ALL_PARAM. */
   readonly params = signal<ParamsReport | null>(null);
   readonly powerDbm = signal<number>(POWER_PRESETS[2].dbm);
@@ -261,6 +254,20 @@ export class RfidReaderService {
     this.seenTags.clear();
   }
 
+  /**
+   * Forget one tag, so the next sweep offers it again.
+   *
+   * The dedupe exists because a continuous inventory re-reports the same tag many times a second.
+   * But it makes the reader look broken the moment a surface *discards* a tag it was given: the
+   * operator removes a row, sweeps the same tag, and nothing happens. Whoever throws a capture
+   * away is responsible for telling the reader it may be offered again.
+   */
+  forgetTag(value: string): void {
+    if (this.seenTags.delete(value)) {
+      this.tagCount.update((count) => Math.max(0, count - 1));
+    }
+  }
+
   // --- Configuration -------------------------------------------------------------------------
 
   /**
@@ -326,16 +333,17 @@ export class RfidReaderService {
    * This also starts a fresh capture session, so tags read during the previous count or batch are
    * offered again to this one.
    */
-  async prepareFor(_task: 'commission' | 'audit'): Promise<void> {
-    // Starts a fresh capture session and nothing else.
-    //
-    // This used to set read mode and power on entering a session. It no longer touches the radio
-    // at all: writing configuration the module did not ask for is what stopped it reading, and the
-    // vendor app never does it either. Power stays where the module has it, adjustable by hand
-    // from the reader chip. Once reading is confirmed working on hardware, per-task power can come
-    // back — as an explicit, stop-the-sweep-first step rather than a silent one.
+  async prepareFor(task: 'commission' | 'audit'): Promise<void> {
     this.beginSession();
     this.setNearFieldOnly(false);
+
+    // Range comes from the power preset, not from an RSSI gate: cutting power stops distant tags
+    // answering at all, whereas a gate discards reads the radio already made. Commissioning wants
+    // only what is in your hand; an audit wants the aisle.
+    //
+    // Only ever while stopped. `setPower` refuses mid-sweep, and reconfiguring a running module is
+    // what stranded this integration for a whole evening.
+    await this.applyPreset(task === 'commission' ? 'near' : 'room');
   }
 
   async refreshBattery(): Promise<void> {
@@ -368,6 +376,10 @@ export class RfidReaderService {
     // Drop a tag-selection mask left behind by another app; one survives power cycles and filters
     // every inventory down to the tags it matches, often none.
     await this.send(protocol.clearSelectMask());
+
+    // Force transparent output again — the setting that actually strands a reader when wrong.
+    await this.send(protocol.setOutputMode('transparent'));
+    await this.send(protocol.getOutputMode());
 
     // Put the front end back on the radio, in case a barcode session left it on the scan engine.
     await this.send(protocol.setReadMode('rfid'));
@@ -426,6 +438,16 @@ export class RfidReaderService {
     await sleep(CONNECT_SETTLE_MS);
 
     await this.send(protocol.getDeviceInfo());
+
+    // The one setting we must impose, because it is the difference between working and silent.
+    //
+    // The reader remembers its output mode in flash, across power cycles and across apps. Left in
+    // Bluetooth-keyboard (HID) mode it connects, accepts every command, runs an inventory, and
+    // types the tags it reads to a phantom keyboard instead of sending them here — which looks
+    // exactly like a reader that finds nothing. This is the only reason the vendor app's "Restore"
+    // fixed it. Sending it on every connect means an operator never has to know that.
+    await this.send(protocol.setOutputMode('transparent'));
+    await this.send(protocol.getOutputMode());
 
     // Read-only, for the diagnostics panel. Safe here because nothing is inventorying yet — the
     // vendor app refuses this same query while a sweep is running.
@@ -492,17 +514,8 @@ export class RfidReaderService {
         this.outputMode.set(report.mode);
         return;
 
-      case 'antenna':
-        this.antennaEnabled.set(report.enabled);
-        this.antennaPowers.set(report.powers);
-        return;
-
       case 'params':
         this.params.set(report);
-        // The module's own view of its antenna and power wins over anything a bare SET_POWER
-        // acknowledged: this is the block the radio actually runs on.
-        this.antennaEnabled.set(report.antenna !== 0);
-        this.antennaPowers.set([report.powerDbm]);
         return;
 
       case 'idle':
@@ -548,8 +561,6 @@ export class RfidReaderService {
     this.deviceName.set(null);
     this.battery.set(null);
     this.outputMode.set(null);
-    this.antennaEnabled.set(null);
-    this.antennaPowers.set([]);
     this.params.set(null);
     this.appliedPowerDbm = null;
     this.sweeping.set(false);

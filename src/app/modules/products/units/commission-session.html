@@ -276,7 +276,7 @@
             #captureInput
             id="commission-capture"
             type="text"
-            inputmode="text"
+            [attr.inputmode]="manualEntry() ? 'text' : 'none'"
             autocomplete="off"
             autocorrect="off"
             autocapitalize="off"
@@ -318,6 +318,16 @@
             </button>
           }
 
+          <button
+            type="button"
+            (click)="toggleManualEntry()"
+            [attr.aria-pressed]="manualEntry()"
+            [attr.aria-label]="manualEntry() ? 'Hide the keyboard' : 'Type an identifier by hand'"
+            class="grid h-8 w-8 shrink-0 place-items-center rounded-md outline-none transition-colors hover:bg-line/60 focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-2 focus-visible:ring-offset-counter"
+            [class]="manualEntry() ? 'bg-ink text-counter' : 'text-muted hover:text-ink'"
+          >
+            <i class="pi pi-pencil text-base" aria-hidden="true"></i>
+          </button>
           <button
             type="button"
             (click)="pastePop.toggle($event)"

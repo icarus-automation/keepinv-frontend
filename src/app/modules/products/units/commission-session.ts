@@ -151,6 +151,13 @@ export class CommissionSession {
   protected readonly staged = signal<StagedUnit[]>([]);
   protected readonly capture = new FormControl('', { nonNullable: true });
   protected readonly pasteControl = new FormControl('', { nonNullable: true });
+
+  /**
+   * Whether the on-screen keyboard is wanted. The capture field holds focus so scanner input always
+   * lands in it; on a phone that focus alone raises the keyboard over the staged roster.
+   * `inputmode="none"` keeps focus without the keyboard, and this brings it back on demand.
+   */
+  protected readonly manualEntry = signal(false);
   protected readonly committing = signal(false);
   protected readonly commitError = signal<string | null>(null);
   /** The most recent tag rejected as an in-session duplicate, for a brief notice. */
@@ -412,6 +419,12 @@ export class CommissionSession {
   }
 
   protected removeStaged(key: string): void {
+    // Let the reader offer this tag again; otherwise removing a row means it can never be
+    // re-scanned, because the reader still counts it as already seen.
+    const removed = this.staged().find((unit) => unit.key === key);
+    if (removed) {
+      this.forgetIdentifiers(removed);
+    }
     this.staged.update((list) => list.filter((unit) => unit.key !== key));
     this.checkConflicts$.next();
     this.refocus();
@@ -419,6 +432,9 @@ export class CommissionSession {
 
   protected clearStaged(popover: Popover): void {
     popover.hide();
+    // A fresh start for the roster is a fresh start for the reader too. Without this, clearing and
+    // re-sweeping the same tags at a different power reads nothing at all.
+    this.reader.beginSession();
     this.staged.set([]);
     this.conflicts.set(new Map());
     this.commitError.set(null);
@@ -433,9 +449,23 @@ export class CommissionSession {
     if (conflicting.size === 0) {
       return;
     }
+    for (const unit of this.staged()) {
+      if (conflicting.has(unit.key)) {
+        this.forgetIdentifiers(unit);
+      }
+    }
     this.staged.update((list) => list.filter((unit) => !conflicting.has(unit.key)));
     this.checkConflicts$.next();
     this.refocus();
+  }
+
+  /** Release a discarded unit's identifiers back to the reader so they can be scanned again. */
+  private forgetIdentifiers(unit: StagedUnit): void {
+    for (const value of [unit.rfidTag, unit.serialNumber, unit.assetTag]) {
+      if (value) {
+        this.reader.forgetTag(value);
+      }
+    }
   }
 
   /** Start or stop the reader's sweep, then hand focus back to the capture field. */
@@ -446,6 +476,20 @@ export class CommissionSession {
 
   protected connectReader(): void {
     void this.reader.connect();
+  }
+
+  /**
+   * Show or hide the on-screen keyboard. Blur and refocus because a browser only re-reads
+   * `inputmode` when an element gains focus.
+   */
+  protected toggleManualEntry(): void {
+    this.manualEntry.update((wanted) => !wanted);
+    const el = this.captureInput()?.nativeElement;
+    if (!el) {
+      return;
+    }
+    el.blur();
+    setTimeout(() => el.focus());
   }
 
   // --- Per-row enrich ---

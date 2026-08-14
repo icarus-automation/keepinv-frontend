@@ -54,6 +54,28 @@ describe('RfidReaderService capture stream', () => {
     expect(service.tagCount()).toBe(1);
   });
 
+  // Regression: clearing staged units and re-sweeping the same tags read nothing at all, because
+  // the reader still counted them as seen. Whoever discards a capture must release it.
+  it('offers a forgotten tag again, and only that tag', () => {
+    feed(service, tag('AAAA'));
+    feed(service, tag('BBBB'));
+    expect(service.tagCount()).toBe(2);
+
+    service.forgetTag('AAAA');
+    expect(service.tagCount()).toBe(1);
+
+    feed(service, tag('AAAA'));
+    feed(service, tag('BBBB'));
+
+    expect(captured.map((capture) => capture.value)).toEqual(['AAAA', 'BBBB', 'AAAA']);
+  });
+
+  it('ignores forgetting a tag it never saw', () => {
+    feed(service, tag('AAAA'));
+    service.forgetTag('NOPE');
+    expect(service.tagCount()).toBe(1);
+  });
+
   it('does not dedupe barcodes: a second deliberate scan must still register', () => {
     feed(service, { kind: 'barcode', value: '4801234567890' });
     feed(service, { kind: 'barcode', value: '4801234567890' });

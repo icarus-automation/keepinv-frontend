@@ -236,13 +236,31 @@
                 Straight from the module's own parameter block — the configuration the radio
                 actually runs on, which a bare SET_POWER acknowledgement does not prove.
               -->
+              <!--
+                Output mode first: it is the one setting that strands a reader completely. The
+                reader keeps it in flash, so a unit left in Bluetooth-keyboard mode by another app
+                connects, accepts everything, and silently types its reads elsewhere.
+              -->
+              <dt class="text-muted">Output</dt>
+              <dd
+                class="text-right"
+                [class]="reader.outputMode() === 'hid' ? 'font-semibold text-danger' : 'text-ink'"
+              >
+                {{
+                  reader.outputMode() === null
+                    ? '—'
+                    : reader.outputMode() === 'hid'
+                      ? 'HID (wrong)'
+                      : 'Transparent'
+                }}
+              </dd>
               @if (reader.params(); as params) {
                 <dt class="text-muted">Antenna</dt>
                 <dd
                   class="text-right"
                   [class]="params.antenna === 0 ? 'font-semibold text-danger' : 'text-ink'"
                 >
-                  {{ params.antenna === 0 ? 'NONE SELECTED' : 'On · ' + params.powerDbm + ' dBm' }}
+                  {{ params.antenna === 0 ? 'NONE SELECTED' : 'On' }}
                 </dd>
                 <dt class="text-muted">Protocol</dt>
                 <dd
@@ -272,7 +290,12 @@
               <dd class="text-right text-ink">{{ reader.triggerHeld() ? 'Held' : 'Released' }}</dd>
             </dl>
 
-            @if (reader.params()?.antenna === 0) {
+            @if (reader.outputMode() === 'hid') {
+              <p role="alert" class="mt-2 rounded-md bg-danger/10 px-2.5 py-2 text-[0.6875rem] leading-relaxed text-danger">
+                The reader is in Bluetooth-keyboard mode, so it types tags instead of sending them
+                here. Press <span class="font-semibold">Re-apply settings</span> below.
+              </p>
+            } @else if (reader.params()?.antenna === 0) {
               <p role="alert" class="mt-2 rounded-md bg-danger/10 px-2.5 py-2 text-[0.6875rem] leading-relaxed text-danger">
                 No antenna is selected, so the reader sweeps but detects nothing. Press
                 <span class="font-semibold">Re-apply settings</span> below.
